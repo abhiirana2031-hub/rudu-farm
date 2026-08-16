@@ -26,7 +26,7 @@ export default function GlobalErrorPage({
       fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
       <div style={{
-        maxWidth: '460px',
+        maxWidth: '600px',
         width: '100%',
         background: '#FFFFFF',
         borderRadius: '24px',
@@ -50,11 +50,29 @@ export default function GlobalErrorPage({
         </div>
 
         <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#4E2A18', margin: '0 0 8px' }}>
-          Rudu Farm Portal
+          Rudu Farm Error Diagnostic
         </h2>
-        <p style={{ fontSize: '13.5px', color: '#64748B', margin: '0 0 24px', lineHeight: '1.5' }}>
-          The application encountered a temporary display update. Click below to refresh your session.
+        <p style={{ fontSize: '13.5px', color: '#64748B', margin: '0 0 16px', lineHeight: '1.5' }}>
+          Exact Error Message:
         </p>
+
+        <div style={{
+          background: '#F1F5F9',
+          color: '#0F172A',
+          padding: '16px',
+          borderRadius: '12px',
+          fontSize: '12px',
+          fontFamily: 'monospace',
+          textAlign: 'left',
+          marginBottom: '20px',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-all',
+          maxHeight: '200px',
+          overflowY: 'auto'
+        }}>
+          {error?.message || String(error)}
+          {error?.digest && `\nDigest: ${error.digest}`}
+        </div>
 
         <button
           onClick={() => {

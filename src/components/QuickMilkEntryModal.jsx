@@ -16,10 +16,12 @@ export const QuickMilkEntryModal = () => {
     rateRules
   } = useFarm();
 
-  const initialFarmer = farmers[0];
+  const farmerList = farmers || [];
+  const empList = employees || [];
+  const initialFarmer = farmerList[0];
   const [farmerId, setFarmerId] = useState(initialFarmer?.id || '');
   const [farmerQuery, setFarmerQuery] = useState(initialFarmer ? `${initialFarmer.name} (${initialFarmer.id})` : '');
-  const [collectedBy, setCollectedBy] = useState(employees ? employees[0]?.name || '' : '');
+  const [collectedBy, setCollectedBy] = useState(empList[0]?.name || '');
   const [shift, setShift] = useState('Morning');
   const [quantity, setQuantity] = useState('42.5');
   const [fat, setFat] = useState('4.2');
@@ -32,14 +34,16 @@ export const QuickMilkEntryModal = () => {
   const currentRate = calculateRate(fat, snf);
   const qtyVal = parseFloat(quantity) || 0;
   const totalAmount = (qtyVal * currentRate).toFixed(2);
-  const selectedFarmer = farmers.find(f => f.id === farmerId) || farmers[0];
+  const selectedFarmer = farmerList.find(f => f?.id === farmerId) || farmerList[0] || {};
 
   const handleFarmerQueryChange = (queryVal) => {
     setFarmerQuery(queryVal);
-    const matched = farmers.find(f => 
-      `${f.name} (${f.id})`.toLowerCase().includes(queryVal.toLowerCase()) ||
-      f.name.toLowerCase().includes(queryVal.toLowerCase()) ||
-      f.id.toLowerCase().includes(queryVal.toLowerCase())
+    const matched = farmerList.find(f => 
+      f && (
+        `${f.name} (${f.id})`.toLowerCase().includes(queryVal.toLowerCase()) ||
+        (f.name || '').toLowerCase().includes(queryVal.toLowerCase()) ||
+        (f.id || '').toLowerCase().includes(queryVal.toLowerCase())
+      )
     );
     if (matched) {
       setFarmerId(matched.id);

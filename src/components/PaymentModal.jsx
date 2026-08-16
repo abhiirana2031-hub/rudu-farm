@@ -14,7 +14,8 @@ const UpiLogo = ({ size = 20, isSelected = false, brandColor = '#4E2A18' }) => (
 export const PaymentModal = () => {
   const { activeModal, setActiveModal, farmers, processPayment } = useFarm();
 
-  const initialFarmer = farmers[0];
+  const farmerList = farmers || [];
+  const initialFarmer = farmerList[0];
   const [farmerId, setFarmerId] = useState(initialFarmer?.id || '');
   const [farmerQuery, setFarmerQuery] = useState(initialFarmer ? `${initialFarmer.name} (${initialFarmer.id})` : '');
   const [amount, setAmount] = useState(initialFarmer?.pendingPayout ? initialFarmer.pendingPayout.toString() : '5000');
@@ -25,14 +26,16 @@ export const PaymentModal = () => {
 
   if (activeModal !== 'makePayment') return null;
 
-  const selectedFarmer = farmers.find(f => f.id === farmerId) || farmers[0];
+  const selectedFarmer = farmerList.find(f => f?.id === farmerId) || farmerList[0] || {};
 
   const handleFarmerQueryChange = (queryVal) => {
     setFarmerQuery(queryVal);
-    const matched = farmers.find(f => 
-      `${f.name} (${f.id})`.toLowerCase().includes(queryVal.toLowerCase()) ||
-      f.name.toLowerCase().includes(queryVal.toLowerCase()) ||
-      f.id.toLowerCase().includes(queryVal.toLowerCase())
+    const matched = farmerList.find(f => 
+      f && (
+        `${f.name} (${f.id})`.toLowerCase().includes(queryVal.toLowerCase()) ||
+        (f.name || '').toLowerCase().includes(queryVal.toLowerCase()) ||
+        (f.id || '').toLowerCase().includes(queryVal.toLowerCase())
+      )
     );
     if (matched) {
       setFarmerId(matched.id);
