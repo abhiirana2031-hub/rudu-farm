@@ -1,17 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc, collection, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase/client';
-import {
-  INITIAL_FARMERS,
-  INITIAL_RATE_RULES,
-  INITIAL_ENTRIES,
-  INITIAL_EMPLOYEES,
-  INITIAL_PAYOUTS,
-  INITIAL_MILK_SALES,
-  INITIAL_SESSIONS,
-  INITIAL_SESSION_CONFIG
-} from '../mockData/initialData';
 
 const FarmContext = createContext();
 
@@ -22,18 +12,27 @@ export const FarmProvider = ({ children }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
 
+  // Restore authenticated session from localStorage or verify on load
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedUser = localStorage.getItem('rudu_auth_user');
+      const savedRole = localStorage.getItem('rudu_auth_role');
+      if (savedUser && savedRole) {
+        try {
+          setCurrentUser(JSON.parse(savedUser));
+          setCurrentRole(savedRole);
+        } catch (e) {}
+      }
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          // Fetch user profile from Firestore
           const userDocRef = doc(db, 'users', user.uid);
           const userDoc = await getDoc(userDocRef);
           
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            // Determine role (in a real app, query tenant membership)
-            // For now, if the email is the admin email or role is set in doc
             let role = userData.role || 'admin'; 
             
             const userObj = {
@@ -47,36 +46,12 @@ export const FarmProvider = ({ children }) => {
             
             setCurrentUser(userObj);
             setCurrentRole(role);
-          } else {
-            // Fallback if no Firestore document
-            const userObj = {
-              id: user.uid,
-              name: user.displayName || 'User',
-              email: user.email,
-              role: 'admin',
-              designation: 'Dairy Owner / Manager',
-              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-            };
-            setCurrentUser(userObj);
-            setCurrentRole('admin');
+            localStorage.setItem('rudu_auth_user', JSON.stringify(userObj));
+            localStorage.setItem('rudu_auth_role', role);
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
-          // Fallback if rules deny access or no document
-          const userObj = {
-            id: user.uid,
-            name: user.displayName || 'Abhay Chaudhary',
-            email: user.email,
-            role: 'admin',
-            designation: 'Dairy Owner / Manager',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-          };
-          setCurrentUser(userObj);
-          setCurrentRole('admin');
         }
-      } else {
-        setCurrentUser(null);
-        setCurrentRole(null);
       }
       setAuthLoading(false);
     });
@@ -93,6 +68,12 @@ export const FarmProvider = ({ children }) => {
 
   const logoutUser = async () => {
     try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('rudu_auth_user');
+        localStorage.removeItem('rudu_auth_role');
+      }
+      setCurrentUser(null);
+      setCurrentRole(null);
       await signOut(auth);
       setIsAuthModalOpen(true);
     } catch (error) {
@@ -114,6 +95,57 @@ export const FarmProvider = ({ children }) => {
   const [collectionCenters, setCollectionCenters] = useState([
     { id: 'CC001', name: 'Rudu Main Center', location: 'Village Road, Sector 1', capacity: 5000, status: 'Active', contact: '' },
   ]);
+
+  // Realtime Firestore Sync Effect
+  useEffect(() => {
+    // 1. Sync Farmers from Firestore
+    const unsubFarmers = onSnapshot(collection(db, 'farmers'), (snap) => {
+      if (!snap.empty) {
+        const loaded = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        setFarmers(loaded);
+      }
+    }, (err) => console.warn("Firestore Farmers sync error:", err));
+
+    // 2. Sync Milk Entries from Firestore
+    const unsubEntries = onSnapshot(collection(db, 'entries'), (snap) => {
+      if (!snap.empty) {
+        const loaded = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        setEntries(loaded);
+      }
+    }, (err) => console.warn("Firestore Entries sync error:", err));
+
+    // 3. Sync Payouts from Firestore
+    const unsubPayouts = onSnapshot(collection(db, 'payouts'), (snap) => {
+      if (!snap.empty) {
+        const loaded = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        setPayouts(loaded);
+      }
+    }, (err) => console.warn("Firestore Payouts sync error:", err));
+
+    // 4. Sync Employees from Firestore
+    const unsubEmployees = onSnapshot(collection(db, 'employees'), (snap) => {
+      if (!snap.empty) {
+        const loaded = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        setEmployees(loaded);
+      }
+    }, (err) => console.warn("Firestore Employees sync error:", err));
+
+    // 5. Sync Centers from Firestore
+    const unsubCenters = onSnapshot(collection(db, 'centers'), (snap) => {
+      if (!snap.empty) {
+        const loaded = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        setCollectionCenters(loaded);
+      }
+    }, (err) => console.warn("Firestore Centers sync error:", err));
+
+    return () => {
+      unsubFarmers();
+      unsubEntries();
+      unsubPayouts();
+      unsubEmployees();
+      unsubCenters();
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -178,6 +210,7 @@ export const FarmProvider = ({ children }) => {
       createdAt: new Date().toISOString(),
     };
     setCollectionCenters(prev => [...prev, newCenter]);
+    setDoc(doc(db, 'centers', newCenter.id), newCenter).catch(e => console.error("Firestore center write error:", e));
     return newCenter;
   };
 
@@ -185,10 +218,15 @@ export const FarmProvider = ({ children }) => {
     setCollectionCenters(prev =>
       prev.map(c => c.id === centerId ? { ...c, ...updates } : c)
     );
+    const existing = collectionCenters.find(c => c.id === centerId);
+    if (existing) {
+      setDoc(doc(db, 'centers', centerId), { ...existing, ...updates }, { merge: true }).catch(e => console.error(e));
+    }
   };
 
   const deleteCollectionCenter = (centerId) => {
     setCollectionCenters(prev => prev.filter(c => c.id !== centerId));
+    deleteDoc(doc(db, 'centers', centerId)).catch(e => console.error(e));
   };
 
   // Rate Engine Formula
@@ -234,6 +272,7 @@ export const FarmProvider = ({ children }) => {
     };
 
     setEntries(prev => [entryObj, ...prev]);
+    setDoc(doc(db, 'entries', entryObj.id), entryObj).catch(e => console.error("Firestore entry save error:", e));
 
     if (activeSession) {
       const updatedSession = {
@@ -249,13 +288,15 @@ export const FarmProvider = ({ children }) => {
     // Update Farmer Stats
     setFarmers(prev => prev.map(f => {
       if (f.id === newEntry.farmerId) {
-        return {
+        const updatedFarmer = {
           ...f,
           totalSupplied: Math.round((f.totalSupplied + qty) * 10) / 10,
           thisMonthSupplied: Math.round((f.thisMonthSupplied + qty) * 10) / 10,
           totalEarned: f.totalEarned + totalAmount,
           pendingPayout: f.pendingPayout + totalAmount
         };
+        setDoc(doc(db, 'farmers', f.id), updatedFarmer, { merge: true }).catch(e => console.error(e));
+        return updatedFarmer;
       }
       return f;
     }));
@@ -314,11 +355,13 @@ export const FarmProvider = ({ children }) => {
     };
 
     setFarmers(prev => [farmerObj, ...prev]);
+    setDoc(doc(db, 'farmers', farmerObj.id), farmerObj).catch(e => console.error("Firestore farmer save error:", e));
     return farmerObj;
   };
 
   const deleteFarmer = (farmerId) => {
     setFarmers(prev => prev.filter(f => f.id !== farmerId));
+    deleteDoc(doc(db, 'farmers', farmerId)).catch(e => console.error("Firestore farmer delete error:", e));
   };
 
   const addEmployee = (newEmp) => {
@@ -328,8 +371,6 @@ export const FarmProvider = ({ children }) => {
       email: newEmp.email || `${newEmp.name.toLowerCase().replace(/\s+/g, '')}@rudufarm.com`,
       password: newEmp.password || newEmp.pin || 'Operator@123',
       pin: newEmp.password || newEmp.pin || '1234',
-      id: `EMP${Math.floor(100 + Math.random() * 900)}`,
-      name: newEmp.name,
       role: newEmp.role || 'Milk Collection Agent',
       center: newEmp.center || 'Kheda Center',
       phone: newEmp.phone || '+91 98000 00000',
@@ -342,11 +383,13 @@ export const FarmProvider = ({ children }) => {
     };
 
     setEmployees(prev => [empObj, ...prev]);
+    setDoc(doc(db, 'employees', empObj.id), empObj).catch(e => console.error("Firestore employee save error:", e));
     return empObj;
   };
 
   const deleteEmployee = (empId) => {
     setEmployees(prev => prev.filter(e => e.id !== empId));
+    deleteDoc(doc(db, 'employees', empId)).catch(e => console.error("Firestore employee delete error:", e));
   };
 
   const processPayment = (payoutData) => {
@@ -364,15 +407,18 @@ export const FarmProvider = ({ children }) => {
     };
 
     setPayouts(prev => [payoutObj, ...prev]);
+    setDoc(doc(db, 'payouts', payoutObj.id), payoutObj).catch(e => console.error("Firestore payout save error:", e));
 
     // Update Farmer Cleared / Pending Payouts
     setFarmers(prev => prev.map(f => {
       if (f.id === payoutData.farmerId) {
-        return {
+        const updatedFarmer = {
           ...f,
           clearedPayout: f.clearedPayout + amount,
           pendingPayout: Math.max(0, f.pendingPayout - amount)
         };
+        setDoc(doc(db, 'farmers', f.id), updatedFarmer, { merge: true }).catch(e => console.error(e));
+        return updatedFarmer;
       }
       return f;
     }));

@@ -106,15 +106,21 @@ export const AuthModal = () => {
         return;
       }
 
-      setCurrentUser({
+      const userObj = {
         id: matchedFarmer.id,
         name: matchedFarmer.name,
         email: matchedFarmer.phone ? `${matchedFarmer.phone}@rudufarm.com` : `${matchedFarmer.id}@rudufarm.com`,
         role: 'farmer',
         village: matchedFarmer.village,
         phone: matchedFarmer.phone
-      });
+      };
+
+      setCurrentUser(userObj);
       setCurrentRole('farmer');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('rudu_auth_user', JSON.stringify(userObj));
+        localStorage.setItem('rudu_auth_role', 'farmer');
+      }
       if (setSelectedFarmerId) setSelectedFarmerId(matchedFarmer.id);
       setIsAuthModalOpen(false);
       return;
@@ -142,14 +148,20 @@ export const AuthModal = () => {
         return;
       }
 
-      setCurrentUser({
+      const userObj = {
         id: matchedOperator.id || `OP-${Date.now()}`,
         name: matchedOperator.name,
         email: matchedOperator.email || 'operator@rudufarm.com',
         role: 'employee',
         center: matchedOperator.center || 'Main Collection Center'
-      });
+      };
+
+      setCurrentUser(userObj);
       setCurrentRole('employee');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('rudu_auth_user', JSON.stringify(userObj));
+        localStorage.setItem('rudu_auth_role', 'employee');
+      }
       setIsAuthModalOpen(false);
       return;
     }
@@ -161,14 +173,20 @@ export const AuthModal = () => {
         return;
       }
 
-      setCurrentUser({
+      const userObj = {
         id: 'ADMIN-01',
         name: 'Abhay Chaudhary',
         email: 'abhayrana8272@gmail.com',
         role: 'admin',
         designation: 'Dairy Owner / Manager'
-      });
+      };
+
+      setCurrentUser(userObj);
       setCurrentRole('admin');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('rudu_auth_user', JSON.stringify(userObj));
+        localStorage.setItem('rudu_auth_role', 'admin');
+      }
       setIsAuthModalOpen(false);
       return;
     }
