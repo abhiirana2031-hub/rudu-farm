@@ -35,38 +35,44 @@ export const FarmProvider = ({ children }) => {
       }
     }
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userDocRef = doc(db, 'users', user.uid);
-          const userDoc = await getDoc(userDocRef);
-          
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            let role = userData.role || 'admin'; 
-            
-            const userObj = {
-              id: user.uid,
-              name: userData.name || user.displayName || 'User',
-              email: user.email,
-              role: role,
-              designation: role === 'admin' ? 'Dairy Owner / Manager' : 'Operator',
-              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-            };
-            
-            setCurrentUser(userObj);
-            setCurrentRole(role);
-            localStorage.setItem('rudu_auth_user', JSON.stringify(userObj));
-            localStorage.setItem('rudu_auth_role', role);
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      }
-      setAuthLoading(false);
-    });
+    // Instantly finish loading so UI is never stuck on spinner
+    setAuthLoading(false);
 
-    return () => unsubscribe();
+    try {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          try {
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDoc = await getDoc(userDocRef);
+            
+            if (userDoc && userDoc.exists()) {
+              const userData = userDoc.data();
+              let role = userData.role || 'admin'; 
+              
+              const userObj = {
+                id: user.uid,
+                name: userData.name || user.displayName || 'User',
+                email: user.email,
+                role: role,
+                designation: role === 'admin' ? 'Dairy Owner / Manager' : 'Operator',
+                avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+              };
+              
+              setCurrentUser(userObj);
+              setCurrentRole(role);
+              localStorage.setItem('rudu_auth_user', JSON.stringify(userObj));
+              localStorage.setItem('rudu_auth_role', role);
+            }
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+          }
+        }
+      });
+
+      return () => unsubscribe();
+    } catch (e) {
+      console.warn("Auth state observer setup error:", e);
+    }
   }, []);
 
   const [selectedFarmerId, setSelectedFarmerId] = useState('RF1024');

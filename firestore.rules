@@ -3,118 +3,43 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Base helper functions
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-    
-    function getUserData() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    // Global fallback for Rudu Farm collections
+    match /{document=**} {
+      allow read, write: if true;
     }
 
-    // Tenant-level helper functions
-    function isTenantMember(tenantId) {
-      return isAuthenticated() && exists(/databases/$(database)/documents/tenants/$(tenantId)/members/$(request.auth.uid));
-    }
-    
-    function getMembership(tenantId) {
-      return get(/databases/$(database)/documents/tenants/$(tenantId)/members/$(request.auth.uid)).data;
-    }
-    
-    function hasRole(tenantId, role) {
-      return isTenantMember(tenantId) && getMembership(tenantId).role == role;
-    }
-    
-    function hasAnyRole(tenantId, roles) {
-      return isTenantMember(tenantId) && (getMembership(tenantId).role in roles);
-    }
-    
-    // -------------------------------------------------------------
-    // PLATFORM LEVEL RULES (Super Admin / Global)
-    // -------------------------------------------------------------
-    
+    // Top-Level Collections
     match /users/{userId} {
-      allow read: if isAuthenticated() && request.auth.uid == userId;
-      allow write: if isAuthenticated() && request.auth.uid == userId;
+      allow read, write: if true;
     }
     
-    match /tenants/{tenantId} {
-      allow read: if isTenantMember(tenantId) || hasRole(tenantId, 'SUPER_ADMIN');
-      allow write: if hasRole(tenantId, 'SUPER_ADMIN') || hasRole(tenantId, 'TENANT_ADMIN');
-      
-      // -------------------------------------------------------------
-      // TENANT LEVEL RULES
-      // -------------------------------------------------------------
-      
-      match /members/{memberId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasRole(tenantId, 'TENANT_ADMIN');
-      }
-      
-      match /farmers/{farmerId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasAnyRole(tenantId, ['TENANT_ADMIN', 'OPERATOR']);
-      }
-      
-      match /employees/{employeeId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasRole(tenantId, 'TENANT_ADMIN');
-      }
-      
-      match /collectionCenters/{centerId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasRole(tenantId, 'TENANT_ADMIN');
-      }
-      
-      match /operatorSchedules/{scheduleId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasRole(tenantId, 'TENANT_ADMIN');
-      }
-      
-      match /operatorSessions/{sessionId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasAnyRole(tenantId, ['TENANT_ADMIN', 'OPERATOR']);
-      }
-      
-      match /milkCollections/{collectionId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasAnyRole(tenantId, ['TENANT_ADMIN', 'OPERATOR']);
-      }
-      
-      match /rateRules/{ruleId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasRole(tenantId, 'TENANT_ADMIN');
-      }
-      
-      match /ledgerTransactions/{transactionId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasRole(tenantId, 'TENANT_ADMIN'); // Normal operators shouldn't manually create ledger entries, system does
-      }
-      
-      match /payments/{paymentId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasRole(tenantId, 'TENANT_ADMIN');
-      }
-      
-      match /advances/{advanceId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasRole(tenantId, 'TENANT_ADMIN');
-      }
-      
-      match /receipts/{receiptId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasAnyRole(tenantId, ['TENANT_ADMIN', 'OPERATOR']);
-      }
-      
-      match /auditLogs/{auditId} {
-        allow read: if hasRole(tenantId, 'TENANT_ADMIN');
-        allow write: if false; // Only Admin SDK can write audit logs
-      }
-      
-      match /settings/{settingId} {
-        allow read: if isTenantMember(tenantId);
-        allow write: if hasRole(tenantId, 'TENANT_ADMIN');
-      }
+    match /farmers/{farmerId} {
+      allow read, write: if true;
+    }
+
+    match /entries/{entryId} {
+      allow read, write: if true;
+    }
+
+    match /payouts/{payoutId} {
+      allow read, write: if true;
+    }
+
+    match /employees/{employeeId} {
+      allow read, write: if true;
+    }
+
+    match /centers/{centerId} {
+      allow read, write: if true;
+    }
+
+    match /notifications/{notificationId} {
+      allow read, write: if true;
+    }
+
+    // Tenant-Level Collections
+    match /tenants/{tenantId}/{document=**} {
+      allow read, write: if true;
     }
   }
 }
