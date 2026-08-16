@@ -1,0 +1,391 @@
+export const INITIAL_FARMERS = [
+  {
+    id: "RF1024",
+    name: "Ramesh Yadav",
+    phone: "+91 98765 43210",
+    village: "Kheda",
+    address: "House 42, Main Road, Kheda",
+    status: "Active",
+    joinedDate: "2024-01-15",
+    bankName: "State Bank of India",
+    accNumber: "XXXX-XXXX-4910",
+    ifsc: "SBIN0001234",
+    cowsCount: 6,
+    buffalosCount: 4,
+    totalSupplied: 1248.0,
+    thisMonthSupplied: 476.0,
+    totalEarned: 26162,
+    clearedPayout: 21400,
+    pendingPayout: 3562,
+    advanceBalance: 1200
+  },
+  {
+    id: "RF1025",
+    name: "Suresh Pal",
+    phone: "+91 98123 45678",
+    village: "Kheda",
+    address: "Plot 12, West Kheda",
+    status: "Active",
+    joinedDate: "2024-02-01",
+    bankName: "HDFC Bank",
+    accNumber: "XXXX-XXXX-8821",
+    ifsc: "HDFC0004321",
+    cowsCount: 4,
+    buffalosCount: 2,
+    totalSupplied: 940.0,
+    thisMonthSupplied: 380.5,
+    totalEarned: 51200,
+    clearedPayout: 45000,
+    pendingPayout: 6200,
+    advanceBalance: 0
+  },
+  {
+    id: "RF1026",
+    name: "Vikram Singh",
+    phone: "+91 97654 32109",
+    village: "Rampur",
+    address: "Near Dairy Chawk, Rampur",
+    status: "Active",
+    joinedDate: "2024-03-10",
+    bankName: "Punjab National Bank",
+    accNumber: "XXXX-XXXX-1102",
+    ifsc: "PUNB0123400",
+    cowsCount: 8,
+    buffalosCount: 5,
+    totalSupplied: 1620.0,
+    thisMonthSupplied: 510.0,
+    totalEarned: 89100,
+    clearedPayout: 75000,
+    pendingPayout: 14100,
+    advanceBalance: 3000
+  },
+  {
+    id: "RF1027",
+    name: "Sunita Devi",
+    phone: "+91 98321 09876",
+    village: "Rampur",
+    address: "Green Basti, Rampur",
+    status: "Active",
+    joinedDate: "2024-04-05",
+    bankName: "ICICI Bank",
+    accNumber: "XXXX-XXXX-5543",
+    ifsc: "ICIC0009876",
+    cowsCount: 3,
+    buffalosCount: 3,
+    totalSupplied: 780.0,
+    thisMonthSupplied: 290.0,
+    totalEarned: 42500,
+    clearedPayout: 38000,
+    pendingPayout: 4500,
+    advanceBalance: 500
+  },
+  {
+    id: "RF1028",
+    name: "Harish Chandra",
+    phone: "+91 99012 34567",
+    village: "Sundarpur",
+    address: "Farm Road, Sundarpur",
+    status: "Active",
+    joinedDate: "2024-05-18",
+    bankName: "Bank of Baroda",
+    accNumber: "XXXX-XXXX-7712",
+    ifsc: "BARB0SUNDAR",
+    cowsCount: 5,
+    buffalosCount: 2,
+    totalSupplied: 850.0,
+    thisMonthSupplied: 310.0,
+    totalEarned: 46750,
+    clearedPayout: 40000,
+    pendingPayout: 6750,
+    advanceBalance: 0
+  },
+  {
+    id: "RF1029",
+    name: "Anita Sharma",
+    phone: "+91 98899 11223",
+    village: "Kheda",
+    address: "North Gate, Kheda",
+    status: "Active",
+    joinedDate: "2024-06-01",
+    bankName: "Axis Bank",
+    accNumber: "XXXX-XXXX-3399",
+    ifsc: "UTIB0002211",
+    cowsCount: 4,
+    buffalosCount: 4,
+    totalSupplied: 1100.0,
+    thisMonthSupplied: 420.0,
+    totalEarned: 60500,
+    clearedPayout: 52000,
+    pendingPayout: 8500,
+    advanceBalance: 1500
+  }
+];
+
+export const INITIAL_RATE_RULES = {
+  baseRate: 54.0,       // ₹ per Liter
+  standardFat: 4.0,     // %
+  standardSNF: 8.5,     // %
+  fatBonusPerUnit: 1.5, // ₹ per 0.1% Fat
+  snfBonusPerUnit: 1.0, // ₹ per 0.1% SNF
+  minRate: 40.0,
+  maxRate: 80.0
+};
+
+export const INITIAL_ENTRIES = [
+  {
+    id: "ENTRY-1001",
+    farmerId: "RF1024",
+    farmerName: "Ramesh Yadav",
+    date: "2026-07-24",
+    shift: "Morning",
+    quantity: 42.5,
+    fat: 4.2,
+    snf: 8.6,
+    temperature: 4.0,
+    rate: 54.90,
+    totalAmount: 2337.00,
+    status: "Pending",
+    collectedBy: "Amit Kumar",
+    timestamp: "08:12 AM"
+  },
+  {
+    id: "ENTRY-1002",
+    farmerId: "RF1025",
+    farmerName: "Suresh Pal",
+    date: "2026-07-24",
+    shift: "Morning",
+    quantity: 36.0,
+    fat: 4.1,
+    snf: 8.5,
+    temperature: 4.2,
+    rate: 55.00,
+    totalAmount: 1980.00,
+    status: "Pending",
+    collectedBy: "Amit Kumar",
+    timestamp: "08:25 AM"
+  },
+  {
+    id: "ENTRY-1003",
+    farmerId: "RF1026",
+    farmerName: "Vikram Singh",
+    date: "2026-07-24",
+    shift: "Morning",
+    quantity: 28.0,
+    fat: 4.0,
+    snf: 8.5,
+    temperature: 3.9,
+    rate: 54.00,
+    totalAmount: 1512.00,
+    status: "Pending",
+    collectedBy: "Priya Verma",
+    timestamp: "08:40 AM"
+  },
+  {
+    id: "ENTRY-1004",
+    farmerId: "RF1027",
+    farmerName: "Sunita Devi",
+    date: "2026-07-24",
+    shift: "Morning",
+    quantity: 28.0,
+    fat: 3.9,
+    snf: 8.4,
+    temperature: 4.1,
+    rate: 53.00,
+    totalAmount: 1484.00,
+    status: "Pending",
+    collectedBy: "Priya Verma",
+    timestamp: "08:52 AM"
+  },
+  {
+    id: "ENTRY-1005",
+    farmerId: "RF1024",
+    farmerName: "Ramesh Yadav",
+    date: "2026-07-23",
+    shift: "Evening",
+    quantity: 38.0,
+    fat: 4.3,
+    snf: 8.6,
+    temperature: 4.1,
+    rate: 55.05,
+    totalAmount: 2091.90,
+    status: "Cleared",
+    collectedBy: "Amit Kumar",
+    timestamp: "05:30 PM"
+  },
+  {
+    id: "ENTRY-1006",
+    farmerId: "RF1025",
+    farmerName: "Suresh Pal",
+    date: "2026-07-23",
+    shift: "Evening",
+    quantity: 34.5,
+    fat: 4.0,
+    snf: 8.5,
+    temperature: 4.0,
+    rate: 54.00,
+    totalAmount: 1863.00,
+    status: "Cleared",
+    collectedBy: "Amit Kumar",
+    timestamp: "05:45 PM"
+  },
+  {
+    id: "ENTRY-1007",
+    farmerId: "RF1028",
+    farmerName: "Harish Chandra",
+    date: "2026-07-23",
+    shift: "Morning",
+    quantity: 30.0,
+    fat: 4.0,
+    snf: 8.6,
+    temperature: 4.0,
+    rate: 54.10,
+    totalAmount: 1623.00,
+    status: "Cleared",
+    collectedBy: "Amit Kumar",
+    timestamp: "08:10 AM"
+  },
+  {
+    id: "ENTRY-1008",
+    farmerId: "RF1029",
+    farmerName: "Anita Sharma",
+    date: "2026-07-23",
+    shift: "Morning",
+    quantity: 40.0,
+    fat: 4.2,
+    snf: 8.5,
+    temperature: 4.2,
+    rate: 54.30,
+    totalAmount: 2172.00,
+    status: "Cleared",
+    collectedBy: "Priya Verma",
+    timestamp: "08:35 AM"
+  }
+];
+
+export const INITIAL_EMPLOYEES = [
+  {
+    id: "EMP101",
+    name: "Amit Kumar",
+    role: "Milk Collection Agent",
+    center: "Kheda Center",
+    phone: "+91 98111 22233",
+    status: "Active",
+    todayEntriesCount: 4,
+    todayVolumeLogged: 145.0
+  },
+  {
+    id: "EMP102",
+    name: "Priya Verma",
+    role: "Quality Inspector & Agent",
+    center: "Rampur Center",
+    phone: "+91 98222 33344",
+    status: "Active",
+    todayEntriesCount: 3,
+    todayVolumeLogged: 120.0
+  }
+];
+
+export const INITIAL_PAYOUTS = [
+  {
+    id: "PAY-901",
+    farmerId: "RF1024",
+    farmerName: "Ramesh Yadav",
+    amount: 21400,
+    date: "2026-07-20",
+    method: "Bank Transfer (Direct UPI)",
+    reference: "UPI/62819284/SBI",
+    status: "Cleared",
+    notes: "Bi-weekly milk settlement"
+  },
+  {
+    id: "PAY-902",
+    farmerId: "RF1025",
+    farmerName: "Suresh Pal",
+    amount: 18500,
+    date: "2026-07-20",
+    method: "Bank Transfer",
+    reference: "HDFC91028371",
+    status: "Cleared",
+    notes: "Bi-weekly milk settlement"
+  },
+  {
+    id: "PAY-903",
+    farmerId: "RF1026",
+    farmerName: "Vikram Singh",
+    amount: 25000,
+    date: "2026-07-18",
+    method: "Cash",
+    reference: "CASH-REC-402",
+    status: "Cleared",
+    notes: "Settlement + ₹2000 Advance adjustment"
+  }
+];
+
+export const INITIAL_MILK_SALES = [
+  {
+    id: "SALE-101",
+    date: "2026-07-24",
+    buyerName: "Amul Dairy Cooperative",
+    quantity: 130,
+    rate: 63.0,
+    totalAmount: 8190,
+    milkType: "Cow",
+    paymentStatus: "Paid",
+    notes: "Bulk Dispatch. Vehicle GJ-04-1234. Quality certified by supervisor.",
+    soldBy: "Amit Kumar",
+    timestamp: "06:30 PM"
+  },
+  {
+    id: "SALE-102",
+    date: "2026-07-23",
+    buyerName: "Mother Dairy",
+    quantity: 140,
+    rate: 62.0,
+    totalAmount: 8680,
+    milkType: "Buffalo",
+    paymentStatus: "Paid",
+    notes: "Evening Dispatch. Milk temp: 4.2°C. Invoice #MD-8812.",
+    soldBy: "Priya Verma",
+    timestamp: "05:15 PM"
+  },
+  {
+    id: "SALE-103",
+    date: "2026-07-27",
+    buyerName: "Amul Dairy Cooperative",
+    quantity: 450,
+    rate: 54.5,
+    totalAmount: 24525,
+    milkType: "Cow",
+    paymentStatus: "Paid",
+    notes: "Evening Dispatch. Vehicle GJ-04-1234. Supervisor signed.",
+    soldBy: "Amit Kumar",
+    timestamp: "06:30 PM"
+  },
+  {
+    id: "SALE-104",
+    date: "2026-07-28",
+    buyerName: "Mother Dairy",
+    quantity: 320,
+    rate: 62.0,
+    totalAmount: 19840,
+    milkType: "Buffalo",
+    paymentStatus: "Pending",
+    notes: "Morning Dispatch. Milk temp: 4.2°C. Invoice #MD-8812.",
+    soldBy: "Priya Verma",
+    timestamp: "09:15 AM"
+  },
+  {
+    id: "SALE-105",
+    date: "2026-07-28",
+    buyerName: "Haldiram Sweets (Local)",
+    quantity: 80,
+    rate: 50.0,
+    totalAmount: 4000,
+    milkType: "Mixed",
+    paymentStatus: "Paid",
+    notes: "Direct Cash Sale. Collected by shop agent.",
+    soldBy: "Amit Kumar",
+    timestamp: "11:45 AM"
+  }
+];
+
