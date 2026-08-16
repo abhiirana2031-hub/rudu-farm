@@ -2,6 +2,16 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc, deleteDoc, collection, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase/client';
+import {
+  INITIAL_FARMERS,
+  INITIAL_RATE_RULES,
+  INITIAL_ENTRIES,
+  INITIAL_EMPLOYEES,
+  INITIAL_PAYOUTS,
+  INITIAL_MILK_SALES,
+  INITIAL_SESSIONS,
+  INITIAL_SESSION_CONFIG
+} from '../mockData/initialData';
 
 const FarmContext = createContext();
 
