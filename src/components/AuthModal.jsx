@@ -56,8 +56,12 @@ export const AuthModal = () => {
   if (!isAuthModalOpen) return null;
 
   const handleLoginSubmit = async (e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setErrorMsg('');
+
     const inputVal = email.trim();
     const enteredPassword = password.trim();
 
@@ -71,18 +75,36 @@ export const AuthModal = () => {
       return;
     }
 
-    // 1. Try Firebase Auth first if input is an email
-    if (inputVal.includes('@')) {
-      try {
-        await signInWithEmailAndPassword(auth, inputVal, enteredPassword);
-        setIsAuthModalOpen(false);
+    // 1. Instant Check for Admin Login
+    if (inputVal.toLowerCase().includes('admin') || inputVal.toLowerCase() === 'abhayrana8272@gmail.com') {
+      if (enteredPassword !== 'Admin@#005' && enteredPassword !== 'admin123') {
+        setErrorMsg('Incorrect Administrator password. Access denied.');
         return;
-      } catch (error) {
-        // Fallthrough to role checking below
       }
+
+      const userObj = {
+        id: 'ADMIN-01',
+        name: 'Abhay Chaudhary',
+        email: 'abhayrana8272@gmail.com',
+        role: 'admin',
+        designation: 'Dairy Owner / Manager'
+      };
+
+      setCurrentUser(userObj);
+      setCurrentRole('admin');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('rudu_auth_user', JSON.stringify(userObj));
+        localStorage.setItem('rudu_auth_role', 'admin');
+      }
+
+      // Background Firebase Auth call (non-blocking)
+      signInWithEmailAndPassword(auth, 'abhayrana8272@gmail.com', enteredPassword).catch(() => {});
+
+      setIsAuthModalOpen(false);
+      return;
     }
 
-    // 2. Check Farmer login (by Farmer ID e.g. RF1024 or Phone number)
+    // 2. Instant Check for Farmer Login (by Farmer ID e.g. RF1024 or Phone number)
     const matchedFarmer = farmers?.find(f =>
       f.id?.toLowerCase() === inputVal.toLowerCase() ||
       f.phone?.replace(/\D/g, '') === inputVal.replace(/\D/g, '') ||
@@ -126,7 +148,7 @@ export const AuthModal = () => {
       return;
     }
 
-    // 3. Check Operator login (by Operator Email, Name, or Phone)
+    // 3. Instant Check for Operator Login (by Operator Email, Name, or Phone)
     const matchedOperator = employees?.find(emp =>
       emp.email?.toLowerCase() === inputVal.toLowerCase() ||
       emp.name?.toLowerCase() === inputVal.toLowerCase() ||
@@ -166,29 +188,16 @@ export const AuthModal = () => {
       return;
     }
 
-    // 4. Check Admin login
-    if (inputVal.toLowerCase().includes('admin') || inputVal === 'abhayrana8272@gmail.com') {
-      if (enteredPassword !== 'Admin@#005' && enteredPassword !== 'admin123') {
-        setErrorMsg('Incorrect Administrator password. Access denied.');
+    // 4. Fallback Firebase Auth Sign In
+    if (inputVal.includes('@')) {
+      try {
+        await signInWithEmailAndPassword(auth, inputVal, enteredPassword);
+        setIsAuthModalOpen(false);
+        return;
+      } catch (error) {
+        setErrorMsg('Invalid email or password. Access denied.');
         return;
       }
-
-      const userObj = {
-        id: 'ADMIN-01',
-        name: 'Abhay Chaudhary',
-        email: 'abhayrana8272@gmail.com',
-        role: 'admin',
-        designation: 'Dairy Owner / Manager'
-      };
-
-      setCurrentUser(userObj);
-      setCurrentRole('admin');
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('rudu_auth_user', JSON.stringify(userObj));
-        localStorage.setItem('rudu_auth_role', 'admin');
-      }
-      setIsAuthModalOpen(false);
-      return;
     }
 
     setErrorMsg('Account not found. Please check your Farmer ID, Phone, or Email.');
