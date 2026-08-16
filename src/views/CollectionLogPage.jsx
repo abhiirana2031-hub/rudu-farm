@@ -11,17 +11,20 @@ export const CollectionLogPage = () => {
   const [viewMode, setViewMode] = useState((typeof window !== 'undefined' && window.innerWidth < 768) ? 'card' : 'table');
 
   const getFarmerVillage = (farmerId) => {
-    const farmer = farmers.find(f => f.id === farmerId);
+    const farmer = (farmers || []).find(f => f?.id === farmerId);
     return farmer?.village || 'Kheda';
   };
 
-  const filteredEntries = entries.filter(e => {
+  const entryList = entries || [];
+  const filteredEntries = entryList.filter(e => {
+    if (!e) return false;
     const village = getFarmerVillage(e.farmerId);
+    const searchStr = searchTerm.toLowerCase();
     const matchesSearch =
-      e.farmerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      e.farmerId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      e.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      village.toLowerCase().includes(searchTerm.toLowerCase());
+      (e.farmerName || '').toLowerCase().includes(searchStr) ||
+      (e.farmerId || '').toLowerCase().includes(searchStr) ||
+      (e.id || '').toLowerCase().includes(searchStr) ||
+      village.toLowerCase().includes(searchStr);
     const matchesShift = shiftFilter === 'All' || e.shift === shiftFilter;
     const matchesDate = !selectedDate || e.date === selectedDate;
     return matchesSearch && matchesShift && matchesDate;

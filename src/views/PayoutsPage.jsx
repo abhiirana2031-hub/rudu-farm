@@ -11,13 +11,16 @@ export const PayoutsPage = () => {
 
   const isAdmin = currentRole === 'admin';
 
-  // Filter payouts into Farmer vs Operator transactions
-  const farmerPayouts = payouts.filter(p => p.type !== 'Operator Salary' && !p.id.startsWith('OP-PAY') && !p.farmerName.startsWith('Staff:'));
-  const operatorPayouts = payouts.filter(p => p.type === 'Operator Salary' || p.id.startsWith('OP-PAY') || p.farmerName.startsWith('Staff:'));
+  const payoutList = payouts || [];
+  const farmerList = farmers || [];
 
-  const totalFarmerCleared = farmerPayouts.reduce((acc, p) => acc + p.amount, 0);
-  const totalOperatorDisbursed = operatorPayouts.reduce((acc, p) => acc + p.amount, 0);
-  const totalPendingFarmer = farmers.reduce((acc, f) => acc + f.pendingPayout, 0);
+  // Filter payouts into Farmer vs Operator transactions
+  const farmerPayouts = payoutList.filter(p => p && p.type !== 'Operator Salary' && (!p.id || !p.id.startsWith('OP-PAY')) && (!p.farmerName || !p.farmerName.startsWith('Staff:')));
+  const operatorPayouts = payoutList.filter(p => p && (p.type === 'Operator Salary' || (p.id && p.id.startsWith('OP-PAY')) || (p.farmerName && p.farmerName.startsWith('Staff:'))));
+
+  const totalFarmerCleared = farmerPayouts.reduce((acc, p) => acc + (p.amount || 0), 0);
+  const totalOperatorDisbursed = operatorPayouts.reduce((acc, p) => acc + (p.amount || 0), 0);
+  const totalPendingFarmer = farmerList.reduce((acc, f) => acc + (f?.pendingPayout || 0), 0);
 
   const basePayouts = activeTab === 'farmers'
     ? farmerPayouts

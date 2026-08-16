@@ -12,11 +12,14 @@ export const OperatorsPage = () => {
   const [selectedOperatorForShift, setSelectedOperatorForShift] = useState(null);
   const [operatorToDelete, setOperatorToDelete] = useState(null);
 
-  const filteredEmployees = employees.filter(emp => {
+  const employeeList = employees || [];
+  const filteredEmployees = employeeList.filter(emp => {
+    if (!emp) return false;
+    const searchStr = searchTerm.toLowerCase();
     const matchesSearch =
-      emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (emp.role && emp.role.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (emp.name || '').toLowerCase().includes(searchStr) ||
+      (emp.id || '').toLowerCase().includes(searchStr) ||
+      (emp.role && emp.role.toLowerCase().includes(searchStr)) ||
       (emp.phone && emp.phone.includes(searchTerm));
     const matchesCenter = selectedCenter === 'All' || emp.center === selectedCenter;
     return matchesSearch && matchesCenter;

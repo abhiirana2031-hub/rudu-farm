@@ -50,8 +50,9 @@ export default function CollectionCentersPage() {
     setTimeout(() => setSaveSuccess(''), 2000);
   };
 
-  const activeCount = collectionCenters.filter((c: any) => c.status === 'Active').length;
-  const totalCapacity = collectionCenters.reduce((a: number, c: any) => a + (parseInt(c.capacity) || 0), 0);
+  const centersList = collectionCenters || [];
+  const activeCount = centersList.filter((c: any) => c?.status === 'Active').length;
+  const totalCapacity = centersList.reduce((a: number, c: any) => a + (parseInt(c?.capacity) || 0), 0);
 
   return (
     <div style={{ maxWidth: '860px', margin: '0 auto', paddingBottom: '40px' }}>
@@ -89,7 +90,7 @@ export default function CollectionCentersPage() {
       {/* Summary Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px', marginBottom: '20px' }}>
         {[
-          { label: 'Total Centres', value: collectionCenters.length, color: '#4E2A18' },
+          { label: 'Total Centres', value: centersList.length, color: '#4E2A18' },
           { label: 'Active Centres', value: activeCount, color: '#22C55E' },
           { label: 'Total Capacity', value: `${totalCapacity.toLocaleString()} L/day`, color: '#2563EB' },
         ].map(s => (
@@ -101,7 +102,7 @@ export default function CollectionCentersPage() {
       </div>
 
       {/* Centres List */}
-      {collectionCenters.length === 0 ? (
+      {centersList.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
           <Building2 size={40} style={{ opacity: 0.3, marginBottom: '12px' }} />
           <p style={{ fontWeight: '700' }}>No collection centres yet.</p>
@@ -109,7 +110,7 @@ export default function CollectionCentersPage() {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {collectionCenters.map((center: any) => (
+          {centersList.map((center: any) => (
             <div key={center.id} style={{
               background: 'var(--surface)', border: '1.5px solid var(--border)',
               borderRadius: '16px', padding: '18px 20px',

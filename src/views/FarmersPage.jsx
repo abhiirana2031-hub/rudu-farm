@@ -12,10 +12,16 @@ export const FarmersPage = () => {
   const [selectedFarmerForDetails, setSelectedFarmerForDetails] = useState(null);
   const [viewMode, setViewMode] = useState((typeof window !== 'undefined' && window.innerWidth < 768) ? 'card' : 'table');
 
-  const availableVillages = Array.from(new Set(farmers.map(f => f.village).filter(Boolean)));
+  const farmerList = farmers || [];
+  const availableVillages = Array.from(new Set(farmerList.map(f => f?.village).filter(Boolean)));
 
-  const filteredFarmers = farmers.filter(f => {
-    const matchesSearch = f.name.toLowerCase().includes(searchTerm.toLowerCase()) || f.id.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredFarmers = farmerList.filter(f => {
+    if (!f) return false;
+    const nameStr = (f.name || '').toLowerCase();
+    const idStr = (f.id || '').toLowerCase();
+    const searchStr = searchTerm.toLowerCase();
+
+    const matchesSearch = nameStr.includes(searchStr) || idStr.includes(searchStr);
     const matchesVillage = selectedVillage === 'All' || f.village === selectedVillage;
     return matchesSearch && matchesVillage;
   });
