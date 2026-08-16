@@ -284,10 +284,15 @@ export const FarmProvider = ({ children }) => {
   };
 
   const addFarmer = (newFarmer) => {
+    const cleanPhone = (newFarmer.phone || '').replace(/\D/g, '');
+    const defaultPin = cleanPhone.length >= 4 ? cleanPhone.slice(-4) : '1234';
+
     const farmerObj = {
       id: `RF${Math.floor(1000 + Math.random() * 9000)}`,
       name: newFarmer.name,
       phone: newFarmer.phone || '+91 90000 00000',
+      pin: newFarmer.pin || newFarmer.password || defaultPin,
+      password: newFarmer.pin || newFarmer.password || defaultPin,
       village: newFarmer.village || 'Kheda',
       aadhaarNumber: newFarmer.aadhaarNumber || '9842 1048 5912',
       address: newFarmer.address || 'Local Village',
@@ -318,6 +323,11 @@ export const FarmProvider = ({ children }) => {
 
   const addEmployee = (newEmp) => {
     const empObj = {
+      id: `EMP${Math.floor(100 + Math.random() * 900)}`,
+      name: newEmp.name,
+      email: newEmp.email || `${newEmp.name.toLowerCase().replace(/\s+/g, '')}@rudufarm.com`,
+      password: newEmp.password || newEmp.pin || 'Operator@123',
+      pin: newEmp.password || newEmp.pin || '1234',
       id: `EMP${Math.floor(100 + Math.random() * 900)}`,
       name: newEmp.name,
       role: newEmp.role || 'Milk Collection Agent',

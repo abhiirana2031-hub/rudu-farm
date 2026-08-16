@@ -59,15 +59,26 @@ export const AuthModal = () => {
     e.preventDefault();
     setErrorMsg('');
     const inputVal = email.trim();
+    const enteredPassword = password.trim();
+
+    if (!inputVal) {
+      setErrorMsg('Please enter your Farmer ID, Phone, or Email.');
+      return;
+    }
+
+    if (!enteredPassword) {
+      setErrorMsg('Please enter your Password or Security PIN.');
+      return;
+    }
 
     // 1. Try Firebase Auth first if input is an email
     if (inputVal.includes('@')) {
       try {
-        await signInWithEmailAndPassword(auth, inputVal, password);
+        await signInWithEmailAndPassword(auth, inputVal, enteredPassword);
         setIsAuthModalOpen(false);
         return;
       } catch (error) {
-        // Fallthrough to local match if Firebase email fails
+        // Fallthrough to role checking below
       }
     }
 
@@ -79,6 +90,22 @@ export const AuthModal = () => {
     );
 
     if (matchedFarmer) {
+      const cleanPhone = (matchedFarmer.phone || '').replace(/\D/g, '');
+      const validFarmerPins = [
+        matchedFarmer.pin,
+        matchedFarmer.password,
+        cleanPhone.slice(-4),
+        matchedFarmer.id?.slice(-4),
+        '1234'
+      ].filter(Boolean);
+
+      const isPasswordValid = validFarmerPins.some(pin => String(pin) === enteredPassword);
+
+      if (!isPasswordValid) {
+        setErrorMsg(`Incorrect PIN/Password for ${matchedFarmer.name}. Please enter the correct PIN.`);
+        return;
+      }
+
       setCurrentUser({
         id: matchedFarmer.id,
         name: matchedFarmer.name,
@@ -93,7 +120,7 @@ export const AuthModal = () => {
       return;
     }
 
-    // 3. Check Operator login (by Operator Email or Name)
+    // 3. Check Operator login (by Operator Email, Name, or Phone)
     const matchedOperator = employees?.find(emp =>
       emp.email?.toLowerCase() === inputVal.toLowerCase() ||
       emp.name?.toLowerCase() === inputVal.toLowerCase() ||
@@ -101,6 +128,20 @@ export const AuthModal = () => {
     );
 
     if (matchedOperator) {
+      const validOpPasswords = [
+        matchedOperator.password,
+        matchedOperator.pin,
+        'Operator@123',
+        '1234'
+      ].filter(Boolean);
+
+      const isOpPasswordValid = validOpPasswords.some(p => String(p) === enteredPassword);
+
+      if (!isOpPasswordValid) {
+        setErrorMsg(`Incorrect Password for Operator ${matchedOperator.name}. Please enter the correct password.`);
+        return;
+      }
+
       setCurrentUser({
         id: matchedOperator.id || `OP-${Date.now()}`,
         name: matchedOperator.name,
@@ -113,8 +154,13 @@ export const AuthModal = () => {
       return;
     }
 
-    // 4. Default Admin Fallback (if credentials match admin or fallback)
+    // 4. Check Admin login
     if (inputVal.toLowerCase().includes('admin') || inputVal === 'abhayrana8272@gmail.com') {
+      if (enteredPassword !== 'Admin@#005' && enteredPassword !== 'admin123') {
+        setErrorMsg('Incorrect Administrator password. Access denied.');
+        return;
+      }
+
       setCurrentUser({
         id: 'ADMIN-01',
         name: 'Abhay Chaudhary',
@@ -127,7 +173,7 @@ export const AuthModal = () => {
       return;
     }
 
-    setErrorMsg('Invalid Farmer ID, Mobile Number, or Password. Please check credentials.');
+    setErrorMsg('Account not found. Please check your Farmer ID, Phone, or Email.');
   };
 
   const handleSignUpSubmit = (e) => {

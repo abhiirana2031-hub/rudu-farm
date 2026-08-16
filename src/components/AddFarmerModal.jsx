@@ -7,6 +7,7 @@ export const AddFarmerModal = () => {
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [pin, setPin] = useState('');
   const [village, setVillage] = useState('Kheda');
   const [aadhaarNumber, setAadhaarNumber] = useState('');
   const [upiId, setUpiId] = useState('');
@@ -51,6 +52,7 @@ export const AddFarmerModal = () => {
     addFarmer({
       name,
       phone,
+      pin,
       village,
       aadhaarNumber: aadhaarNumber || '9842 1048 5912',
       assignedOperator,
@@ -95,7 +97,7 @@ export const AddFarmerModal = () => {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
             <div className="form-group">
               <label style={{ fontWeight: '700', fontSize: '13px' }}>Phone Number</label>
               <input
@@ -104,6 +106,18 @@ export const AddFarmerModal = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+91 98765 43210"
+              />
+            </div>
+
+            <div className="form-group">
+              <label style={{ fontWeight: '700', fontSize: '13px' }}>Login PIN / Password</label>
+              <input
+                type="text"
+                className="form-input"
+                value={pin}
+                onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                placeholder="e.g. 1234"
+                style={{ fontWeight: '800', letterSpacing: '1px' }}
               />
             </div>
 
