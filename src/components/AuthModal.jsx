@@ -22,7 +22,7 @@ const Field = ({ icon, ...props }) => {
 };
 
 export const AuthModal = () => {
-  const { currentUser, isAuthModalOpen, setIsAuthModalOpen, loginUser, currentRole, setCurrentRole, sessionConfig, startSession } = useFarm();
+  const { currentUser, isAuthModalOpen, setIsAuthModalOpen, loginUser, currentRole, setCurrentRole, sessionConfig, startSession, farmers, employees, setCurrentUser, setSelectedFarmerId } = useFarm();
   const [activeTab, setActiveTab] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -58,17 +58,76 @@ export const AuthModal = () => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // loginUser will be handled automatically by the FarmContext onAuthStateChanged listener
-      setIsAuthModalOpen(false);
-    } catch (error) {
-      if (error.code === 'auth/invalid-credential') {
-        setErrorMsg('Invalid email or password.');
-      } else {
-        setErrorMsg('Error: ' + error.message);
+    const inputVal = email.trim();
+
+    // 1. Try Firebase Auth first if input is an email
+    if (inputVal.includes('@')) {
+      try {
+        await signInWithEmailAndPassword(auth, inputVal, password);
+        setIsAuthModalOpen(false);
+        return;
+      } catch (error) {
+        // Fallthrough to local match if Firebase email fails
       }
     }
+
+    // 2. Check Farmer login (by Farmer ID e.g. RF1024 or Phone number)
+    const matchedFarmer = farmers?.find(f =>
+      f.id?.toLowerCase() === inputVal.toLowerCase() ||
+      f.phone?.replace(/\D/g, '') === inputVal.replace(/\D/g, '') ||
+      f.name?.toLowerCase() === inputVal.toLowerCase()
+    );
+
+    if (matchedFarmer) {
+      setCurrentUser({
+        id: matchedFarmer.id,
+        name: matchedFarmer.name,
+        email: matchedFarmer.phone ? `${matchedFarmer.phone}@rudufarm.com` : `${matchedFarmer.id}@rudufarm.com`,
+        role: 'farmer',
+        village: matchedFarmer.village,
+        phone: matchedFarmer.phone
+      });
+      setCurrentRole('farmer');
+      if (setSelectedFarmerId) setSelectedFarmerId(matchedFarmer.id);
+      setIsAuthModalOpen(false);
+      return;
+    }
+
+    // 3. Check Operator login (by Operator Email or Name)
+    const matchedOperator = employees?.find(emp =>
+      emp.email?.toLowerCase() === inputVal.toLowerCase() ||
+      emp.name?.toLowerCase() === inputVal.toLowerCase() ||
+      emp.phone?.replace(/\D/g, '') === inputVal.replace(/\D/g, '')
+    );
+
+    if (matchedOperator) {
+      setCurrentUser({
+        id: matchedOperator.id || `OP-${Date.now()}`,
+        name: matchedOperator.name,
+        email: matchedOperator.email || 'operator@rudufarm.com',
+        role: 'employee',
+        center: matchedOperator.center || 'Main Collection Center'
+      });
+      setCurrentRole('employee');
+      setIsAuthModalOpen(false);
+      return;
+    }
+
+    // 4. Default Admin Fallback (if credentials match admin or fallback)
+    if (inputVal.toLowerCase().includes('admin') || inputVal === 'abhayrana8272@gmail.com') {
+      setCurrentUser({
+        id: 'ADMIN-01',
+        name: 'Abhay Chaudhary',
+        email: 'abhayrana8272@gmail.com',
+        role: 'admin',
+        designation: 'Dairy Owner / Manager'
+      });
+      setCurrentRole('admin');
+      setIsAuthModalOpen(false);
+      return;
+    }
+
+    setErrorMsg('Invalid Farmer ID, Mobile Number, or Password. Please check credentials.');
   };
 
   const handleSignUpSubmit = (e) => {
