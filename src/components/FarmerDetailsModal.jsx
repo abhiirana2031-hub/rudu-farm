@@ -6,7 +6,7 @@ import { X, Phone, MapPin, Calendar, CreditCard, Printer, Plus, Droplets, ArrowU
 export const FarmerDetailsModal = ({ farmer, onClose }) => {
   const { entries, openSlip, setActiveModal, setSelectedFarmerId } = useFarm();
   const [activeTab, setActiveTab] = useState('supply'); // 'supply' | 'bank'
-  const [viewMode, setViewMode] = useState(window.innerWidth < 768 ? 'card' : 'table');
+  const [viewMode, setViewMode] = useState((typeof window !== 'undefined' && window.innerWidth < 768) ? 'card' : 'table');
 
   if (!farmer) return null;
 

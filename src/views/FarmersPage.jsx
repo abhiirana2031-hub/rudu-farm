@@ -106,11 +106,11 @@ export const FarmersPage = () => {
               <div style={{ background: '#F8FAF9', padding: '10px 12px', borderRadius: '10px', fontSize: '12px', display: 'flex', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ color: 'var(--text-muted)' }}>Total Supply</div>
-                  <strong>{f.totalSupplied} L</strong>
+                  <strong>{f.totalSupplied || 0} L</strong>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ color: 'var(--text-muted)' }}>Pending Payout</div>
-                  <strong style={{ color: '#B45309' }}>₹{f.pendingPayout.toLocaleString()}</strong>
+                  <strong style={{ color: '#B45309' }}>₹{(f.pendingPayout || 0).toLocaleString()}</strong>
                 </div>
               </div>
             </div>
@@ -165,8 +165,8 @@ export const FarmersPage = () => {
                   <td><strong>{f.name}</strong></td>
                   <td>{f.phone}</td>
                   <td>{f.village}</td>
-                  <td>{f.totalSupplied} L</td>
-                  <td style={{ color: '#B45309', fontWeight: '800' }}>₹{f.pendingPayout.toLocaleString()}</td>
+                  <td>{f.totalSupplied || 0} L</td>
+                  <td style={{ color: '#B45309', fontWeight: '800' }}>₹{(f.pendingPayout || 0).toLocaleString()}</td>
                   <td>
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button onClick={() => setSelectedFarmerForDetails(f)} className="btn btn-secondary btn-sm" style={{ background: '#EAF4EE', color: '#4E2A18', border: '1px solid #DCC5B3' }}>
@@ -217,8 +217,8 @@ export const FarmersPage = () => {
               <div style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', padding: '12px', borderRadius: '12px', fontSize: '12px', color: '#991B1B', marginBottom: '16px' }}>
                 <strong>Farmer Summary:</strong><br />
                 • Village: {farmerToDelete.village}<br />
-                • Total Milk Supplied: {farmerToDelete.totalSupplied} L<br />
-                • Pending Payout Balance: ₹{farmerToDelete.pendingPayout.toLocaleString()}
+                • Total Milk Supplied: {farmerToDelete.totalSupplied || 0} L<br />
+                • Pending Payout Balance: ₹{(farmerToDelete.pendingPayout || 0).toLocaleString()}
               </div>
 
               <div style={{ display: 'flex', gap: '10px' }}>
