@@ -657,4 +657,35 @@ export const FarmProvider = ({ children }) => {
   );
 };
 
-export const useFarm = () => useContext(FarmContext);
+export const useFarm = () => {
+  const context = useContext(FarmContext);
+  if (!context) {
+    return {
+      currentUser: null,
+      currentRole: null,
+      authLoading: false,
+      farmers: [],
+      rateRules: { standardFat: 4.5, standardSNF: 8.5, baseRate: 48, fatBonusPerUnit: 0.8, snfBonusPerUnit: 0.5, minRate: 30, maxRate: 80 },
+      entries: [],
+      employees: [],
+      payouts: [],
+      milkSales: [],
+      sessions: [],
+      collectionCenters: [],
+      isAuthModalOpen: false,
+      setIsAuthModalOpen: () => {},
+      activeModal: null,
+      setActiveModal: () => {},
+      addFarmer: () => ({ id: 'RF000', name: '' }),
+      deleteFarmer: () => {},
+      addMilkEntry: () => ({ id: 'ENTRY-000' }),
+      processPayment: () => {},
+      addEmployee: () => ({ id: 'EMP000' }),
+      deleteEmployee: () => {},
+      addCollectionCenter: () => {},
+      updateCollectionCenter: () => {},
+      deleteCollectionCenter: () => {},
+    };
+  }
+  return context;
+};

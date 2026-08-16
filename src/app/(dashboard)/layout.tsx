@@ -76,7 +76,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   // 3. Admin Route Access Guard
-  const isAdminRoute = pathname.startsWith('/admin');
+  const isAdminRoute = Boolean(pathname && pathname.startsWith('/admin'));
   if (isAdminRoute && currentRole !== 'admin') {
     return (
       <div className="dashboard-shell-container">
