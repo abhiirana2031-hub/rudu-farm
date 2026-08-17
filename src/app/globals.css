@@ -7657,3 +7657,57 @@ input, select, textarea {
   }
 }
 
+/* Master Print Stylesheet */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sidebar,
+  .navbar,
+  .bottom-nav,
+  .non-printable,
+  .mobile-drawer-overlay,
+  button:not(.printable-button),
+  .modal-overlay > .modal-content > :not(.document-container):not(.thermal-receipt-container) {
+    display: none !important;
+  }
+
+  .modal-overlay {
+    position: static !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .modal-content {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .document-container,
+  .thermal-receipt-container {
+    width: 100% !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  @page {
+    margin: 10mm;
+    size: auto;
+  }
+}
+

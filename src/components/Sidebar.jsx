@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useFarm } from '@/context/FarmContext';
 import {
   LayoutDashboard, Users, Milk, Receipt, Sliders, DollarSign,
-  BarChart3, UserCheck, TrendingUp, Clock, Building2, MessageSquare
+  BarChart3, UserCheck, TrendingUp, Clock, Building2, MessageSquare, Printer
 } from 'lucide-react';
 
 export const Sidebar = ({ onClose }) => {
@@ -19,6 +19,7 @@ export const Sidebar = ({ onClose }) => {
     { href: '/admin/sessions', label: 'Operator Sessions', icon: Clock },
     { href: '/admin/centers', label: 'Collection Centres', icon: Building2 },
     { href: '/admin/collection', label: 'Milk Collection Log', icon: Milk },
+    { href: '/admin/documents', label: 'Print & Documents', icon: Printer },
     { href: '/admin/milk-sales', label: 'Profit & Loss Log', icon: TrendingUp },
     { href: '/admin/rate-chart', label: 'Rate Chart Config', icon: Sliders },
     { href: '/admin/payouts', label: 'Payouts & Ledger', icon: DollarSign },
