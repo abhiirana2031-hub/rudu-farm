@@ -7705,6 +7705,12 @@ input, select, textarea {
     padding: 0 !important;
   }
 
+  @page {
+    margin: 10mm;
+    size: auto;
+  }
+}
+
 .v2-btn-partner-header {
   background: #C5221F;
   color: #FFFFFF;
