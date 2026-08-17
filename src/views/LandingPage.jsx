@@ -517,181 +517,232 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* ================= ABOUT US SECTION ================= */}
-      <section id="about" className="about-us-section">
-        <div className="about-us-container">
-          <div className="landing-section-header">
-            <span className="section-tagline">Who We Are</span>
-            <h2 className="section-main-title">About Rudu Dairy</h2>
-            <p className="section-desc">Pioneering transparent milk collection, modern cold-chain infrastructure, and empowering village dairy farmers across Northern India.</p>
-          </div>
+      {/* ================= ABOUT US SECTION (MATCHING USER IMAGE EXACTLY) ================= */}
+      <section id="about" className="about-us-section-v2">
+        <div className="about-v2-container">
+          
+          {/* 1. HERO BANNER: WHO WE ARE */}
+          <div className="about-v2-hero">
+            <div className="about-v2-hero-content">
+              <span className="v2-tag-red">WHO WE ARE</span>
+              <h1 className="v2-hero-title">About Rudu Dairy</h1>
+              <p className="v2-hero-desc">
+                Rudu Dairy is more than just a dairy—it’s a promise of purity, transparency, and trust. 
+                We are dedicated to building a better future for farmers, animals, and every home we serve.
+              </p>
 
-          {/* Sub Navigation Tabs */}
-          <div className="about-subtabs-row">
-            <button className={`about-tab-btn ${aboutSubTab === 'story' ? 'active' : ''}`} onClick={() => setAboutSubTab('story')}>
-              <BookOpen size={16} /> <span>Company Story</span>
-            </button>
-            <button className={`about-tab-btn ${aboutSubTab === 'mission' ? 'active' : ''}`} onClick={() => setAboutSubTab('mission')}>
-              <Target size={16} /> <span>Mission & Vision</span>
-            </button>
-            <button className={`about-tab-btn ${aboutSubTab === 'team' ? 'active' : ''}`} onClick={() => setAboutSubTab('team')}>
-              <Users size={16} /> <span>Our Leadership</span>
-            </button>
-            <button className={`about-tab-btn ${aboutSubTab === 'infrastructure' ? 'active' : ''}`} onClick={() => setAboutSubTab('infrastructure')}>
-              <Building2 size={16} /> <span>Infrastructure</span>
-            </button>
-            <button className={`about-tab-btn ${aboutSubTab === 'certifications' ? 'active' : ''}`} onClick={() => setAboutSubTab('certifications')}>
-              <Award size={16} /> <span>Certifications</span>
-            </button>
-          </div>
+              <div className="v2-hero-cta-row">
+                <button className="v2-btn-journey" onClick={() => scrollToSection('process')}>
+                  <BookOpen size={16} /> <span>Our Journey</span>
+                </button>
+                <button className="v2-btn-mission" onClick={() => scrollToSection('about-values')}>
+                  <Target size={16} /> <span>Our Mission</span>
+                </button>
+              </div>
 
-          {/* Tab 1: Company Story */}
-          {aboutSubTab === 'story' && (
-            <div className="about-content-card animated-fade-in">
-              <div className="story-grid">
-                <div className="story-text-col">
-                  <h3>Founded in the Heart of Mathura Dairy Belt</h3>
-                  <p>
-                    Established in 2018, Rudu Farm was born out of a simple commitment: to eliminate milk weight manipulation, fat testing disputes, and delayed payouts that traditionally plagued rural dairy farmers.
-                  </p>
-                  <p>
-                    By deploying digital Automated Milk Collection Units (AMCUs) directly to village hubs, we created a 100% transparent ecosystem where every drop of milk is tested digitally, weighed accurately, and recorded instantly on cloud servers.
-                  </p>
-                  <div className="story-highlights-row">
-                    <div className="story-highlight-box">
-                      <span className="highlight-number">500+</span>
-                      <span className="highlight-label">Partner Villages</span>
-                    </div>
-                    <div className="story-highlight-box">
-                      <span className="highlight-number">100%</span>
-                      <span className="highlight-label">Automated Payouts</span>
-                    </div>
-                    <div className="story-highlight-box">
-                      <span className="highlight-number">0%</span>
-                      <span className="highlight-label">Preservative Added</span>
-                    </div>
+              {/* Floating Feature Pill Bar */}
+              <div className="v2-feature-pill-bar">
+                <div className="v2-pill-item">
+                  <span className="v2-pill-icon red-icon"><Heart size={16} color="#C5221F" /></span>
+                  <div>
+                    <div className="v2-pill-title">Love & Care</div>
+                    <div className="v2-pill-sub">for Animals</div>
                   </div>
                 </div>
-                <div className="story-visual-col">
-                  <img src="/images/fresh_dairy_products.png" alt="Rudu Farm Story" className="story-img" />
+                <div className="v2-pill-divider"></div>
+                <div className="v2-pill-item">
+                  <span className="v2-pill-icon red-icon"><ShieldCheck size={16} color="#C5221F" /></span>
+                  <div>
+                    <div className="v2-pill-title">100% Transparent</div>
+                    <div className="v2-pill-sub">Milk Collection</div>
+                  </div>
+                </div>
+                <div className="v2-pill-divider"></div>
+                <div className="v2-pill-item">
+                  <span className="v2-pill-icon red-icon"><Users size={16} color="#C5221F" /></span>
+                  <div>
+                    <div className="v2-pill-title">Empowering</div>
+                    <div className="v2-pill-sub">Rural Farmers</div>
+                  </div>
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Tab 2: Mission & Vision */}
-          {aboutSubTab === 'mission' && (
-            <div className="about-content-card animated-fade-in">
-              <div className="mission-vision-grid">
-                <div className="mv-card mission-card">
-                  <div className="mv-icon-wrapper"><Target size={28} /></div>
-                  <h3>Our Mission</h3>
-                  <p>
-                    To empower rural dairy farmers with transparent daily milk pricing, zero-error automated banking payouts, and modern veterinary support, while delivering unadulterated, grade-A pure dairy products to every Indian home.
-                  </p>
-                </div>
-                <div className="mv-card vision-card">
-                  <div className="mv-icon-wrapper"><Eye size={28} /></div>
-                  <h3>Our Vision</h3>
-                  <p>
-                    To become India's premier tech-driven dairy cooperative—setting gold standards in cold-chain purity, zero-emission logistics, and sustainable indigenous cattle care.
-                  </p>
-                </div>
+            <div className="about-v2-hero-image-col">
+              <div className="v2-hero-image-frame">
+                <img 
+                  src="https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=1000&q=80" 
+                  alt="Rudu Dairy Farmer with Cow" 
+                  className="v2-farmer-img"
+                  onError={(e) => { e.currentTarget.src = '/images/sunny_dairy_farm.png'; }}
+                />
               </div>
             </div>
-          )}
+          </div>
 
-          {/* Tab 3: Team */}
-          {aboutSubTab === 'team' && (
-            <div className="about-content-card animated-fade-in">
-              <div className="team-grid">
-                <div className="team-card">
-                  <div className="team-avatar-box">RV</div>
-                  <h4>Rameshwar Verma</h4>
-                  <span className="team-role">Founder & Managing Director</span>
-                  <p>20+ years of dairy cooperative leadership in Uttar Pradesh. Pioneer of rural digitization.</p>
-                </div>
-                <div className="team-card">
-                  <div className="team-avatar-box">SR</div>
-                  <h4>Dr. Sunita Rao</h4>
-                  <span className="team-role">Head of Quality & Veterinary Health</span>
-                  <p>Ex-NDRI Scientist specializing in cattle nutrition, disease prevention, and A2 protein testing.</p>
-                </div>
-                <div className="team-card">
-                  <div className="team-avatar-box">VS</div>
-                  <h4>Vikramaditya Singh</h4>
-                  <span className="team-role">Chief Technology Officer</span>
-                  <p>Architect of Rudu's AMCU IoT hardware integration and instant farmer payment gateway.</p>
-                </div>
-                <div className="team-card">
-                  <div className="team-avatar-box">PS</div>
-                  <h4>Priya Sharma</h4>
-                  <span className="team-role">Head of Cold Storage & Logistics</span>
-                  <p>Oversees 45+ Bulk Milk Chilling units ensuring continuous 4°C cold-chain maintenance.</p>
-                </div>
+          {/* 2. OUR STORY SECTION */}
+          <div className="about-v2-story-block">
+            <div className="v2-story-grid">
+              <div className="v2-story-text-col">
+                <span className="v2-tag-red">OUR STORY</span>
+                <h2 className="v2-block-title">Built on Trust, Grown with Experience</h2>
+                <p className="v2-story-p">
+                  Rudu Dairy was founded in 2026 with a simple but powerful purpose — to bring honesty, technology, and compassion together in the dairy industry.
+                </p>
+                <p className="v2-story-p">
+                  With 8 years of hands-on experience in animal care and dairy management, we understand the needs of both farmers and animals. Our mission is to ensure every drop of milk is pure, every farmer is respected, and every animal is treated with love.
+                </p>
+                <p className="v2-story-p">
+                  We started this journey from the heart of Mathura dairy belt and today, we are building a modern, farmer-first ecosystem that delivers real value and long-term prosperity.
+                </p>
               </div>
-            </div>
-          )}
 
-          {/* Tab 4: Infrastructure */}
-          {aboutSubTab === 'infrastructure' && (
-            <div className="about-content-card animated-fade-in">
-              <div className="infra-grid">
-                <div className="infra-card">
-                  <div className="infra-icon"><Building2 size={24} /></div>
-                  <h4>4°C Bulk Milk Coolers (BMC)</h4>
-                  <p>45+ chilling stations situated within 3km of village hubs, cooling fresh milk below 4°C in 30 minutes to lock in freshness.</p>
+              {/* Statistics Box */}
+              <div className="v2-stats-card">
+                <div className="v2-stat-row">
+                  <div className="v2-stat-icon-box"><Clock size={22} color="#C5221F" /></div>
+                  <div className="v2-stat-info">
+                    <span className="v2-stat-label">Founded In</span>
+                    <span className="v2-stat-val">2026</span>
+                  </div>
                 </div>
-                <div className="infra-card">
-                  <div className="infra-icon"><Droplets size={24} /></div>
-                  <h4>Ultrasonic AMCU Testing</h4>
-                  <p>High-precision digital fat & SNF analyzers integrated with thermal print slip generators and solar backup power.</p>
-                </div>
-                <div className="infra-card">
-                  <div className="infra-icon"><ShieldCheck size={24} /></div>
-                  <h4>NABL Central Testing Lab</h4>
-                  <p>State-of-the-art Gas Chromatography & HPLC testing equipment for multi-spectrum adulterant screening.</p>
-                </div>
-                <div className="infra-card">
-                  <div className="infra-icon"><Sliders size={24} /></div>
-                  <h4>Automated Touchless Packaging</h4>
-                  <p>Hermetically sealed packaging lines operating in clean-room environments without human contact.</p>
-                </div>
-              </div>
-            </div>
-          )}
+                <div className="v2-stat-divider"></div>
 
-          {/* Tab 5: Certifications */}
-          {aboutSubTab === 'certifications' && (
-            <div className="about-content-card animated-fade-in">
-              <div className="cert-grid">
-                <div className="cert-card">
-                  <div className="cert-badge-circle"><Award size={26} /></div>
-                  <h4>FSSAI Licensed</h4>
-                  <span className="cert-no">Lic. No. 10021051000189</span>
-                  <p>Compliant with Food Safety and Standards Authority of India safety benchmarks.</p>
+                <div className="v2-stat-row">
+                  <div className="v2-stat-icon-box"><Award size={22} color="#C5221F" /></div>
+                  <div className="v2-stat-info">
+                    <span className="v2-stat-label">Experience In Animals</span>
+                    <span className="v2-stat-val">8+ Years</span>
+                  </div>
                 </div>
-                <div className="cert-card">
-                  <div className="cert-badge-circle"><ShieldCheck size={26} /></div>
-                  <h4>ISO 22000:2018 Certified</h4>
-                  <span className="cert-no">Cert ID: FS-994012</span>
-                  <p>Internationally recognized Food Safety Management System accreditation.</p>
+                <div className="v2-stat-divider"></div>
+
+                <div className="v2-stat-row">
+                  <div className="v2-stat-icon-box"><Users size={22} color="#C5221F" /></div>
+                  <div className="v2-stat-info">
+                    <span className="v2-stat-label">Farmers Connected</span>
+                    <span className="v2-stat-val">500+</span>
+                  </div>
                 </div>
-                <div className="cert-card">
-                  <div className="cert-badge-circle"><Leaf size={26} /></div>
-                  <h4>A2 Native Breed Verified</h4>
-                  <span className="cert-no">DNA Batch Tested</span>
-                  <p>Guaranteed 100% Beta-Casein A2 protein sourced exclusively from Gir and Sahiwal cows.</p>
+                <div className="v2-stat-divider"></div>
+
+                <div className="v2-stat-row">
+                  <div className="v2-stat-icon-box"><Droplets size={22} color="#C5221F" /></div>
+                  <div className="v2-stat-info">
+                    <span className="v2-stat-label">Daily Milk Collection</span>
+                    <span className="v2-stat-val">10,000+ Liters</span>
+                  </div>
                 </div>
-                <div className="cert-card">
-                  <div className="cert-badge-circle"><CheckCircle size={26} /></div>
-                  <h4>NABL Accredited Lab</h4>
-                  <span className="cert-no">Standard ISO/IEC 17025</span>
-                  <p>Certified zero chemical adulteration, zero antibiotics, and zero heavy metal residue.</p>
+                <div className="v2-stat-divider"></div>
+
+                <div className="v2-stat-row">
+                  <div className="v2-stat-icon-box"><MapPin size={22} color="#C5221F" /></div>
+                  <div className="v2-stat-info">
+                    <span className="v2-stat-label">Serving In</span>
+                    <span className="v2-stat-val">Northern India</span>
+                  </div>
                 </div>
               </div>
             </div>
-          )}
+          </div>
+
+          {/* 3. OUR VALUES SECTION */}
+          <div id="about-values" className="about-v2-values-block">
+            <div className="v2-section-center-header">
+              <span className="v2-tag-red">OUR VALUES</span>
+              <h2 className="v2-block-title">Guided by Care, Driven by Purpose</h2>
+              <div className="v2-leaf-divider">
+                <span className="v2-line"></span>
+                <span className="v2-leaf-icon">🍃</span>
+                <span className="v2-line"></span>
+              </div>
+            </div>
+
+            <div className="v2-values-grid">
+              <div className="v2-value-card">
+                <div className="v2-val-icon-circle"><Heart size={22} color="#C5221F" fill="#C5221F" /></div>
+                <h4>Love for Animals</h4>
+                <p>We treat every animal with kindness and ensure their health and happiness comes first.</p>
+              </div>
+
+              <div className="v2-value-card">
+                <div className="v2-val-icon-circle"><ShieldCheck size={22} color="#C5221F" /></div>
+                <h4>Transparency</h4>
+                <p>Every drop of milk is tested, measured, and recorded transparently through modern technology.</p>
+              </div>
+
+              <div className="v2-value-card">
+                <div className="v2-val-icon-circle"><User size={22} color="#C5221F" /></div>
+                <h4>Farmer First</h4>
+                <p>We empower rural dairy farmers by giving them fair prices, timely payments, and continuous support.</p>
+              </div>
+
+              <div className="v2-value-card">
+                <div className="v2-val-icon-circle"><Leaf size={22} color="#C5221F" /></div>
+                <h4>Pure & Natural</h4>
+                <p>From farm to home, we ensure 100% pure, natural, and safe dairy products for your family.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. WHAT WE DO SECTION */}
+          <div className="about-v2-what-block">
+            <div className="v2-what-grid">
+              <div className="v2-what-text-col">
+                <span className="v2-tag-red">WHAT WE DO</span>
+                <h2 className="v2-block-title">From Our Farms To Your Family</h2>
+                <p className="v2-what-sub">
+                  We operate modern milk collection units, follow strict quality protocols, and use technology to ensure purity at every step.
+                </p>
+
+                <ul className="v2-checklist">
+                  <li>
+                    <span className="v2-check-circle"><Check size={12} strokeWidth={3} /></span>
+                    <span>Automated Milk Collection Units (AMCU)</span>
+                  </li>
+                  <li>
+                    <span className="v2-check-circle"><Check size={12} strokeWidth={3} /></span>
+                    <span>Milk Testing & Fat/SNF Analysis</span>
+                  </li>
+                  <li>
+                    <span className="v2-check-circle"><Check size={12} strokeWidth={3} /></span>
+                    <span>Farmer Training & Support</span>
+                  </li>
+                  <li>
+                    <span className="v2-check-circle"><Check size={12} strokeWidth={3} /></span>
+                    <span>Timely Payments & Digital Records</span>
+                  </li>
+                  <li>
+                    <span className="v2-check-circle"><Check size={12} strokeWidth={3} /></span>
+                    <span>Ethical & Hygienic Practices</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="v2-what-img-col">
+                <img 
+                  src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1000&q=80" 
+                  alt="Modern Dairy Farm Shed and Silos" 
+                  className="v2-farm-shed-img"
+                  onError={(e) => { e.currentTarget.src = '/images/dairy_farm_bg.png'; }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 5. OUR PROMISE BANNER */}
+          <div className="about-v2-promise-banner">
+            <div className="v2-promise-icon-box">
+              <Heart size={24} color="#C5221F" fill="#C5221F" />
+            </div>
+            <div className="v2-promise-content">
+              <h4 className="v2-promise-title">Our Promise</h4>
+              <p className="v2-promise-text">
+                We promise to continue working with honesty, caring for animals, supporting farmers, and delivering pure milk to every home. Rudu Dairy is not just our business — it's our responsibility.
+              </p>
+            </div>
+          </div>
+
         </div>
       </section>
 
