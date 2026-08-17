@@ -7705,6 +7705,24 @@ input, select, textarea {
     padding: 0 !important;
   }
 
+.v2-btn-partner-header {
+  background: #C5221F;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 22px;
+  font-weight: 800;
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(197,34,31,0.25);
+  transition: all 0.2s ease;
+}
+
+.v2-btn-partner-header:hover {
+  background: #a81c19;
+  transform: translateY(-2px);
+}
+
 /* ================= HERO SECTION V2 (MATCHING USER SCREENSHOT) ================= */
 .landing-hero-wrapper-v2 {
   background-color: #FAF7F2;

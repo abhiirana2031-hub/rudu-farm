@@ -230,25 +230,20 @@ export const LandingPage = () => {
           
           <nav className={`landing-nav ${isMobileMenuOpen ? 'open' : ''}`}>
             <button onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`nav-link ${activeSection === 'home' ? 'active' : ''}`}>Home</button>
-            <button onClick={() => scrollToSection('products')} className={`nav-link ${activeSection === 'products' ? 'active' : ''}`}>
-              Our Products <span style={{ fontSize: '11px', marginLeft: '4px', opacity: 0.8 }}>▼</span>
-            </button>
-            <button onClick={() => scrollToSection('purity')} className={`nav-link ${activeSection === 'purity' ? 'active' : ''}`}>Purity</button>
-            <button onClick={() => scrollToSection('process')} className={`nav-link ${activeSection === 'process' ? 'active' : ''}`}>Journey</button>
             <button onClick={() => scrollToSection('about')} className={`nav-link ${activeSection === 'about' ? 'active' : ''}`}>About Us</button>
-            <button onClick={() => scrollToSection('blog')} className={`nav-link ${activeSection === 'blog' ? 'active' : ''}`}>Blog & News</button>
-            <button onClick={() => scrollToSection('faq')} className={`nav-link ${activeSection === 'faq' ? 'active' : ''}`}>FAQ</button>
-            <button onClick={() => { setShowCareersSection(true); setIsMobileMenuOpen(false); setTimeout(() => scrollToSection('careers'), 100); }} className={`nav-link ${activeSection === 'careers' ? 'active' : ''}`}>Careers</button>
+            <button onClick={() => scrollToSection('products')} className={`nav-link ${activeSection === 'products' ? 'active' : ''}`}>Our Services</button>
+            <button onClick={() => handleLogin('farmer')} className={`nav-link ${activeSection === 'farmers' ? 'active' : ''}`}>Farmers</button>
+            <button onClick={() => scrollToSection('purity')} className={`nav-link ${activeSection === 'gallery' ? 'active' : ''}`}>Gallery</button>
+            <button onClick={() => scrollToSection('faq')} className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`}>Contact Us</button>
             <button onClick={() => handleLogin('farmer')} className="btn-landing-login mobile-login-item">
               <User size={15} />
-              <span>Farmer Login</span>
+              <span>Partner With Us</span>
             </button>
           </nav>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button onClick={() => handleLogin('farmer')} className="btn-landing-login desktop-only-login">
-              <User size={15} />
-              <span>Farmer Login</span>
+            <button onClick={() => handleLogin('farmer')} className="v2-btn-partner-header desktop-only-login">
+              <span>Partner With Us</span>
             </button>
 
             <button 
