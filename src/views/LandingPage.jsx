@@ -269,167 +269,76 @@ export const LandingPage = () => {
         </div>
       </header>
 
-      {/* 2. Hero Section */}
-      <div className="landing-hero-wrapper">
-        <section className="landing-hero">
-          <div className="landing-hero-content">
-            {/* Left Column: Heading and Taglines */}
-            <div className="hero-text-col">
-              <span className="hero-tag">From Farms to Families</span>
-              <h1 className="hero-title">
-                Experience the Taste of <span>100% Pure</span> Dairy
+      {/* 2. Hero Section (MATCHING USER SCREENSHOT EXACTLY) */}
+      <div className="landing-hero-wrapper-v2">
+        <section className="landing-hero-v2">
+          <div className="hero-v2-grid">
+            
+            {/* Left Text Column */}
+            <div className="hero-v2-text-col">
+              <h1 className="v2-main-hero-title">
+                Pure Milk.<br />
+                Trusted by<br />
+                <span className="red-accent">Every Home.</span>
               </h1>
-              <p className="hero-subtitle">
-                Rudu Dairy coordinates collection, automated purity testing, and transparent pricing for over 500+ local farmers, delivering fresh grade-A milk daily.
+              
+              <p className="v2-main-hero-sub">
+                Rudu Dairy is committed to pure milk, transparent practices, and empowering farmers across Northern India.
               </p>
 
-              <div className="hero-cta-row">
-                <button onClick={() => handleLogin('farmer')} className="hero-btn-primary">
-                  <User size={16} />
-                  <span>Farmer Login</span>
+              <div className="v2-hero-btn-group">
+                <button onClick={() => scrollToSection('products')} className="v2-btn-red-primary">
+                  <Sparkles size={16} />
+                  <span>Our Services</span>
                 </button>
-                <button onClick={() => scrollToSection('products')} className="hero-btn-secondary">
-                  <span>Explore Products</span>
-                  <ArrowRight size={16} />
+                <button onClick={() => { setShowCareersSection(true); setTimeout(() => scrollToSection('careers'), 100); }} className="v2-btn-white-secondary">
+                  <Briefcase size={16} />
+                  <span>Partner With Us</span>
                 </button>
               </div>
 
-              {/* Value Badges - Matching Image 2 Design */}
-              <div className="purity-cards-container">
-                <div className="purity-cards-grid">
-                  {/* Row 1: Card 1 */}
-                  <div className="purity-feature-card">
-                    <div className="purity-badge-wrapper">
-                      <div className="purity-badge-outer">
-                        <div className="purity-badge-inner">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E6B34" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="#2E6B34" fillOpacity="0.2" />
-                            <polyline points="9 12 11 14 15 10" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="purity-card-content">
-                      <h4 className="purity-card-title">GC Tested Purity</h4>
-                      <div className="purity-card-divider"></div>
-                      <p className="purity-card-desc">Every drop is tested for purity and quality.</p>
-                    </div>
-                  </div>
-
-                  {/* Row 1: Card 2 */}
-                  <div className="purity-feature-card">
-                    <div className="purity-badge-wrapper">
-                      <div className="purity-badge-outer">
-                        <div className="purity-badge-inner">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E6B34" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#2E6B34" fillOpacity="0.2" />
-                            <line x1="12" y1="11" x2="12" y2="17" />
-                            <line x1="9" y1="14" x2="15" y2="14" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="purity-card-content">
-                      <h4 className="purity-card-title">Hygienically Packed</h4>
-                      <div className="purity-card-divider"></div>
-                      <p className="purity-card-desc">Packed with care to retain freshness.</p>
-                    </div>
-                  </div>
-
-                  {/* Row 2: Card 3 (Centered) */}
-                  <div className="purity-feature-card purity-card-full">
-                    <div className="purity-badge-wrapper">
-                      <div className="purity-badge-outer">
-                        <div className="purity-badge-inner">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="#2E6B34">
-                            <path d="M17 8C8 10 5.9 16.17 3.83 22 1.5 22 2c0-5.5 4.5-10 10-10 2 0 4 1 5 2.5z" />
-                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.12 2 9a7 7 0 0 1-10 9z" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="purity-card-content">
-                      <h4 className="purity-card-title">100% Natural & Safe</h4>
-                      <div className="purity-card-divider"></div>
-                      <p className="purity-card-desc">No additives, no preservatives. Just pure and natural.</p>
-                    </div>
-                  </div>
-
-                  {/* Row 3: Card 4 */}
-                  <div className="purity-feature-card">
-                    <div className="purity-badge-wrapper">
-                      <div className="purity-badge-outer">
-                        <div className="purity-badge-inner">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="#2E6B34">
-                            <path d="M12 2c-3.5 0-6 1-9 2.5-.3.15-.5.45-.5.8 0 .4.3.7.7.7h17.6c.4 0 .7-.3.7-.7 0-.35-.2-.65-.5-.8C18 3 15.5 2 12 2zM8.5 6.5c0-.8.7-1.5 1.5-1.5h4c.8 0 1.5.7 1.5 1.5V9H8.5V6.5zM4 18c0-3 3.5-5 8-5s8 2 8 5v2H4v-2z" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="purity-card-content">
-                      <h4 className="purity-card-title">Support Local Farmers</h4>
-                      <div className="purity-card-divider"></div>
-                      <p className="purity-card-desc">Empowering farmers and strengthening communities.</p>
-                    </div>
-                  </div>
-
-                  {/* Row 3: Card 5 */}
-                  <div className="purity-feature-card">
-                    <div className="purity-badge-wrapper">
-                      <div className="purity-badge-outer">
-                        <div className="purity-badge-inner">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E6B34" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="1" y="3" width="13" height="13" rx="2" fill="#2E6B34" fillOpacity="0.15" />
-                            <polygon points="14 8 18 8 21 11 21 16 14 16 14 8" fill="#2E6B34" fillOpacity="0.15" />
-                            <circle cx="5.5" cy="18.5" r="2.5" fill="#2E6B34" />
-                            <circle cx="17.5" cy="18.5" r="2.5" fill="#2E6B34" />
-                            <line x1="7" y1="8" x2="9" y2="8" strokeWidth="2.5" />
-                            <line x1="8" y1="7" x2="8" y2="9" strokeWidth="2.5" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="purity-card-content">
-                      <h4 className="purity-card-title">Fresh Delivery</h4>
-                      <div className="purity-card-divider"></div>
-                      <p className="purity-card-desc">Delivered fresh to your doorstep every day.</p>
-                    </div>
+              {/* Floating Bottom Feature Pill Bar */}
+              <div className="v2-hero-pill-bar">
+                <div className="v2-hero-pill-item">
+                  <span className="v2-hero-pill-icon"><ShieldCheck size={16} color="#C5221F" /></span>
+                  <div>
+                    <div className="v2-hero-pill-head">100% Transparent</div>
+                    <div className="v2-hero-pill-sub">Milk Collection</div>
                   </div>
                 </div>
-
-                {/* Row 4: Bottom Pill Bar */}
-                <div className="purity-bottom-pill-bar">
-                  <div className="pill-item">
-                    <Leaf size={15} color="#2E6B34" />
-                    <span>Pure & Healthy</span>
+                <div className="v2-hero-pill-sep"></div>
+                <div className="v2-hero-pill-item">
+                  <span className="v2-hero-pill-icon"><Heart size={16} color="#C5221F" fill="#C5221F" /></span>
+                  <div>
+                    <div className="v2-hero-pill-head">Love & Care</div>
+                    <div className="v2-hero-pill-sub">for Animals</div>
                   </div>
-                  <div className="pill-item">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2E6B34" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55A2 2 0 0 0 6.508 23h10.984a2 2 0 0 0 1.788-2.45l-5.069-10.127A2 2 0 0 1 14 9.527V2" />
-                      <path d="M8.5 2h7" />
-                      <path d="M7 16h10" />
-                    </svg>
-                    <span>No Chemicals</span>
-                  </div>
-                  <div className="pill-item">
-                    <Heart size={15} color="#2E6B34" />
-                    <span>Trusted by Families</span>
-                  </div>
-                  <div className="pill-item">
-                    <Star size={15} color="#2E6B34" />
-                    <span>Premium Quality</span>
+                </div>
+                <div className="v2-hero-pill-sep"></div>
+                <div className="v2-hero-pill-item">
+                  <span className="v2-hero-pill-icon"><Users size={16} color="#C5221F" /></span>
+                  <div>
+                    <div className="v2-hero-pill-head">Empowering</div>
+                    <div className="v2-hero-pill-sub">Rural Farmers</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Column: Premium Branded Product Image */}
-            <div className="hero-product-col">
-              <img src="/milk.png" alt="Rudu Premium Milk" className="hero-product-img-sole" />
+            {/* Right Photo Column: Exact Farmer Photo from Screenshot */}
+            <div className="hero-v2-image-col">
+              <div className="hero-v2-img-container">
+                <img 
+                  src="/images/rudu_hero_farmer.jpg" 
+                  alt="Rudu Dairy Farmer holding Cow" 
+                  className="hero-v2-farmer-img"
+                  onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=1200&q=80'; }}
+                />
+              </div>
             </div>
+
           </div>
         </section>
-
       </div>
 
       {/* 4. Products Tabbed Catalog */}
