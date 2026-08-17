@@ -109,7 +109,7 @@ export const TotalsSection: React.FC<TotalsSectionProps> = ({
 
         <div style={{
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           fontSize: '15px',
           fontWeight: '900',
           color: '#4E2A18',
@@ -131,7 +131,7 @@ export const TotalsSection: React.FC<TotalsSectionProps> = ({
         {balance !== undefined && (
           <div style={{
             display: 'flex',
-            justify: 'space-between',
+            justifyContent: 'space-between',
             fontSize: '13px',
             fontWeight: '900',
             color: balance > 0 ? '#DC2626' : '#16A34A',

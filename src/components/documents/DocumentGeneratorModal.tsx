@@ -49,8 +49,8 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
     setDocNumber(generateDocumentNumber(templateMeta.prefix));
   }, [templateId]);
 
-  const selectedFarmer = farmers.find(f => f.id === selectedFarmerId) || farmers[0];
-  const selectedOperator = employees.find(e => e.id === selectedOperatorId) || employees[0];
+  const selectedFarmer = (farmers || []).find((f: any) => f.id === selectedFarmerId) || farmers[0];
+  const selectedOperator = (employees || []).find((e: any) => e.id === selectedOperatorId) || employees[0];
 
   // Dynamic Data Binding based on template type
   const docData: any = {
@@ -117,7 +117,7 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
           color: '#FFFFFF',
           padding: '16px 24px',
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -201,7 +201,7 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
                   className="form-input"
                   style={{ width: '100%', fontSize: '13px' }}
                 >
-                  {farmers.map(f => (
+                  {farmers.map((f: any) => (
                     <option key={f.id} value={f.id}>{f.name} ({f.id}) - {f.village}</option>
                   ))}
                 </select>

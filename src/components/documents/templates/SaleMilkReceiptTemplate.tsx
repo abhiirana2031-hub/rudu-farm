@@ -183,7 +183,7 @@ export const SaleMilkReceiptTemplate: React.FC<SaleMilkReceiptProps> = ({
         borderRadius: '16px',
         padding: '18px 24px',
         display: 'flex',
-        justify: 'space-between',
+        justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '20px'
       }}>

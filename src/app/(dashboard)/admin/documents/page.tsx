@@ -172,7 +172,7 @@ export default function PrintAndDocumentsPage() {
                   padding: '24px',
                   display: 'flex',
                   flexDirection: 'column',
-                  justify: 'space-between',
+                  justifyContent: 'space-between',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
                   transition: 'all 0.2s ease-in-out'
                 }}
@@ -230,7 +230,7 @@ export default function PrintAndDocumentsPage() {
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      justify: 'center',
+                      justifyContent: 'center',
                       gap: '6px'
                     }}
                   >
@@ -249,7 +249,7 @@ export default function PrintAndDocumentsPage() {
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      justify: 'center',
+                      justifyContent: 'center',
                       gap: '4px'
                     }}
                     title="Quick Print"
