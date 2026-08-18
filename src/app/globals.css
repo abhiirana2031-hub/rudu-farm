@@ -7733,10 +7733,10 @@ input, select, textarea {
 .landing-hero-wrapper-v2 {
   position: relative;
   width: 100%;
-  height: 740px;
-  min-height: 730px;
-  max-height: 760px;
-  background-color: #FAF7F2;
+  height: 730px;
+  min-height: 720px;
+  max-height: 740px;
+  background-color: #FAF8F3;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -7758,7 +7758,7 @@ input, select, textarea {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: right 20%;
+  object-position: 88% center;
   display: block;
 }
 
@@ -7771,12 +7771,12 @@ input, select, textarea {
   width: 100%;
   height: 100%;
   background: linear-gradient(
-    to right, 
-    #FAF7F2 0%, 
-    #FAF7F2 26%, 
-    rgba(250, 247, 242, 0.85) 44%, 
-    rgba(250, 247, 242, 0.45) 62%, 
-    rgba(250, 247, 242, 0) 82%
+    90deg, 
+    rgba(250, 248, 243, 0.96) 0%, 
+    rgba(250, 248, 243, 0.82) 22%, 
+    rgba(250, 248, 243, 0.42) 42%, 
+    rgba(250, 248, 243, 0.08) 62%, 
+    rgba(250, 248, 243, 0) 78%
   );
   pointer-events: none;
 }
@@ -7787,23 +7787,23 @@ input, select, textarea {
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 5%;
+  padding: 0 8%;
   height: 100%;
   display: flex;
   align-items: center;
 }
 
 .hero-v2-content-col {
-  max-width: 600px;
-  margin-top: -30px;
+  max-width: 520px;
+  margin-top: -20px;
 }
 
 .v2-main-hero-title {
-  font-size: clamp(48px, 4.2vw, 62px);
+  font-size: clamp(48px, 4.5vw, 64px);
   font-weight: 900;
-  line-height: 1.02;
-  margin: 0 0 20px 0;
-  letter-spacing: -1.2px;
+  line-height: 0.98;
+  margin: 0 0 22px 0;
+  letter-spacing: -1.4px;
   font-family: var(--font-sans, 'Outfit', 'Inter', sans-serif);
 }
 
@@ -7816,10 +7816,10 @@ input, select, textarea {
 }
 
 .v2-main-hero-sub {
-  font-size: 16px;
+  font-size: 15.5px;
   line-height: 1.55;
   color: #475569;
-  margin-bottom: 32px;
+  margin-bottom: 30px;
   max-width: 380px;
 }
 
@@ -7827,7 +7827,7 @@ input, select, textarea {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 44px;
+  margin-bottom: 42px;
 }
 
 .v2-btn-red-primary {
@@ -7874,18 +7874,17 @@ input, select, textarea {
   transform: translateY(-2px);
 }
 
-/* Floating Bottom Trust/Feature Card */
+/* Floating Bottom Trust/Feature Card - Solid White & Crisp */
 .v2-hero-trust-card {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: #FFFFFF !important;
+  border: 1px solid #E5E7EB;
   border-radius: 20px;
   padding: 16px 24px;
   display: inline-flex;
   align-items: center;
   width: 100%;
   max-width: 560px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
 }
 
 .v2-trust-card-item {
