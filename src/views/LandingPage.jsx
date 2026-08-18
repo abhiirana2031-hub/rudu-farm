@@ -20,6 +20,7 @@ import {
   Lock, 
   ArrowRight,
   Sparkles,
+  LayoutGrid,
   Phone,
   Mail,
   Star,
@@ -264,13 +265,13 @@ export const LandingPage = () => {
         </div>
       </header>
 
-      {/* 2. Hero Section (FULL BLEED SEAMLESS BACKGROUND MATCHING USER SCREENSHOT) */}
+      {/* 2. Hero Section - Exact Reference Composition */}
       <div className="landing-hero-wrapper-v2">
-        {/* Full Bleed Seamless Background Image */}
+        {/* Full Hero Area Background Image + Soft White/Cream Gradient Overlay */}
         <div className="hero-v2-full-bg">
           <img 
             src="/images/rudu_farmer_clean.jpg" 
-            alt="Rudu Dairy Farmer holding Cow" 
+            alt="Rudu Dairy Farmer with Cow" 
             className="hero-v2-full-farmer-img"
             onError={(e) => { e.currentTarget.src = '/images/rudu_hero_farmer.jpg'; }}
           />
@@ -278,62 +279,64 @@ export const LandingPage = () => {
         </div>
 
         <section className="landing-hero-v2">
-          <div className="hero-v2-grid">
+          <div className="hero-v2-content-col">
+            <h1 className="v2-main-hero-title">
+              <span className="dark-green-text">Pure Milk.</span><br />
+              <span className="dark-green-text">Trusted by</span><br />
+              <span className="red-accent">Every Home.</span>
+            </h1>
             
-            {/* Left Text Content */}
-            <div className="hero-v2-text-col">
-              <h1 className="v2-main-hero-title">
-                Pure Milk.<br />
-                Trusted by<br />
-                <span className="red-accent">Every Home.</span>
-              </h1>
-              
-              <p className="v2-main-hero-sub">
-                Rudu Dairy is committed to pure milk, transparent practices, and empowering farmers across Northern India.
-              </p>
+            <p className="v2-main-hero-sub">
+              Rudu Dairy is committed to pure milk, transparent practices, and empowering farmers across Northern India.
+            </p>
 
-              <div className="v2-hero-btn-group">
-                <button onClick={() => scrollToSection('products')} className="v2-btn-red-primary">
-                  <Sparkles size={16} />
-                  <span>Our Services</span>
-                </button>
-                <button onClick={() => { setShowCareersSection(true); setTimeout(() => scrollToSection('careers'), 100); }} className="v2-btn-white-secondary">
-                  <Briefcase size={16} />
-                  <span>Partner With Us</span>
-                </button>
+            <div className="v2-hero-btn-group">
+              <button onClick={() => scrollToSection('products')} className="v2-btn-red-primary">
+                <LayoutGrid size={18} strokeWidth={2.2} />
+                <span>Our Services</span>
+              </button>
+              <button onClick={() => { setShowCareersSection(true); setTimeout(() => scrollToSection('careers'), 100); }} className="v2-btn-white-secondary">
+                <Users size={18} strokeWidth={2.2} />
+                <span>Partner With Us</span>
+              </button>
+            </div>
+
+            {/* Floating Bottom Trust/Feature Card */}
+            <div className="v2-hero-trust-card">
+              <div className="v2-trust-card-item">
+                <div className="v2-trust-card-icon">
+                  <ShieldCheck size={20} color="#C5221F" strokeWidth={2} />
+                </div>
+                <div className="v2-trust-card-text">
+                  <div className="v2-trust-card-head">100% Transparent</div>
+                  <div className="v2-trust-card-sub">Milk Collection</div>
+                </div>
               </div>
 
-              {/* Floating Bottom Feature Pill Bar */}
-              <div className="v2-hero-pill-bar">
-                <div className="v2-hero-pill-item">
-                  <span className="v2-hero-pill-icon"><ShieldCheck size={16} color="#C5221F" /></span>
-                  <div>
-                    <div className="v2-hero-pill-head">100% Transparent</div>
-                    <div className="v2-hero-pill-sub">Milk Collection</div>
-                  </div>
+              <div className="v2-trust-card-divider"></div>
+
+              <div className="v2-trust-card-item">
+                <div className="v2-trust-card-icon">
+                  <Heart size={20} color="#C5221F" strokeWidth={2} />
                 </div>
-                <div className="v2-hero-pill-sep"></div>
-                <div className="v2-hero-pill-item">
-                  <span className="v2-hero-pill-icon"><Heart size={16} color="#C5221F" fill="#C5221F" /></span>
-                  <div>
-                    <div className="v2-hero-pill-head">Love & Care</div>
-                    <div className="v2-hero-pill-sub">for Animals</div>
-                  </div>
+                <div className="v2-trust-card-text">
+                  <div className="v2-trust-card-head">Love & Care</div>
+                  <div className="v2-trust-card-sub">for Animals</div>
                 </div>
-                <div className="v2-hero-pill-sep"></div>
-                <div className="v2-hero-pill-item">
-                  <span className="v2-hero-pill-icon"><Users size={16} color="#C5221F" /></span>
-                  <div>
-                    <div className="v2-hero-pill-head">Empowering</div>
-                    <div className="v2-hero-pill-sub">Rural Farmers</div>
-                  </div>
+              </div>
+
+              <div className="v2-trust-card-divider"></div>
+
+              <div className="v2-trust-card-item">
+                <div className="v2-trust-card-icon">
+                  <Users size={20} color="#C5221F" strokeWidth={2} />
+                </div>
+                <div className="v2-trust-card-text">
+                  <div className="v2-trust-card-head">Empowering</div>
+                  <div className="v2-trust-card-sub">Rural Farmers</div>
                 </div>
               </div>
             </div>
-
-            {/* Empty Right Column for Space Balancing on Desktop */}
-            <div className="hero-v2-spacer-col"></div>
-
           </div>
         </section>
       </div>
