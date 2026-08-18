@@ -7883,24 +7883,68 @@ input, select, textarea {
 }
 
 @media (max-width: 1024px) {
+  .landing-hero-wrapper-v2 {
+    padding: 40px 16px 60px 16px;
+  }
   .hero-v2-grid {
     grid-template-columns: 1fr;
+    gap: 32px;
   }
   .hero-v2-image-col {
-    order: -1;
+    order: 2;
   }
   .v2-main-hero-title {
-    font-size: 42px;
+    font-size: 38px;
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .v2-main-hero-sub {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .v2-hero-btn-group {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .v2-btn-red-primary,
+  .v2-btn-white-secondary {
+    flex: 1;
+    justify-content: center;
+    padding: 12px 18px;
+    font-size: 13.5px;
+  }
+  .hero-v2-img-container {
+    border-radius: 24px;
   }
   .hero-v2-farmer-img {
     height: 380px;
+    object-position: center 15%;
   }
   .v2-hero-pill-bar {
-    flex-wrap: wrap;
-    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-radius: 20px;
+    padding: 16px 20px;
+    gap: 14px;
   }
   .v2-hero-pill-sep {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .v2-main-hero-title {
+    font-size: 32px;
+  }
+  .v2-hero-btn-group {
+    flex-direction: column;
+  }
+  .hero-v2-farmer-img {
+    height: 320px;
   }
 }
 
