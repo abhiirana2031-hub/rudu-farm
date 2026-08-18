@@ -7902,33 +7902,51 @@ input, select, textarea {
 
 @media (max-width: 1024px) {
   .landing-hero-wrapper-v2 {
-    padding: 40px 16px 60px 16px;
-    flex-direction: column;
-    min-height: auto;
+    padding: 50px 20px 60px 20px;
+    min-height: 540px;
+    position: relative;
+    overflow: hidden;
   }
   .hero-v2-full-bg {
-    position: relative;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 65%;
+    z-index: 1;
+    display: block;
+    overflow: hidden;
+  }
+  .hero-v2-full-farmer-img {
     width: 100%;
-    height: 380px;
-    margin-top: 24px;
-    border-radius: 24px;
+    height: 100%;
+    object-fit: cover;
+    object-position: 70% top;
   }
   .hero-v2-bg-overlay {
-    display: none;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 70%;
+    background: linear-gradient(to right, #FAF7F2 0%, rgba(250,247,242,0.88) 45%, rgba(250,247,242,0) 100%);
   }
   .hero-v2-grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 0;
   }
   .v2-main-hero-title {
     font-size: 38px;
     line-height: 1.15;
     margin-bottom: 14px;
+    max-width: 90%;
   }
   .v2-main-hero-sub {
-    font-size: 15px;
+    font-size: 14.5px;
     line-height: 1.6;
     margin-bottom: 24px;
+    max-width: 85%;
   }
   .v2-hero-btn-group {
     display: flex;
@@ -7938,8 +7956,6 @@ input, select, textarea {
   }
   .v2-btn-red-primary,
   .v2-btn-white-secondary {
-    flex: 1;
-    justify-content: center;
     padding: 12px 18px;
     font-size: 13.5px;
   }
@@ -7947,9 +7963,12 @@ input, select, textarea {
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 480px;
     border-radius: 20px;
-    padding: 16px 20px;
-    gap: 14px;
+    padding: 14px 18px;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
   }
   .v2-hero-pill-sep {
     display: none;
@@ -7957,14 +7976,24 @@ input, select, textarea {
 }
 
 @media (max-width: 480px) {
+  .landing-hero-wrapper-v2 {
+    padding: 40px 16px 50px 16px;
+    min-height: 480px;
+  }
+  .hero-v2-full-bg {
+    width: 85%;
+    opacity: 0.85;
+  }
+  .hero-v2-bg-overlay {
+    width: 80%;
+    background: linear-gradient(to right, #FAF7F2 0%, rgba(250,247,242,0.92) 50%, rgba(250,247,242,0.15) 100%);
+  }
   .v2-main-hero-title {
     font-size: 32px;
   }
   .v2-hero-btn-group {
-    flex-direction: column;
-  }
-  .hero-v2-farmer-img {
-    height: 320px;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 }
 
