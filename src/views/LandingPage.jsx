@@ -320,14 +320,14 @@ export const LandingPage = () => {
               </div>
             </div>
 
-            {/* Right Photo Column: Exact Farmer Photo from Screenshot */}
+            {/* Right Photo Column: Exact Clean Farmer Photo from Provided Image */}
             <div className="hero-v2-image-col">
               <div className="hero-v2-img-container">
                 <img 
-                  src="/images/rudu_hero_farmer.jpg" 
+                  src="/images/rudu_farmer_clean.jpg" 
                   alt="Rudu Dairy Farmer holding Cow" 
                   className="hero-v2-farmer-img"
-                  onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=1200&q=80'; }}
+                  onError={(e) => { e.currentTarget.src = '/images/rudu_hero_farmer.jpg'; }}
                 />
               </div>
             </div>
