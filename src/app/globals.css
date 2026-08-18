@@ -7763,8 +7763,9 @@ input, select, textarea {
   top: 0;
   left: 0;
   bottom: 0;
-  width: 45%;
-  background: linear-gradient(to right, #FAF7F2 0%, rgba(250,247,242,0.85) 35%, rgba(250,247,242,0) 100%);
+  width: 35%;
+  background: linear-gradient(to right, rgba(250,247,242,0.10) 0%, rgba(250,247,242,0.05) 60%, transparent 100%);
+  pointer-events: none;
 }
 
 .landing-hero-v2 {
@@ -7932,8 +7933,9 @@ input, select, textarea {
     top: 0;
     left: 0;
     bottom: 0;
-    width: 45%;
-    background: linear-gradient(to right, #FAF7F2 0%, rgba(250,247,242,0.45) 50%, transparent 100%);
+    width: 30%;
+    background: linear-gradient(to right, rgba(250,247,242,0.08) 0%, rgba(250,247,242,0.04) 60%, transparent 100%);
+    pointer-events: none;
   }
   .hero-v2-grid {
     grid-template-columns: 1fr;
@@ -7993,8 +7995,8 @@ input, select, textarea {
     object-position: center top;
   }
   .hero-v2-bg-overlay {
-    width: 40%;
-    background: linear-gradient(to right, #FAF7F2 0%, rgba(250,247,242,0.35) 60%, transparent 100%);
+    width: 25%;
+    background: linear-gradient(to right, rgba(250,247,242,0.06) 0%, rgba(250,247,242,0.02) 60%, transparent 100%);
   }
   .v2-main-hero-title {
     font-size: 30px;
