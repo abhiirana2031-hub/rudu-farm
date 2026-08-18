@@ -7758,7 +7758,7 @@ input, select, textarea {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 88% center;
+  object-position: 88% 5%;
   display: block;
 }
 
@@ -7773,10 +7773,10 @@ input, select, textarea {
   background: linear-gradient(
     90deg, 
     rgba(250, 248, 243, 0.96) 0%, 
-    rgba(250, 248, 243, 0.82) 22%, 
-    rgba(250, 248, 243, 0.42) 42%, 
-    rgba(250, 248, 243, 0.08) 62%, 
-    rgba(250, 248, 243, 0) 78%
+    rgba(250, 248, 243, 0.82) 18%, 
+    rgba(250, 248, 243, 0.48) 34%, 
+    rgba(250, 248, 243, 0.16) 50%, 
+    rgba(250, 248, 243, 0) 68%
   );
   pointer-events: none;
 }
@@ -7787,14 +7787,14 @@ input, select, textarea {
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 8%;
+  padding: 0 8.5%;
   height: 100%;
   display: flex;
   align-items: center;
 }
 
 .hero-v2-content-col {
-  max-width: 520px;
+  max-width: 500px;
   margin-top: -20px;
 }
 
@@ -7819,8 +7819,8 @@ input, select, textarea {
   font-size: 15.5px;
   line-height: 1.55;
   color: #475569;
-  margin-bottom: 30px;
-  max-width: 380px;
+  margin-bottom: 28px;
+  max-width: 370px;
 }
 
 .v2-hero-btn-group {
@@ -7936,17 +7936,20 @@ input, select, textarea {
     height: 700px;
     min-height: 680px;
   }
+  .hero-v2-full-farmer-img {
+    object-position: 85% 5%;
+  }
   .v2-main-hero-title {
     font-size: 52px;
   }
   .hero-v2-bg-overlay {
     background: linear-gradient(
-      to right, 
-      #FAF7F2 0%, 
-      #FAF7F2 28%, 
-      rgba(250, 247, 242, 0.88) 48%, 
-      rgba(250, 247, 242, 0.5) 68%, 
-      rgba(250, 247, 242, 0) 86%
+      90deg, 
+      rgba(250, 248, 243, 0.96) 0%, 
+      rgba(250, 248, 243, 0.85) 24%, 
+      rgba(250, 248, 243, 0.5) 44%, 
+      rgba(250, 248, 243, 0.16) 64%, 
+      rgba(250, 248, 243, 0) 80%
     );
   }
 }
@@ -7957,17 +7960,20 @@ input, select, textarea {
     min-height: 620px;
     padding: 60px 0;
   }
+  .landing-hero-v2 {
+    padding: 0 6%;
+  }
   .hero-v2-full-farmer-img {
-    object-position: 75% center;
+    object-position: 80% 5%;
   }
   .hero-v2-bg-overlay {
     background: linear-gradient(
-      to right, 
-      #FAF7F2 0%, 
-      #FAF7F2 40%, 
-      rgba(250, 247, 242, 0.85) 60%, 
-      rgba(250, 247, 242, 0.3) 85%, 
-      rgba(250, 247, 242, 0) 100%
+      90deg, 
+      rgba(250, 248, 243, 0.96) 0%, 
+      rgba(250, 248, 243, 0.88) 35%, 
+      rgba(250, 248, 243, 0.55) 58%, 
+      rgba(250, 248, 243, 0.18) 78%, 
+      rgba(250, 248, 243, 0) 95%
     );
   }
   .v2-main-hero-title {
@@ -7988,15 +7994,15 @@ input, select, textarea {
     margin-top: 0;
   }
   .hero-v2-full-farmer-img {
-    object-position: 80% center;
+    object-position: 78% 5%;
   }
   .hero-v2-bg-overlay {
     background: linear-gradient(
-      to right, 
-      #FAF7F2 0%, 
-      #FAF7F2 50%, 
-      rgba(250, 247, 242, 0.88) 72%, 
-      rgba(250, 247, 242, 0.4) 100%
+      90deg, 
+      rgba(250, 248, 243, 0.96) 0%, 
+      rgba(250, 248, 243, 0.9) 45%, 
+      rgba(250, 248, 243, 0.6) 70%, 
+      rgba(250, 248, 243, 0.15) 95%
     );
   }
   .v2-main-hero-title {
@@ -8036,6 +8042,9 @@ input, select, textarea {
   .landing-hero-wrapper-v2 {
     padding: 32px 0 40px 0;
     min-height: 520px;
+  }
+  .hero-v2-full-farmer-img {
+    object-position: 75% 5%;
   }
   .v2-main-hero-title {
     font-size: 34px;
