@@ -477,10 +477,10 @@ export const LandingPage = () => {
             <div className="about-v2-hero-image-col">
               <div className="v2-hero-image-frame">
                 <img 
-                  src="https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=1000&q=80" 
+                  src="/images/rudu_farmer_clean.jpg" 
                   alt="Rudu Dairy Farmer with Cow" 
                   className="v2-farmer-img"
-                  onError={(e) => { e.currentTarget.src = '/images/sunny_dairy_farm.png'; }}
+                  onError={(e) => { e.currentTarget.src = '/images/rudu_hero_farmer.jpg'; }}
                 />
               </div>
             </div>
