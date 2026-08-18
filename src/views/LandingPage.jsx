@@ -264,12 +264,23 @@ export const LandingPage = () => {
         </div>
       </header>
 
-      {/* 2. Hero Section (MATCHING USER SCREENSHOT EXACTLY) */}
+      {/* 2. Hero Section (FULL BLEED SEAMLESS BACKGROUND MATCHING USER SCREENSHOT) */}
       <div className="landing-hero-wrapper-v2">
+        {/* Full Bleed Seamless Background Image */}
+        <div className="hero-v2-full-bg">
+          <img 
+            src="/images/rudu_farmer_clean.jpg" 
+            alt="Rudu Dairy Farmer holding Cow" 
+            className="hero-v2-full-farmer-img"
+            onError={(e) => { e.currentTarget.src = '/images/rudu_hero_farmer.jpg'; }}
+          />
+          <div className="hero-v2-bg-overlay"></div>
+        </div>
+
         <section className="landing-hero-v2">
           <div className="hero-v2-grid">
             
-            {/* Left Text Column */}
+            {/* Left Text Content */}
             <div className="hero-v2-text-col">
               <h1 className="v2-main-hero-title">
                 Pure Milk.<br />
@@ -320,17 +331,8 @@ export const LandingPage = () => {
               </div>
             </div>
 
-            {/* Right Photo Column: Exact Clean Farmer Photo from Provided Image */}
-            <div className="hero-v2-image-col">
-              <div className="hero-v2-img-container">
-                <img 
-                  src="/images/rudu_farmer_clean.jpg" 
-                  alt="Rudu Dairy Farmer holding Cow" 
-                  className="hero-v2-farmer-img"
-                  onError={(e) => { e.currentTarget.src = '/images/rudu_hero_farmer.jpg'; }}
-                />
-              </div>
-            </div>
+            {/* Empty Right Column for Space Balancing on Desktop */}
+            <div className="hero-v2-spacer-col"></div>
 
           </div>
         </section>
