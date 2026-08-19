@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFarm } from '@/context/FarmContext';
 import { DOCUMENT_TEMPLATES, PaperFormat, generateDocumentNumber } from '@/services/documents/templates.registry';
-import { X, Printer, Download, FileText, Settings, CheckCircle2, Plus, Trash2, Edit3, Sliders, RefreshCw, User, Building } from 'lucide-react';
+import { X, Printer, Download, FileText, Settings, CheckCircle2, Plus, Trash2, Edit3, Sliders, RefreshCw, User, Building, Eye } from 'lucide-react';
 
 // Import All 14 Templates
 import { GeneralReceiptTemplate } from './templates/GeneralReceiptTemplate';
@@ -46,6 +46,7 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
   const templateMeta = DOCUMENT_TEMPLATES[templateId] || DOCUMENT_TEMPLATES['GENERAL_RECEIPT'];
 
   const [editorMode, setEditorMode] = useState<'auto' | 'custom'>('custom');
+  const [mobileActiveTab, setMobileActiveTab] = useState<'editor' | 'preview'>('editor');
   const [paperFormat, setPaperFormat] = useState<PaperFormat>(templateMeta.defaultFormat);
   const [docNumber, setDocNumber] = useState('');
 
@@ -123,55 +124,58 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
   const handleAddItem = () => {
     setItems([
       ...items,
-      { description: 'New Product / Service Item', quantity: 1, unit: 'Liters', rate: 100, discount: 0, taxPercent: 0, amount: 100 }
+      { description: 'New Product Item', quantity: 1, unit: 'Pcs', rate: 100, discount: 0, taxPercent: 0, amount: 100 }
     ]);
   };
 
   const handleRemoveItem = (index: number) => {
-    setItems(items.filter((_, idx) => idx !== index));
+    setItems(items.filter((_, i) => i !== index));
   };
 
-  // Compute Milk Total
-  const computedMilkTotal = Math.round(milkQuantity * milkRate * 100) / 100;
+  const calculateSubtotal = () => items.reduce((sum, i) => sum + i.amount, 0);
 
-  // Composite Document Data Object
-  const docData: any = {
-    docNumber,
+  // Consolidated Document Data Object
+  const docData = {
+    documentNumber: docNumber,
     date: docDate,
     time: docTime,
-    shift: milkShift,
-    receivedFrom: `${customerName} (${farmerIdCode})`,
-    farmerName: customerName,
-    farmerId: farmerIdCode,
-    farmerPhone: customerPhone,
-    village: customerAddress,
-    customerName,
-    customerPhone,
-    customerAddress,
-    recipientName: customerName,
-    recipientPhone: customerPhone,
-    supplierName: customerName,
-    supplierPhone: customerPhone,
-    supplierGstin: '07BBBBB1111B1Z2',
-    empName: selectedOperator?.name || 'Amit Kumar',
-    empId: selectedOperator?.id || 'EMP102',
-    designation: selectedOperator?.role || 'Milk Collection Agent',
-    centerName: collectionCenters[0]?.name || 'Rudu Main Center',
-    amount: parseFloat(customAmount) || 5000,
-    amountPaid: parseFloat(amountPaid) || 5000,
-    paymentMode,
-    transactionId,
-    notes: customNotes,
     startDate,
     endDate,
-    milkType,
-    quantity: milkQuantity,
-    fat: milkFat,
-    snf: milkSnf,
-    rate: milkRate,
-    totalAmount: computedMilkTotal,
+    recipient: {
+      name: customerName,
+      code: farmerIdCode,
+      phone: customerPhone,
+      address: customerAddress,
+      village: customerAddress
+    },
+    milkDetails: {
+      type: milkType,
+      quantity: milkQuantity,
+      fat: milkFat,
+      snf: milkSnf,
+      rate: milkRate,
+      shift: milkShift,
+      totalAmount: Math.round(milkQuantity * milkRate)
+    },
     items,
-    ...initialData
+    totals: {
+      subtotal: items.length > 0 ? calculateSubtotal() : parseFloat(customAmount) || 0,
+      discount: 0,
+      tax: 0,
+      totalAmount: items.length > 0 ? calculateSubtotal() : parseFloat(customAmount) || 0,
+      paidAmount: parseFloat(amountPaid) || 0,
+      dueAmount: Math.max(0, (items.length > 0 ? calculateSubtotal() : parseFloat(customAmount) || 0) - (parseFloat(amountPaid) || 0))
+    },
+    payment: {
+      mode: paymentMode,
+      transactionId,
+      status: (parseFloat(amountPaid) || 0) >= (parseFloat(customAmount) || 0) ? 'PAID' : 'PARTIAL'
+    },
+    operator: {
+      name: selectedOperator?.name || 'Operator (EMP102)',
+      id: selectedOperator?.id || 'EMP102'
+    },
+    remarks: customNotes
   };
 
   const tenantInfo = {
@@ -206,73 +210,118 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
   };
 
   return (
-    <div className="modal-overlay" style={{ zIndex: 2000, background: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(6px)' }}>
+    <div className="modal-overlay" style={{ zIndex: 2000, background: 'rgba(15,23,42,0.8)', backdropFilter: 'blur(8px)', padding: '8px' }}>
       <div className="modal-content non-printable" style={{
         maxWidth: '1360px',
-        width: '98%',
-        height: '92vh',
+        width: '100%',
+        height: '95vh',
         display: 'flex',
         flexDirection: 'column',
-        borderRadius: '24px',
+        borderRadius: '20px',
         overflow: 'hidden',
-        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)'
+        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)',
+        background: '#FFFFFF'
       }}>
         {/* Top Header Controls Bar */}
         <div style={{
           background: 'linear-gradient(135deg, #4E2A18 0%, #7C3A21 100%)',
           color: '#FFFFFF',
-          padding: '14px 24px',
+          padding: '12px 16px',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '10px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <FileText size={22} color="#F5EBE1" />
             <div>
-              <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800' }}>
-                {templateMeta.name} Editor
+              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '800' }}>
+                {templateMeta.name}
               </h3>
-              <span style={{ fontSize: '11.5px', color: '#F5EBE1', opacity: 0.85 }}>
-                Doc #: <b>{docNumber}</b> | Live Billing Mode
+              <span style={{ fontSize: '11px', color: '#F5EBE1', opacity: 0.85 }}>
+                Doc #: <b>{docNumber}</b>
               </span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <button onClick={handlePrint} className="btn" style={{ background: '#FFFFFF', color: '#4E2A18', fontWeight: '800', fontSize: '13px', borderRadius: '30px', padding: '8px 18px', border: 'none', cursor: 'pointer' }}>
-              <Printer size={15} /> Print Document
+          {/* Mobile Screen Editor vs Live Preview Tab Switcher */}
+          <div className="md:hidden" style={{ display: 'flex', background: 'rgba(255,255,255,0.15)', padding: '3px', borderRadius: '20px', gap: '2px' }}>
+            <button
+              onClick={() => setMobileActiveTab('editor')}
+              style={{
+                padding: '5px 12px',
+                borderRadius: '16px',
+                border: 'none',
+                fontSize: '11.5px',
+                fontWeight: '800',
+                background: mobileActiveTab === 'editor' ? '#FFFFFF' : 'transparent',
+                color: mobileActiveTab === 'editor' ? '#4E2A18' : '#FFFFFF',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <Edit3 size={13} /> Edit Form
             </button>
-            <button onClick={handlePrint} className="btn" style={{ background: '#EAF4EE', color: '#065F46', fontWeight: '800', fontSize: '13px', borderRadius: '30px', padding: '8px 16px', border: 'none', cursor: 'pointer' }}>
-              <Download size={15} /> Download PDF
+            <button
+              onClick={() => setMobileActiveTab('preview')}
+              style={{
+                padding: '5px 12px',
+                borderRadius: '16px',
+                border: 'none',
+                fontSize: '11.5px',
+                fontWeight: '800',
+                background: mobileActiveTab === 'preview' ? '#FFFFFF' : 'transparent',
+                color: mobileActiveTab === 'preview' ? '#4E2A18' : '#FFFFFF',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <Eye size={13} /> Live Preview
             </button>
-            <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#FFFFFF', width: '36px', height: '36px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button onClick={handlePrint} className="btn" style={{ background: '#FFFFFF', color: '#4E2A18', fontWeight: '800', fontSize: '12px', borderRadius: '30px', padding: '6px 14px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Printer size={14} /> <span className="hidden sm:inline">Print</span>
+            </button>
+            <button onClick={handlePrint} className="btn" style={{ background: '#EAF4EE', color: '#065F46', fontWeight: '800', fontSize: '12px', borderRadius: '30px', padding: '6px 14px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Download size={14} /> <span className="hidden sm:inline">PDF</span>
+            </button>
+            <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#FFFFFF', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
               <X size={18} />
             </button>
           </div>
         </div>
 
         {/* Main Body Split View */}
-        <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', flex: 1, overflow: 'hidden', flexDirection: 'row' }}>
           {/* Left Panel: Professional Billing Editor */}
-          <div style={{
-            width: '460px',
-            background: '#F8FAF9',
-            borderRight: '1.5px solid #CBD5E1',
-            padding: '20px',
-            overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '18px'
-          }}>
+          <div 
+            className={`w-full md:w-[420px] lg:w-[460px] ${mobileActiveTab === 'editor' ? 'block' : 'hidden md:block'}`}
+            style={{
+              background: '#F8FAF9',
+              borderRight: '1.5px solid #CBD5E1',
+              padding: '16px',
+              overflowY: 'auto',
+              display: mobileActiveTab === 'editor' ? 'flex' : undefined,
+              flexDirection: 'column',
+              gap: '16px'
+            }}
+          >
             {/* Editor Mode Selector */}
-            <div style={{ background: '#FFFFFF', padding: '6px', borderRadius: '12px', border: '1px solid #CBD5E1', display: 'flex', gap: '4px' }}>
+            <div style={{ background: '#FFFFFF', padding: '5px', borderRadius: '12px', border: '1px solid #CBD5E1', display: 'flex', gap: '4px' }}>
               <button
                 onClick={() => setEditorMode('custom')}
                 style={{
                   flex: 1,
-                  padding: '8px',
+                  padding: '7px',
                   borderRadius: '8px',
-                  fontSize: '12px',
+                  fontSize: '11.5px',
                   fontWeight: '800',
                   border: 'none',
                   background: editorMode === 'custom' ? '#4E2A18' : 'transparent',
@@ -281,18 +330,18 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '6px'
+                  gap: '5px'
                 }}
               >
-                <Edit3 size={14} /> Professional Editor
+                <Edit3 size={13} /> Professional Editor
               </button>
               <button
                 onClick={() => setEditorMode('auto')}
                 style={{
                   flex: 1,
-                  padding: '8px',
+                  padding: '7px',
                   borderRadius: '8px',
-                  fontSize: '12px',
+                  fontSize: '11.5px',
                   fontWeight: '800',
                   border: 'none',
                   background: editorMode === 'auto' ? '#4E2A18' : 'transparent',
@@ -301,16 +350,16 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '6px'
+                  gap: '5px'
                 }}
               >
-                <RefreshCw size={14} /> Database Auto Sync
+                <RefreshCw size={13} /> Database Sync
               </button>
             </div>
 
             {/* Paper Size Selector */}
             <div>
-              <label style={{ fontSize: '11.5px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '6px' }}>
+              <label style={{ fontSize: '11px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '6px' }}>
                 Paper Layout Size
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
@@ -319,8 +368,8 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
                     key={fmt}
                     onClick={() => setPaperFormat(fmt)}
                     style={{
-                      padding: '8px',
-                      fontSize: '11.5px',
+                      padding: '7px',
+                      fontSize: '11px',
                       fontWeight: '800',
                       borderRadius: '8px',
                       border: paperFormat === fmt ? '2px solid #4E2A18' : '1px solid #CBD5E1',
@@ -337,15 +386,15 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
 
             {/* Auto Mode: Database Record Selector */}
             {editorMode === 'auto' && (
-              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '14px' }}>
-                <label style={{ fontSize: '11.5px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '6px' }}>
+              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '12px' }}>
+                <label style={{ fontSize: '11px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '6px' }}>
                   Select Farmer / Entity from Database
                 </label>
                 <select
                   value={selectedFarmerId}
                   onChange={e => setSelectedFarmerId(e.target.value)}
                   className="form-input"
-                  style={{ width: '100%', fontSize: '13px' }}
+                  style={{ width: '100%', fontSize: '12.5px' }}
                 >
                   {farmers.map((f: any) => (
                     <option key={f.id} value={f.id}>{f.name} ({f.id}) - {f.village}</option>
@@ -355,26 +404,26 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
             )}
 
             {/* Business Profile Details Section */}
-            <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '14px' }}>
-              <div style={{ fontWeight: '800', fontSize: '12.5px', color: '#4E2A18', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Building size={15} /> Business Header Info
+            <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '12px' }}>
+              <div style={{ fontWeight: '800', fontSize: '12px', color: '#4E2A18', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Building size={14} /> Business Header Info
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div>
-                  <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Business Name</label>
+                  <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Business Name</label>
                   <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} className="form-input" style={{ fontSize: '12px' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Address</label>
+                  <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Address</label>
                   <input type="text" value={businessAddress} onChange={e => setBusinessAddress(e.target.value)} className="form-input" style={{ fontSize: '12px' }} />
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Phone</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Phone</label>
                     <input type="text" value={businessPhone} onChange={e => setBusinessPhone(e.target.value)} className="form-input" style={{ fontSize: '12px' }} />
                   </div>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>GSTIN</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>GSTIN</label>
                     <input type="text" value={businessGstin} onChange={e => setBusinessGstin(e.target.value)} className="form-input" style={{ fontSize: '12px' }} />
                   </div>
                 </div>
@@ -382,28 +431,28 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
             </div>
 
             {/* Customer / Farmer Profile Details Section */}
-            <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '14px' }}>
-              <div style={{ fontWeight: '800', fontSize: '12.5px', color: '#4E2A18', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <User size={15} /> Recipient / Customer Details
+            <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '12px' }}>
+              <div style={{ fontWeight: '800', fontSize: '12px', color: '#4E2A18', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <User size={14} /> Recipient / Customer Details
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Name</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Name</label>
                     <input type="text" value={customerName} onChange={e => setCustomerName(e.target.value)} className="form-input" style={{ fontSize: '12px' }} />
                   </div>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>ID / Code</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>ID / Code</label>
                     <input type="text" value={farmerIdCode} onChange={e => setFarmerIdCode(e.target.value)} className="form-input" style={{ fontSize: '12px' }} />
                   </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Phone</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Phone</label>
                     <input type="text" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className="form-input" style={{ fontSize: '12px' }} />
                   </div>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Village / Address</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Village / Address</label>
                     <input type="text" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} className="form-input" style={{ fontSize: '12px' }} />
                   </div>
                 </div>
@@ -412,13 +461,13 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
 
             {/* Milk Specific Controls */}
             {(templateId === 'SALE_MILK_RECEIPT' || templateId === 'FARMER_10DAY_SUMMARY') && (
-              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ fontWeight: '800', fontSize: '12.5px', color: '#4E2A18', marginBottom: '10px' }}>
+              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '12px' }}>
+                <div style={{ fontWeight: '800', fontSize: '12px', color: '#4E2A18', marginBottom: '8px' }}>
                   🥛 Milk Collection Metrics
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Milk Type</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Milk Type</label>
                     <select value={milkType} onChange={e => setMilkType(e.target.value)} className="form-input" style={{ fontSize: '12px' }}>
                       <option value="Cow Milk">Cow Milk</option>
                       <option value="Buffalo Milk">Buffalo Milk</option>
@@ -426,23 +475,23 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
                     </select>
                   </div>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Quantity (Liters)</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Quantity (Liters)</label>
                     <input type="number" value={milkQuantity} onChange={e => setMilkQuantity(parseFloat(e.target.value) || 0)} className="form-input" style={{ fontSize: '12px' }} />
                   </div>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>FAT %</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>FAT %</label>
                     <input type="number" step="0.1" value={milkFat} onChange={e => setMilkFat(parseFloat(e.target.value) || 0)} className="form-input" style={{ fontSize: '12px' }} />
                   </div>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>SNF %</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>SNF %</label>
                     <input type="number" step="0.1" value={milkSnf} onChange={e => setMilkSnf(parseFloat(e.target.value) || 0)} className="form-input" style={{ fontSize: '12px' }} />
                   </div>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Rate per Litre (₹)</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Rate per Litre (₹)</label>
                     <input type="number" value={milkRate} onChange={e => setMilkRate(parseFloat(e.target.value) || 0)} className="form-input" style={{ fontSize: '12px' }} />
                   </div>
                   <div>
-                    <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Shift</label>
+                    <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Shift</label>
                     <select value={milkShift} onChange={e => setMilkShift(e.target.value)} className="form-input" style={{ fontSize: '12px' }}>
                       <option value="Morning">Morning</option>
                       <option value="Evening">Evening</option>
@@ -454,9 +503,9 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
 
             {/* Multi-Line Items Table Manager (for Bills & Invoices) */}
             {(templateId.includes('BILL') || templateId === 'GENERAL_RECEIPT' || templateId === 'MISC_BILL') && (
-              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '14px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <div style={{ fontWeight: '800', fontSize: '12.5px', color: '#4E2A18' }}>
+              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <div style={{ fontWeight: '800', fontSize: '12px', color: '#4E2A18' }}>
                     🛒 Line Items Table Editor
                   </div>
                   <button onClick={handleAddItem} style={{ background: '#EAF4EE', color: '#065F46', border: '1px solid #BBF7D0', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -466,7 +515,7 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {items.map((item, idx) => (
-                    <div key={idx} style={{ background: '#F8FAF9', border: '1px solid #E2E8F0', padding: '8px', borderRadius: '8px', fontSize: '11.5px' }}>
+                    <div key={idx} style={{ background: '#F8FAF9', border: '1px solid #E2E8F0', padding: '8px', borderRadius: '8px', fontSize: '11px' }}>
                       <div style={{ display: 'flex', gap: '6px', marginBottom: '4px' }}>
                         <input
                           type="text"
@@ -482,15 +531,15 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
                         <div>
-                          <label style={{ fontSize: '9.5px', color: '#64748B' }}>Qty</label>
+                          <label style={{ fontSize: '9px', color: '#64748B' }}>Qty</label>
                           <input type="number" value={item.quantity} onChange={e => handleItemChange(idx, 'quantity', parseFloat(e.target.value) || 0)} className="form-input" style={{ fontSize: '11px', padding: '2px 4px' }} />
                         </div>
                         <div>
-                          <label style={{ fontSize: '9.5px', color: '#64748B' }}>Rate (₹)</label>
+                          <label style={{ fontSize: '9px', color: '#64748B' }}>Rate (₹)</label>
                           <input type="number" value={item.rate} onChange={e => handleItemChange(idx, 'rate', parseFloat(e.target.value) || 0)} className="form-input" style={{ fontSize: '11px', padding: '2px 4px' }} />
                         </div>
                         <div>
-                          <label style={{ fontSize: '9.5px', color: '#64748B' }}>Total (₹)</label>
+                          <label style={{ fontSize: '9px', color: '#64748B' }}>Total (₹)</label>
                           <input type="number" value={item.amount} readOnly className="form-input" style={{ fontSize: '11px', padding: '2px 4px', fontWeight: '800', background: '#E2E8F0' }} />
                         </div>
                       </div>
@@ -501,25 +550,25 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
             )}
 
             {/* Financial Totals & Payment Info */}
-            <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '14px' }}>
-              <div style={{ fontWeight: '800', fontSize: '12.5px', color: '#4E2A18', marginBottom: '10px' }}>
+            <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '12px' }}>
+              <div style={{ fontWeight: '800', fontSize: '12px', color: '#4E2A18', marginBottom: '8px' }}>
                 💳 Financials & Payment Terms
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 <div>
-                  <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Doc Amount (₹)</label>
+                  <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Doc Amount (₹)</label>
                   <input type="number" value={customAmount} onChange={e => setCustomAmount(e.target.value)} className="form-input" style={{ fontSize: '12px', fontWeight: '800' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Amount Paid (₹)</label>
+                  <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Amount Paid (₹)</label>
                   <input type="number" value={amountPaid} onChange={e => setAmountPaid(e.target.value)} className="form-input" style={{ fontSize: '12px', fontWeight: '800' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Payment Mode</label>
+                  <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Payment Mode</label>
                   <input type="text" value={paymentMode} onChange={e => setPaymentMode(e.target.value)} className="form-input" style={{ fontSize: '12px' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '10.5px', fontWeight: '700', color: '#64748B' }}>Txn Ref #</label>
+                  <label style={{ fontSize: '10px', fontWeight: '700', color: '#64748B' }}>Txn Ref #</label>
                   <input type="text" value={transactionId} onChange={e => setTransactionId(e.target.value)} className="form-input" style={{ fontSize: '12px' }} />
                 </div>
               </div>
@@ -527,7 +576,7 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
 
             {/* Remarks / Terms */}
             <div>
-              <label style={{ fontSize: '11.5px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '4px' }}>
                 Custom Notes & Remarks
               </label>
               <textarea
@@ -539,23 +588,47 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
               />
             </div>
 
-            <div style={{ background: '#EAF4EE', border: '1px solid #BBF7D0', borderRadius: '12px', padding: '10px', fontSize: '11px', color: '#065F46', marginTop: 'auto' }}>
-              <CheckCircle2 size={14} style={{ marginBottom: '2px' }} />
+            <div style={{ background: '#EAF4EE', border: '1px solid #BBF7D0', borderRadius: '12px', padding: '10px', fontSize: '11px', color: '#065F46' }}>
+              <CheckCircle2 size={13} style={{ marginBottom: '2px' }} />
               <b>Live Billing Editor Active:</b> Any change updates the live preview instantly.
             </div>
           </div>
 
-          {/* Right Panel: Live Document Preview Container */}
-          <div style={{ flex: 1, background: '#64748B', padding: '24px', overflowY: 'auto', display: 'flex', justifyContent: 'center' }}>
-            <div style={{
-              background: '#FFFFFF',
-              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.3)',
-              borderRadius: '4px',
-              minHeight: '600px',
-              width: paperFormat === 'A4' ? '210mm' : paperFormat === 'A5' ? '148mm' : paperFormat === 'THERMAL_80MM' ? '80mm' : '58mm',
-              transition: 'all 0.2s ease-in-out'
-            }}>
-              {renderTemplateComponent()}
+          {/* Right Panel: Live Document Preview Container (Fully Responsive & Scrollable on Mobile) */}
+          <div 
+            className={`flex-1 ${mobileActiveTab === 'preview' ? 'block' : 'hidden md:block'}`}
+            style={{ 
+              background: '#475569', 
+              padding: '16px 8px', 
+              overflowY: 'auto', 
+              overflowX: 'auto',
+              width: '100%'
+            }}
+          >
+            <div 
+              className="preview-touch-scroll-wrapper" 
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'flex-start',
+                overflowX: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                paddingBottom: '30px'
+              }}
+            >
+              <div style={{
+                background: '#FFFFFF',
+                boxShadow: '0 20px 25px -5px rgba(0,0,0,0.3)',
+                borderRadius: '4px',
+                minHeight: '500px',
+                width: paperFormat === 'A4' ? '210mm' : paperFormat === 'A5' ? '148mm' : paperFormat === 'THERMAL_80MM' ? '80mm' : '58mm',
+                maxWidth: paperFormat === 'THERMAL_80MM' || paperFormat === 'THERMAL_58MM' ? '100%' : undefined,
+                transition: 'all 0.2s ease-in-out',
+                margin: '0 auto'
+              }}>
+                {renderTemplateComponent()}
+              </div>
             </div>
           </div>
         </div>

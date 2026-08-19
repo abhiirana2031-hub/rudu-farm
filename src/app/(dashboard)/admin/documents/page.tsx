@@ -117,9 +117,9 @@ export default function PrintAndDocumentsPage() {
       {activeTab === 'templates' ? (
         <>
           {/* Controls & Filter Bar */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
             {/* Category Tabs */}
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', maxWidth: '100%', WebkitOverflowScrolling: 'touch' }}>
               {[
                 { id: 'all', label: 'All Templates' },
                 { id: 'receipts', label: 'Receipts' },
@@ -135,6 +135,7 @@ export default function PrintAndDocumentsPage() {
                     borderRadius: '20px',
                     fontSize: '12.5px',
                     fontWeight: '800',
+                    whiteSpace: 'nowrap',
                     border: activeCategory === cat.id ? '2px solid #4E2A18' : '1px solid #CBD5E1',
                     background: activeCategory === cat.id ? '#4E2A18' : '#FFFFFF',
                     color: activeCategory === cat.id ? '#FFFFFF' : '#475569',
@@ -147,21 +148,21 @@ export default function PrintAndDocumentsPage() {
             </div>
 
             {/* Search Box */}
-            <div style={{ position: 'relative', width: '280px' }}>
+            <div style={{ position: 'relative', width: '100%', maxWidth: '280px' }}>
               <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748B' }} />
               <input
                 type="text"
-                placeholder="Search templates (e.g. 10-day summary, bill)..."
+                placeholder="Search templates..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 className="form-input"
-                style={{ paddingLeft: '36px', fontSize: '13px', borderRadius: '30px' }}
+                style={{ paddingLeft: '36px', fontSize: '13px', borderRadius: '30px', width: '100%' }}
               />
             </div>
           </div>
 
-          {/* 14 Document Templates Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '20px' }}>
+          {/* 14 Document Templates Responsive Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
             {filteredTemplates.map(tpl => (
               <div
                 key={tpl.id}
@@ -263,49 +264,51 @@ export default function PrintAndDocumentsPage() {
         </>
       ) : (
         /* Generated Documents History Table */
-        <div style={{ background: '#FFFFFF', border: '1.5px solid #E2E8F0', borderRadius: '20px', padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ background: '#FFFFFF', border: '1.5px solid #E2E8F0', borderRadius: '20px', padding: '20px', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
             <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: '#4E2A18' }}>
               Generated Documents Audit History
             </h3>
             <span style={{ fontSize: '12px', color: '#64748B' }}>Showing recent official document logs</span>
           </div>
 
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-            <thead>
-              <tr style={{ background: '#F8FAF9', borderBottom: '2px solid #E2E8F0', textAlign: 'left', color: '#475569' }}>
-                <th style={{ padding: '12px 14px' }}>Doc Number</th>
-                <th style={{ padding: '12px 14px' }}>Document Type</th>
-                <th style={{ padding: '12px 14px' }}>Recipient / Entity</th>
-                <th style={{ padding: '12px 14px' }}>Date Created</th>
-                <th style={{ padding: '12px 14px', textAlign: 'right' }}>Amount (₹)</th>
-                <th style={{ padding: '12px 14px', textAlign: 'center' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {documentHistory.map((item, idx) => (
-                <tr key={idx} style={{ borderBottom: '1px solid #E2E8F0' }}>
-                  <td style={{ padding: '12px 14px', fontWeight: '900', color: '#4E2A18' }}>{item.docNumber}</td>
-                  <td style={{ padding: '12px 14px', fontWeight: '700' }}>{item.type}</td>
-                  <td style={{ padding: '12px 14px', color: '#334155' }}>{item.recipient}</td>
-                  <td style={{ padding: '12px 14px', color: '#64748B' }}>{item.date}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: '900', color: '#16A34A' }}>
-                    ₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                  </td>
-                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>
-                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-                      <button
-                        onClick={() => setSelectedTemplateId(item.type.includes('Milk') ? 'SALE_MILK_RECEIPT' : 'GENERAL_RECEIPT')}
-                        style={{ background: '#EAF4EE', color: '#4E2A18', border: '1px solid #DCC5B3', padding: '6px 12px', borderRadius: '12px', fontSize: '11.5px', fontWeight: '800', cursor: 'pointer' }}
-                      >
-                        <Printer size={13} /> Reprint
-                      </button>
-                    </div>
-                  </td>
+          <div style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '680px' }}>
+              <thead>
+                <tr style={{ background: '#F8FAF9', borderBottom: '2px solid #E2E8F0', textAlign: 'left', color: '#475569' }}>
+                  <th style={{ padding: '12px 14px' }}>Doc Number</th>
+                  <th style={{ padding: '12px 14px' }}>Document Type</th>
+                  <th style={{ padding: '12px 14px' }}>Recipient / Entity</th>
+                  <th style={{ padding: '12px 14px' }}>Date Created</th>
+                  <th style={{ padding: '12px 14px', textAlign: 'right' }}>Amount (₹)</th>
+                  <th style={{ padding: '12px 14px', textAlign: 'center' }}>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {documentHistory.map((item, idx) => (
+                  <tr key={idx} style={{ borderBottom: '1px solid #E2E8F0' }}>
+                    <td style={{ padding: '12px 14px', fontWeight: '900', color: '#4E2A18' }}>{item.docNumber}</td>
+                    <td style={{ padding: '12px 14px', fontWeight: '700' }}>{item.type}</td>
+                    <td style={{ padding: '12px 14px', color: '#334155' }}>{item.recipient}</td>
+                    <td style={{ padding: '12px 14px', color: '#64748B' }}>{item.date}</td>
+                    <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: '900', color: '#16A34A' }}>
+                      ₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    </td>
+                    <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                        <button
+                          onClick={() => setSelectedTemplateId(item.type.includes('Milk') ? 'SALE_MILK_RECEIPT' : 'GENERAL_RECEIPT')}
+                          style={{ background: '#EAF4EE', color: '#4E2A18', border: '1px solid #DCC5B3', padding: '6px 12px', borderRadius: '12px', fontSize: '11.5px', fontWeight: '800', cursor: 'pointer' }}
+                        >
+                          <Printer size={13} /> Reprint
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
