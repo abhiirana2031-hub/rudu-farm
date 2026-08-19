@@ -4,25 +4,49 @@ import { ViewToggle } from '../components/ViewToggle';
 import { CreditCard, Briefcase, CheckCircle2, Clock, Plus, ArrowUpRight, Users, Layers, Calendar } from 'lucide-react';
 
 export const PayoutsPage = () => {
-  const { farmers, payouts, setActiveModal, currentRole } = useFarm();
+  const { farmers, payouts, setActiveModal, currentRole, currentUser } = useFarm();
   const [activeTab, setActiveTab] = useState('farmers'); // 'farmers' | 'operators' | 'all'
   const [selectedDate, setSelectedDate] = useState('');
   const [viewMode, setViewMode] = useState((typeof window !== 'undefined' && window.innerWidth < 768) ? 'card' : 'table');
 
   const isAdmin = currentRole === 'admin';
+  const isFarmerRole = currentRole === 'farmer' || currentUser?.role === 'farmer';
+
+  const currentFarmer = isFarmerRole && currentUser
+    ? (farmers || []).find(f => 
+        f?.phone === currentUser?.phone || 
+        f?.id === currentUser?.id || 
+        f?.id === currentUser?.farmerId || 
+        (f?.name && currentUser?.name && f.name.toLowerCase() === currentUser.name.toLowerCase())
+      )
+    : null;
 
   const payoutList = payouts || [];
   const farmerList = farmers || [];
 
-  // Filter payouts into Farmer vs Operator transactions
-  const farmerPayouts = payoutList.filter(p => p && p.type !== 'Operator Salary' && (!p.id || !p.id.startsWith('OP-PAY')) && (!p.farmerName || !p.farmerName.startsWith('Staff:')));
-  const operatorPayouts = payoutList.filter(p => p && (p.type === 'Operator Salary' || (p.id && p.id.startsWith('OP-PAY')) || (p.farmerName && p.farmerName.startsWith('Staff:'))));
+  // Filter payouts: If farmer role, strictly isolate to current farmer's payouts only!
+  const farmerPayouts = isFarmerRole
+    ? payoutList.filter(p => p && (
+        (currentFarmer && (p.farmerId === currentFarmer.id || p.farmerPhone === currentFarmer.phone)) ||
+        (currentUser?.phone && (p.farmerPhone === currentUser.phone || p.phone === currentUser.phone)) ||
+        (currentUser?.farmerId && p.farmerId === currentUser.farmerId) ||
+        (currentUser?.name && p.farmerName?.toLowerCase().includes(currentUser.name.toLowerCase()))
+      ))
+    : payoutList.filter(p => p && p.type !== 'Operator Salary' && (!p.id || !p.id.startsWith('OP-PAY')) && (!p.farmerName || !p.farmerName.startsWith('Staff:')));
+
+  const operatorPayouts = isFarmerRole
+    ? []
+    : payoutList.filter(p => p && (p.type === 'Operator Salary' || (p.id && p.id.startsWith('OP-PAY')) || (p.farmerName && p.farmerName.startsWith('Staff:'))));
 
   const totalFarmerCleared = farmerPayouts.reduce((acc, p) => acc + (p.amount || 0), 0);
   const totalOperatorDisbursed = operatorPayouts.reduce((acc, p) => acc + (p.amount || 0), 0);
-  const totalPendingFarmer = farmerList.reduce((acc, f) => acc + (f?.pendingPayout || 0), 0);
+  const totalPendingFarmer = isFarmerRole
+    ? (currentFarmer?.pendingPayout || 0)
+    : farmerList.reduce((acc, f) => acc + (f?.pendingPayout || 0), 0);
 
-  const basePayouts = activeTab === 'farmers'
+  const basePayouts = isFarmerRole
+    ? farmerPayouts
+    : activeTab === 'farmers'
     ? farmerPayouts
     : activeTab === 'operators'
     ? operatorPayouts
@@ -35,8 +59,14 @@ export const PayoutsPage = () => {
       {/* Header Banner */}
       <div className="section-title-bar">
         <div>
-          <h2 className="section-title">Financial Payouts & Settlement Ledger</h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Track cleared payments, pending balances, and issue direct payouts to farmers & staff</p>
+          <h2 className="section-title">
+            {isFarmerRole ? 'My Financial Payouts & Settlement Ledger' : 'Financial Payouts & Settlement Ledger'}
+          </h2>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+            {isFarmerRole 
+              ? 'Track your cleared bank payments and settlement history with Rudu Farm' 
+              : 'Track cleared payments, pending balances, and issue direct payouts to farmers & staff'}
+          </p>
         </div>
         {isAdmin && (
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
@@ -76,7 +106,9 @@ export const PayoutsPage = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         <div style={{ background: '#FFFFFF', border: '1px solid var(--border)', padding: '18px', borderRadius: '16px', boxShadow: 'var(--shadow-sm)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Farmer Cleared Payouts</span>
+            <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              {isFarmerRole ? 'My Cleared Payouts' : 'Farmer Cleared Payouts'}
+            </span>
             <div style={{ background: '#EAF4EE', color: '#4E2A18', padding: '8px', borderRadius: '10px' }}>
               <CheckCircle2 size={18} />
             </div>
@@ -89,25 +121,44 @@ export const PayoutsPage = () => {
           </div>
         </div>
 
-        <div style={{ background: '#FFFFFF', border: '1px solid var(--border)', padding: '18px', borderRadius: '16px', boxShadow: 'var(--shadow-sm)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Staff Salary Disbursed</span>
-            <div style={{ background: '#F0F9FF', color: '#0284C7', padding: '8px', borderRadius: '10px' }}>
-              <Briefcase size={18} />
+        {!isFarmerRole ? (
+          <div style={{ background: '#FFFFFF', border: '1px solid var(--border)', padding: '18px', borderRadius: '16px', boxShadow: 'var(--shadow-sm)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Staff Salary Disbursed</span>
+              <div style={{ background: '#F0F9FF', color: '#0284C7', padding: '8px', borderRadius: '10px' }}>
+                <Briefcase size={18} />
+              </div>
+            </div>
+            <div style={{ fontSize: '26px', fontWeight: '800', margin: '8px 0 2px', color: '#0284C7' }}>
+              ₹{totalOperatorDisbursed.toLocaleString()}
+            </div>
+            <div style={{ fontSize: '11px', color: '#0284C7', fontWeight: '700' }}>
+              {operatorPayouts.length} Staff Salary Transfers
             </div>
           </div>
-          <div style={{ fontSize: '26px', fontWeight: '800', margin: '8px 0 2px', color: '#0284C7' }}>
-            ₹{totalOperatorDisbursed.toLocaleString()}
+        ) : (
+          <div style={{ background: '#FFFFFF', border: '1px solid var(--border)', padding: '18px', borderRadius: '16px', boxShadow: 'var(--shadow-sm)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>My Advance Balance</span>
+              <div style={{ background: '#FEF3C7', color: '#D97706', padding: '8px', borderRadius: '10px' }}>
+                <Briefcase size={18} />
+              </div>
+            </div>
+            <div style={{ fontSize: '26px', fontWeight: '800', margin: '8px 0 2px', color: '#D97706' }}>
+              ₹{(currentFarmer?.advanceBalance || 0).toLocaleString()}
+            </div>
+            <div style={{ fontSize: '11px', color: '#D97706', fontWeight: '700' }}>
+              Active Cash / Feed Advance
+            </div>
           </div>
-          <div style={{ fontSize: '11px', color: '#0284C7', fontWeight: '700' }}>
-            {operatorPayouts.length} Staff Salary Transfers
-          </div>
-        </div>
+        )}
 
         <div style={{ background: '#FFFFFF', border: '1px solid var(--border)', padding: '18px', borderRadius: '16px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Pending Farmer Balance</span>
+              <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                {isFarmerRole ? 'My Pending Balance' : 'Pending Farmer Balance'}
+              </span>
               <div style={{ background: '#FEF3C7', color: '#D97706', padding: '8px', borderRadius: '10px' }}>
                 <Clock size={18} />
               </div>
@@ -117,7 +168,9 @@ export const PayoutsPage = () => {
             </div>
           </div>
           <div style={{ marginTop: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>Across active suppliers</span>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>
+              {isFarmerRole ? 'Upcoming settlement cycle' : 'Across active suppliers'}
+            </span>
             {isAdmin && (
               <button
                 onClick={() => setActiveModal('makePayment')}
@@ -136,8 +189,12 @@ export const PayoutsPage = () => {
         {/* Sub-Header & Tab Navigation */}
         <div style={{ padding: '18px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', flexWrap: 'wrap', gap: '12px' }}>
           <div>
-            <h3 style={{ fontSize: '17px', fontWeight: '800', margin: 0, color: '#0F172A' }}>Settlement History & Payroll Ledger</h3>
-            <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Real-time audit stream of farmer payouts and staff salary disbursements</p>
+            <h3 style={{ fontSize: '17px', fontWeight: '800', margin: 0, color: '#0F172A' }}>
+              {isFarmerRole ? 'My Payout & Settlement History' : 'Settlement History & Payroll Ledger'}
+            </h3>
+            <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>
+              {isFarmerRole ? 'Complete audit log of all bank payouts received' : 'Real-time audit stream of farmer payouts and staff salary disbursements'}
+            </p>
           </div>
 
           {/* Filter Controls: Date Selector + Tabs */}
@@ -164,68 +221,74 @@ export const PayoutsPage = () => {
               )}
             </div>
 
-            {/* Interactive Separate Payment Tabs */}
-            <div style={{ display: 'flex', background: '#F1F5F9', padding: '4px', borderRadius: '12px', gap: '4px' }}>
-              <button
-                onClick={() => setActiveTab('farmers')}
-                style={{
-                  padding: '7px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontWeight: '800',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: activeTab === 'farmers' ? '#FFFFFF' : 'transparent',
-                  color: activeTab === 'farmers' ? '#4E2A18' : 'var(--text-muted)',
-                  boxShadow: activeTab === 'farmers' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                }}
-              >
-                 Farmer Payouts ({farmerPayouts.length})
-              </button>
+            {/* Interactive Separate Payment Tabs (Hidden / Simplified for Farmers) */}
+            {!isFarmerRole ? (
+              <div style={{ display: 'flex', background: '#F1F5F9', padding: '4px', borderRadius: '12px', gap: '4px' }}>
+                <button
+                  onClick={() => setActiveTab('farmers')}
+                  style={{
+                    padding: '7px 16px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    background: activeTab === 'farmers' ? '#FFFFFF' : 'transparent',
+                    color: activeTab === 'farmers' ? '#4E2A18' : 'var(--text-muted)',
+                    boxShadow: activeTab === 'farmers' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                  }}
+                >
+                  Farmer Payouts ({farmerPayouts.length})
+                </button>
 
-              <button
-                onClick={() => setActiveTab('operators')}
-                style={{
-                  padding: '7px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontWeight: '800',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: activeTab === 'operators' ? '#FFFFFF' : 'transparent',
-                  color: activeTab === 'operators' ? '#0284C7' : 'var(--text-muted)',
-                  boxShadow: activeTab === 'operators' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                }}
-              >
-                💼 Operator Payroll ({operatorPayouts.length})
-              </button>
+                <button
+                  onClick={() => setActiveTab('operators')}
+                  style={{
+                    padding: '7px 16px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    background: activeTab === 'operators' ? '#FFFFFF' : 'transparent',
+                    color: activeTab === 'operators' ? '#0284C7' : 'var(--text-muted)',
+                    boxShadow: activeTab === 'operators' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                  }}
+                >
+                  💼 Operator Payroll ({operatorPayouts.length})
+                </button>
 
-              <button
-                onClick={() => setActiveTab('all')}
-                style={{
-                  padding: '7px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontWeight: '800',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: activeTab === 'all' ? '#FFFFFF' : 'transparent',
-                  color: activeTab === 'all' ? '#0F172A' : 'var(--text-muted)',
-                  boxShadow: activeTab === 'all' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                }}
-              >
-                📜 All Ledger ({payouts.length})
-              </button>
-            </div>
+                <button
+                  onClick={() => setActiveTab('all')}
+                  style={{
+                    padding: '7px 16px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    background: activeTab === 'all' ? '#FFFFFF' : 'transparent',
+                    color: activeTab === 'all' ? '#0F172A' : 'var(--text-muted)',
+                    boxShadow: activeTab === 'all' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                  }}
+                >
+                  📜 All Ledger ({payouts.length})
+                </button>
+              </div>
+            ) : (
+              <span style={{ fontSize: '12px', fontWeight: '800', color: '#4E2A18', background: '#EAF4EE', padding: '6px 14px', borderRadius: '12px' }}>
+                {farmerPayouts.length} Settled Transactions
+              </span>
+            )}
             
             <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
           </div>
