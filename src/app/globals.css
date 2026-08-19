@@ -173,11 +173,12 @@ input, select, textarea {
   overflow-x: hidden;
 }
 
-.top-navbar {
-  background-color: var(--primary);
+.top-navbar,
+.farmer-portal-header {
+  background-color: var(--primary, #4E2A18);
   color: #ffffff;
-  height: 70px;
-  padding: 0 24px;
+  height: 64px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -185,6 +186,176 @@ input, select, textarea {
   position: sticky;
   top: 0;
   z-index: 100;
+  width: 100%;
+}
+
+.left-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.menu-btn:hover,
+.menu-btn:active {
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(1.04);
+}
+
+.rudu-logo-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.right-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-profile-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 4px 12px 4px 6px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-avatar-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.user-meta-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.user-phone {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.user-portal-tag {
+  font-size: 10px;
+  opacity: 0.85;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.logout-btn-header {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn-header:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+@media (max-width: 640px) {
+  .user-meta-info {
+    display: none;
+  }
+  .user-profile-pill {
+    padding: 4px;
+    border-radius: 50%;
+  }
+}
+
+/* Mobile Drawer Overlay & Sidebar */
+.mobile-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  animation: fadeInDrawer 0.2s ease-out;
+}
+
+.mobile-drawer-sidebar {
+  width: 285px;
+  max-width: 85vw;
+  height: 100%;
+  background: #FFFFFF;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  animation: slideInLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+.mobile-drawer-sidebar .sidebar {
+  display: flex !important;
+  width: 100%;
+  height: 100%;
+  border-right: none;
+  box-shadow: none;
+  padding: 20px 16px;
+  background: #FFFFFF;
+}
+
+@media (min-width: 1024px) {
+  .main-layout > .sidebar {
+    display: flex;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInDrawer {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .brand-logo {

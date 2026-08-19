@@ -47,8 +47,36 @@ export const Sidebar = ({ onClose }) => {
 
   return (
     <aside className="sidebar">
-      <div style={{ padding: '0 8px 12px 8px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
-        {currentRole === 'admin' ? 'Management Center' : currentRole === 'employee' ? 'Agent Workspace' : 'Farmer Portal'}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px 14px 4px', borderBottom: '1px solid var(--border, #EFE2D5)', marginBottom: '12px' }}>
+        <div>
+          <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--primary, #4E2A18)' }}>
+            Rudu Portal
+          </div>
+          <div style={{ fontSize: '10.5px', fontWeight: '700', color: 'var(--text-muted, #7C695D)', textTransform: 'uppercase', letterSpacing: '0.8px', marginTop: '1px' }}>
+            {currentRole === 'admin' ? 'Management Center' : currentRole === 'employee' ? 'Agent Workspace' : 'Farmer Portal'}
+          </div>
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="sidebar-close-btn"
+            title="Close menu"
+            style={{
+              background: 'var(--bg-subtle, #F9F6F0)',
+              border: 'none',
+              borderRadius: '50%',
+              width: '30px',
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--text-muted, #7C695D)',
+              cursor: 'pointer'
+            }}
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
       {currentNav.map(item => {

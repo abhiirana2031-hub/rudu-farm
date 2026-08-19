@@ -35,12 +35,24 @@ export const Navbar = ({ onToggleMobileMenu }) => {
   const details = getRoleHeaderDetails();
 
   return (
-    <header className="farmer-portal-header">
-      <button onClick={onToggleMobileMenu} className="menu-btn" title="Toggle Menu">
-        <Menu size={22} />
-      </button>
-      
-      <div className="rudu-logo-text">Rudu</div>
+    <header className="farmer-portal-header top-navbar">
+      <div className="left-nav-group" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <button 
+          onClick={onToggleMobileMenu} 
+          className="menu-btn" 
+          title="Toggle Navigation Menu"
+          aria-label="Toggle Navigation Menu"
+        >
+          <Menu size={22} />
+        </button>
+        
+        <div className="rudu-logo-text" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="brand-icon-box" style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontWeight: '800', fontSize: '17px', color: '#FFFFFF' }}>R</span>
+          </div>
+          <span className="brand-title" style={{ fontSize: '20px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '-0.5px' }}>Rudu</span>
+        </div>
+      </div>
       
       <div className="right-group">
         <div className="user-profile-pill">
@@ -63,18 +75,18 @@ export const Navbar = ({ onToggleMobileMenu }) => {
           title="Notifications"
           style={{ position: 'relative' }}
         >
-          <Bell size={14} />
-          <span style={{ position: 'absolute', top: '5px', right: '5px', width: '6px', height: '6px', background: '#EF4444', borderRadius: '50%' }} />
+          <Bell size={15} />
+          <span style={{ position: 'absolute', top: '5px', right: '5px', width: '6px', height: '6px', background: '#EF4444', borderRadius: '50%', border: '1px solid #4E2A18' }} />
         </button>
 
         {/* Settings */}
         <button onClick={() => setActiveModal('settings')} className="logout-btn-header" title="Settings">
-          <Settings size={14} />
+          <Settings size={15} />
         </button>
 
         {/* Logout */}
         <button onClick={() => logoutUser()} className="logout-btn-header" title="Sign Out">
-          <LogOut size={14} />
+          <LogOut size={15} />
         </button>
       </div>
     </header>
