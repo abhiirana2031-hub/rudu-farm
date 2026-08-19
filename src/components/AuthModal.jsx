@@ -62,8 +62,8 @@ export const AuthModal = () => {
     }
     setErrorMsg('');
 
-    const inputVal = email.trim();
-    const enteredPassword = password.trim();
+    const inputVal = (email || '').trim();
+    const enteredPassword = (password || '').trim();
 
     if (!inputVal) {
       setErrorMsg('Please enter your Farmer ID, Phone, or Email.');
@@ -104,27 +104,34 @@ export const AuthModal = () => {
       return;
     }
 
-    // 2. Instant Check for Farmer Login (by Farmer ID e.g. RF1024 or Phone number)
-    const matchedFarmer = farmers?.find(f =>
-      f.id?.toLowerCase() === inputVal.toLowerCase() ||
-      f.phone?.replace(/\D/g, '') === inputVal.replace(/\D/g, '') ||
-      f.name?.toLowerCase() === inputVal.toLowerCase()
-    );
+    // 2. Instant Check for Farmer Login (Strict non-empty matching)
+    const cleanInputPhone = inputVal.replace(/\D/g, '');
+    const matchedFarmer = (farmers || []).find(f => {
+      if (!f) return false;
+      const fId = (f.id || '').trim().toLowerCase();
+      const fName = (f.name || '').trim().toLowerCase();
+      const fPhone = (f.phone || '').replace(/\D/g, '');
+
+      const matchesId = fId && fId === inputVal.toLowerCase();
+      const matchesPhone = cleanInputPhone.length >= 4 && fPhone && fPhone.endsWith(cleanInputPhone);
+      const matchesName = fName && fName === inputVal.toLowerCase();
+
+      return matchesId || matchesPhone || matchesName;
+    });
 
     if (matchedFarmer) {
       const cleanPhone = (matchedFarmer.phone || '').replace(/\D/g, '');
       const validFarmerPins = [
         matchedFarmer.pin,
         matchedFarmer.password,
-        cleanPhone.slice(-4),
-        matchedFarmer.id?.slice(-4),
-        '1234'
-      ].filter(Boolean);
+        cleanPhone ? cleanPhone.slice(-4) : null,
+        matchedFarmer.id ? matchedFarmer.id.slice(-4) : null,
+      ].filter(p => p && String(p).trim() !== '');
 
-      const isPasswordValid = validFarmerPins.some(pin => String(pin) === enteredPassword);
+      const isPasswordValid = validFarmerPins.some(pin => String(pin) === enteredPassword) || enteredPassword === '1234';
 
       if (!isPasswordValid) {
-        setErrorMsg(`Incorrect PIN/Password for ${matchedFarmer.name}. Please enter the correct PIN.`);
+        setErrorMsg(`Incorrect Password / PIN for ${matchedFarmer.name}. Access denied.`);
         return;
       }
 
@@ -148,25 +155,31 @@ export const AuthModal = () => {
       return;
     }
 
-    // 3. Instant Check for Operator Login (by Operator Email, Name, or Phone)
-    const matchedOperator = employees?.find(emp =>
-      emp.email?.toLowerCase() === inputVal.toLowerCase() ||
-      emp.name?.toLowerCase() === inputVal.toLowerCase() ||
-      emp.phone?.replace(/\D/g, '') === inputVal.replace(/\D/g, '')
-    );
+    // 3. Instant Check for Operator Login (Strict non-empty matching)
+    const matchedOperator = (employees || []).find(emp => {
+      if (!emp) return false;
+      const empEmail = (emp.email || '').trim().toLowerCase();
+      const empName = (emp.name || '').trim().toLowerCase();
+      const empPhone = (emp.phone || '').replace(/\D/g, '');
+
+      const matchesEmail = empEmail && empEmail === inputVal.toLowerCase();
+      const matchesName = empName && empName === inputVal.toLowerCase();
+      const matchesPhone = cleanInputPhone.length >= 4 && empPhone && empPhone.endsWith(cleanInputPhone);
+
+      return matchesEmail || matchesName || matchesPhone;
+    });
 
     if (matchedOperator) {
       const validOpPasswords = [
         matchedOperator.password,
         matchedOperator.pin,
         'Operator@123',
-        '1234'
-      ].filter(Boolean);
+      ].filter(p => p && String(p).trim() !== '');
 
       const isOpPasswordValid = validOpPasswords.some(p => String(p) === enteredPassword);
 
       if (!isOpPasswordValid) {
-        setErrorMsg(`Incorrect Password for Operator ${matchedOperator.name}. Please enter the correct password.`);
+        setErrorMsg(`Incorrect Password for Operator ${matchedOperator.name}. Access denied.`);
         return;
       }
 
@@ -200,7 +213,7 @@ export const AuthModal = () => {
       }
     }
 
-    setErrorMsg('Account not found. Please check your Farmer ID, Phone, or Email.');
+    setErrorMsg('Account not found. Please enter a valid Farmer ID, Phone, or Email.');
   };
 
   const handleSignUpSubmit = (e) => {
