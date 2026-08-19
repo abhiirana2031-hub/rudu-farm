@@ -193,7 +193,7 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
     switch (templateId) {
       case 'GENERAL_RECEIPT': return <GeneralReceiptTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
       case 'BILL_PRINT': return <BillPrintTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
-      case 'SALARY_SLIP': return <SalarySlipTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
+      case 'SALARY_SLIP': return <SalarySlipTemplate format={paperFormat} docData={docData as any} tenantInfo={tenantInfo} />;
       case 'PURCHASE_BILL': return <PurchaseBillTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
       case 'SALE_BILL': return <SaleBillTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
       case 'SALE_MILK_RECEIPT': return <SaleMilkReceiptTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
@@ -204,7 +204,7 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
       case 'FARMER_LEDGER': return <FarmerLedgerTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
       case 'CENTER_DAILY_SUMMARY': return <CenterDailySummaryTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
       case 'OPERATOR_DAILY_SUMMARY': return <OperatorDailySummaryTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
-      case 'MONTHLY_MILK_REPORT': return <MonthlyMilkReportTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
+      case 'MONTHLY_MILK_REPORT': return <MonthlyMilkReportTemplate format={paperFormat} docData={docData as any} tenantInfo={tenantInfo} />;
       default: return <GeneralReceiptTemplate format={paperFormat} docData={docData} tenantInfo={tenantInfo} />;
     }
   };
@@ -292,7 +292,7 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
             <button onClick={handlePrint} className="btn" style={{ background: '#EAF4EE', color: '#065F46', fontWeight: '800', fontSize: '12px', borderRadius: '30px', padding: '6px 14px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Download size={14} /> <span className="hidden sm:inline">PDF</span>
             </button>
-            <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#FFFFFF', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
+            <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#FFFFFF', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <X size={18} />
             </button>
           </div>
