@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useFarm } from '../context/FarmContext';
 import { RuduLogo } from '../components/RuduLogo';
 import { CinematicHeroSection } from '../components/CinematicHeroSection';
+import { ToonHubCarousel } from '../components/ToonHubCarousel';
 import { 
   Milk, 
   Users, 
@@ -229,7 +230,10 @@ export const LandingPage = () => {
         onHandleLogin={handleLogin} 
       />
 
-      {/* 2. Products Tabbed Catalog */}
+      {/* 2. Character-Figurine Showcase Section with Smooth 650ms Color Crossfade */}
+      <ToonHubCarousel />
+
+      {/* 3. Products Tabbed Catalog */}
       <section id="products" className="products-catalog-section">
         <div className="catalog-container">
           <div className="landing-section-header">
