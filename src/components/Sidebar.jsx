@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useFarm } from '@/context/FarmContext';
 import {
   LayoutDashboard, Users, Milk, Receipt, Sliders, DollarSign,
-  BarChart3, UserCheck, TrendingUp, Clock, Building2, MessageSquare, Printer
+  BarChart3, UserCheck, TrendingUp, Clock, Building2, MessageSquare, Printer, X
 } from 'lucide-react';
 
 export const Sidebar = ({ onClose }) => {
