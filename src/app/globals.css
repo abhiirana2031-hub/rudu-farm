@@ -1,5 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
+
+.font-serif-instrument {
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+
+.font-sans-inter {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@keyframes fadeRise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-rise {
+  animation: fadeRise 0.8s ease-out forwards;
+}
+
+.animate-fade-rise-delay {
+  animation: fadeRise 0.8s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-fade-rise-delay-2 {
+  animation: fadeRise 0.8s ease-out 0.4s forwards;
+  opacity: 0;
+}
 
 :root {
   --background: #ffffff;
@@ -7996,166 +8030,73 @@ input, select, textarea {
 
 @media (max-width: 768px) {
   .landing-hero-wrapper-v2 {
-    height: 700px;
-    min-height: 680px;
-    max-height: 730px;
-    padding: 24px 0 20px 0;
-    align-items: flex-start;
+    height: clamp(480px, 120vw, 560px);
+    min-height: 480px;
+    padding: 0;
   }
-
   .hero-v2-full-farmer-img {
-    object-position: 68% center;
+    object-position: 85% 5%;
   }
-
-  .hero-v2-bg-overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(250, 248, 243, 0.96) 0%,
-      rgba(250, 248, 243, 0.82) 25%,
-      rgba(250, 248, 243, 0.40) 48%,
-      rgba(250, 248, 243, 0.08) 70%,
-      rgba(250, 248, 243, 0) 100%
-    );
-  }
-
   .landing-hero-v2 {
-    padding: 0 24px;
-    align-items: flex-start;
-    height: 100%;
+    padding: 0 5%;
   }
-
   .hero-v2-content-col {
-    max-width: 100%;
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    max-width: 58%;
+    margin-top: 0;
   }
-
   .v2-main-hero-title {
-    font-size: clamp(38px, 9.5vw, 42px);
+    font-size: clamp(28px, 6.8vw, 38px);
     line-height: 0.98;
-    margin: 0 0 16px 0;
-    letter-spacing: -1.2px;
+    margin-bottom: 12px;
+    letter-spacing: -0.8px;
   }
-
   .v2-main-hero-sub {
-    font-size: 15.5px;
-    line-height: 1.5;
-    max-width: 320px;
-    margin-bottom: 24px;
-    color: #475569;
+    font-size: clamp(11px, 2.8vw, 13.5px);
+    line-height: 1.45;
+    margin-bottom: 16px;
+    max-width: 95%;
   }
-
   .v2-hero-btn-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: auto;
-    width: 100%;
+    gap: 8px;
+    margin-bottom: 20px;
   }
-
   .v2-btn-red-primary,
   .v2-btn-white-secondary {
-    height: 52px;
-    padding: 0 16px;
-    font-size: 14px;
-    font-weight: 800;
-    border-radius: 12px;
-    white-space: nowrap;
-    justify-content: center;
-    flex: 1;
-    min-width: 0;
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 16px);
+    font-size: clamp(11px, 2.6vw, 13px);
+    border-radius: 8px;
+    gap: 6px;
   }
-
   .v2-btn-red-primary svg,
   .v2-btn-white-secondary svg {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
   }
-
-  /* Compact Floating Horizontal 3-Column Feature Card */
   .v2-hero-trust-card {
-    background: #FFFFFF !important;
-    border: 1px solid #E5E7EB;
-    border-radius: 18px;
-    padding: 12px 14px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: calc(100% - 32px);
-    margin: 0 16px 12px 16px;
-    height: 110px;
-    min-height: 105px;
-    max-height: 120px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    max-width: 100%;
+    padding: clamp(6px, 1.8vw, 10px) clamp(8px, 2vw, 14px);
+    border-radius: 14px;
   }
-
   .v2-trust-card-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 3px;
-    min-width: 0;
+    gap: 6px;
   }
-
   .v2-trust-card-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #FDF2F2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    width: clamp(24px, 6vw, 30px);
+    height: clamp(24px, 6vw, 30px);
   }
-
   .v2-trust-card-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
   }
-
-  .v2-trust-card-text {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
   .v2-trust-card-head {
-    font-size: 11px;
-    font-weight: 800;
-    color: #111827;
-    line-height: 1.2;
-    white-space: nowrap;
+    font-size: clamp(9.5px, 2.4vw, 11px);
   }
-
   .v2-trust-card-sub {
-    font-size: 9.5px;
-    color: #6B7280;
-    font-weight: 600;
-    white-space: nowrap;
+    font-size: clamp(8px, 2vw, 9.5px);
   }
-
   .v2-trust-card-divider {
-    width: 1px;
-    height: 36px;
-    background: #E5E7EB;
-    margin: 0 4px;
-    flex-shrink: 0;
-  }
-}
-
-@media (max-width: 350px) {
-  .v2-hero-btn-group {
-    flex-direction: column;
-  }
-  .v2-btn-red-primary,
-  .v2-btn-white-secondary {
-    width: 100%;
+    height: 24px;
+    margin: 0 6px;
   }
 }
 

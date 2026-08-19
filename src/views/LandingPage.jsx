@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useFarm } from '../context/FarmContext';
 import { RuduLogo } from '../components/RuduLogo';
+import { CinematicHeroSection } from '../components/CinematicHeroSection';
 import { 
   Milk, 
   Users, 
@@ -222,126 +223,13 @@ export const LandingPage = () => {
 
   return (
     <div className="landing-page-container">
-      {/* 1. Header Navigation */}
-      <header className="landing-header">
-        <div className="landing-header-content">
-          <div className="landing-logo" onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-            <RuduLogo height={45} />
-          </div>
-          
-          <nav className={`landing-nav ${isMobileMenuOpen ? 'open' : ''}`}>
-            <button onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`nav-link ${activeSection === 'home' ? 'active' : ''}`}>Home</button>
-            <button onClick={() => scrollToSection('about')} className={`nav-link ${activeSection === 'about' ? 'active' : ''}`}>About Us</button>
-            <button onClick={() => scrollToSection('products')} className={`nav-link ${activeSection === 'products' ? 'active' : ''}`}>Our Services</button>
-            <button onClick={() => handleLogin('farmer')} className={`nav-link ${activeSection === 'farmers' ? 'active' : ''}`}>Farmers</button>
-            <button onClick={() => scrollToSection('purity')} className={`nav-link ${activeSection === 'gallery' ? 'active' : ''}`}>Gallery</button>
-            <button onClick={() => scrollToSection('faq')} className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`}>Contact Us</button>
-            <button onClick={() => handleLogin('farmer')} className="btn-landing-login mobile-login-item">
-              <User size={15} />
-              <span>Partner With Us</span>
-            </button>
-          </nav>
+      {/* 1. Cinematic Hero Section with Looping Video Background & Seamless Navigation */}
+      <CinematicHeroSection 
+        onScrollToSection={scrollToSection} 
+        onHandleLogin={handleLogin} 
+      />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button onClick={() => handleLogin('farmer')} className="v2-btn-partner-header desktop-only-login">
-              <span>Partner With Us</span>
-            </button>
-
-            <button 
-              className="mobile-menu-toggle"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle navigation menu"
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-
-        {/* Wavy Bottom Border */}
-        <div className="header-wave-border">
-          <svg viewBox="0 0 1440 40" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-            <path d="M0 0 L1440 0 L1440 15 C1300 35, 1100 -5, 900 25 C700 45, 500 -10, 300 30 C150 40, 50 25, 0 15 Z" fill="#ffffff" />
-          </svg>
-        </div>
-      </header>
-
-      {/* 2. Hero Section - Exact Reference Composition */}
-      <div className="landing-hero-wrapper-v2">
-        {/* Full Hero Area Background Image + Soft White/Cream Gradient Overlay */}
-        <div className="hero-v2-full-bg">
-          <img 
-            src="/images/rudu_farmer_clean.jpg" 
-            alt="Rudu Dairy Farmer with Cow" 
-            className="hero-v2-full-farmer-img"
-            onError={(e) => { e.currentTarget.src = '/images/rudu_hero_farmer.jpg'; }}
-          />
-          <div className="hero-v2-bg-overlay"></div>
-        </div>
-
-        <section className="landing-hero-v2">
-          <div className="hero-v2-content-col">
-            <h1 className="v2-main-hero-title">
-              <span className="dark-green-text">Pure Milk.</span><br />
-              <span className="dark-green-text">Trusted by</span><br />
-              <span className="red-accent">Every Home.</span>
-            </h1>
-            
-            <p className="v2-main-hero-sub">
-              Rudu Dairy is committed to pure milk, transparent practices, and empowering farmers across Northern India.
-            </p>
-
-            <div className="v2-hero-btn-group">
-              <button onClick={() => scrollToSection('products')} className="v2-btn-red-primary">
-                <LayoutGrid size={18} strokeWidth={2.2} />
-                <span>Our Services</span>
-              </button>
-              <button onClick={() => { setShowCareersSection(true); setTimeout(() => scrollToSection('careers'), 100); }} className="v2-btn-white-secondary">
-                <Users size={18} strokeWidth={2.2} />
-                <span>Partner With Us</span>
-              </button>
-            </div>
-
-            {/* Floating Bottom Trust/Feature Card */}
-            <div className="v2-hero-trust-card">
-              <div className="v2-trust-card-item">
-                <div className="v2-trust-card-icon">
-                  <ShieldCheck size={20} color="#C5221F" strokeWidth={2} />
-                </div>
-                <div className="v2-trust-card-text">
-                  <div className="v2-trust-card-head">100% Transparent</div>
-                  <div className="v2-trust-card-sub">Milk Collection</div>
-                </div>
-              </div>
-
-              <div className="v2-trust-card-divider"></div>
-
-              <div className="v2-trust-card-item">
-                <div className="v2-trust-card-icon">
-                  <Heart size={20} color="#C5221F" strokeWidth={2} />
-                </div>
-                <div className="v2-trust-card-text">
-                  <div className="v2-trust-card-head">Love & Care</div>
-                  <div className="v2-trust-card-sub">for Animals</div>
-                </div>
-              </div>
-
-              <div className="v2-trust-card-divider"></div>
-
-              <div className="v2-trust-card-item">
-                <div className="v2-trust-card-icon">
-                  <Users size={20} color="#C5221F" strokeWidth={2} />
-                </div>
-                <div className="v2-trust-card-text">
-                  <div className="v2-trust-card-head">Empowering</div>
-                  <div className="v2-trust-card-sub">Rural Farmers</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {/* 4. Products Tabbed Catalog */}
+      {/* 2. Products Tabbed Catalog */}
       <section id="products" className="products-catalog-section">
         <div className="catalog-container">
           <div className="landing-section-header">
