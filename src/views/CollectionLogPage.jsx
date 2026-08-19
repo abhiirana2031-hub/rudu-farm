@@ -4,7 +4,7 @@ import { ViewToggle } from '../components/ViewToggle';
 import { Search, Printer, Calendar, Plus } from 'lucide-react';
 
 export const CollectionLogPage = () => {
-  const { entries, farmers, openSlip, setActiveModal, currentRole } = useFarm();
+  const { entries, farmers, openSlip, setActiveModal, currentRole, currentUser } = useFarm();
   const [searchTerm, setSearchTerm] = useState('');
   const [shiftFilter, setShiftFilter] = useState('All');
   const [selectedDate, setSelectedDate] = useState('');
@@ -15,9 +15,31 @@ export const CollectionLogPage = () => {
     return farmer?.village || 'Kheda';
   };
 
+  const isFarmerRole = currentRole === 'farmer' || currentUser?.role === 'farmer';
+  const currentFarmer = isFarmerRole && currentUser
+    ? (farmers || []).find(f => 
+        f?.phone === currentUser?.phone || 
+        f?.id === currentUser?.id || 
+        f?.id === currentUser?.farmerId || 
+        (f?.name && currentUser?.name && f.name.toLowerCase() === currentUser.name.toLowerCase())
+      )
+    : null;
+
   const entryList = entries || [];
   const filteredEntries = entryList.filter(e => {
     if (!e) return false;
+
+    // Strict Farmer Isolation: Farmers ONLY see their own collection slips & records
+    if (isFarmerRole) {
+      const isFarmerMatch =
+        (currentFarmer && (e.farmerId === currentFarmer.id || e.farmerPhone === currentFarmer.phone)) ||
+        (currentUser?.phone && (e.farmerPhone === currentUser.phone || e.phone === currentUser.phone)) ||
+        (currentUser?.farmerId && e.farmerId === currentUser.farmerId) ||
+        (currentUser?.name && e.farmerName?.toLowerCase() === currentUser.name?.toLowerCase());
+
+      if (!isFarmerMatch) return false;
+    }
+
     const village = getFarmerVillage(e.farmerId);
     const searchStr = searchTerm.toLowerCase();
     const matchesSearch =

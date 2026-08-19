@@ -1,7 +1,7 @@
 import { RuduLogo } from './RuduLogo';
 import React, { useState } from 'react';
 import { useFarm } from '../context/FarmContext';
-import { X, Printer, Check, MessageSquare } from 'lucide-react';
+import { X, Printer, Check, MessageSquare, Download, Share2 } from 'lucide-react';
 
 const WhatsAppIcon = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
@@ -11,15 +11,135 @@ const WhatsAppIcon = ({ size = 16 }) => (
 );
 
 export const PrintSlipModal = () => {
-  const { activeModal, setActiveModal, selectedSlipEntry, farmers, fast2smsApiKey } = useFarm();
+  const { activeModal, setActiveModal, selectedSlipEntry, farmers, fast2smsApiKey, currentRole, currentUser } = useFarm();
   const [copied, setCopied] = useState(false);
   const [smsStatus, setSmsStatus] = useState('');
   const [sendingSms, setSendingSms] = useState(false);
 
   if (activeModal !== 'printSlip' || !selectedSlipEntry) return null;
 
+  const isFarmerRole = currentRole === 'farmer' || currentUser?.role === 'farmer';
+
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleSaveAsImage = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 460;
+      canvas.height = 620;
+
+      // Card Background
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Border
+      ctx.strokeStyle = '#4E2A18';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(12, 12, canvas.width - 24, canvas.height - 24);
+
+      // Header
+      ctx.fillStyle = '#4E2A18';
+      ctx.font = 'bold 22px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('RUDU FARM', 230, 48);
+
+      ctx.fillStyle = '#7C695D';
+      ctx.font = '12px sans-serif';
+      ctx.fillText('Official Milk Collection Receipt', 230, 70);
+
+      // Divider Line
+      ctx.strokeStyle = '#3C1F10';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(30, 85);
+      ctx.lineTo(430, 85);
+      ctx.stroke();
+
+      // Content Lines
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#3B2214';
+      ctx.font = 'bold 13px sans-serif';
+
+      ctx.fillText(`Receipt No:`, 40, 115);
+      ctx.fillText(selectedSlipEntry.id || 'N/A', 260, 115);
+
+      ctx.fillText(`Date / Shift:`, 40, 142);
+      ctx.fillText(`${selectedSlipEntry.date} (${selectedSlipEntry.shift || ''})`, 260, 142);
+
+      ctx.fillText(`Farmer Name:`, 40, 169);
+      ctx.fillText(selectedSlipEntry.farmerName || '', 260, 169);
+
+      ctx.fillText(`Farmer ID:`, 40, 196);
+      ctx.fillText(selectedSlipEntry.farmerId || '', 260, 196);
+
+      ctx.beginPath();
+      ctx.moveTo(30, 215);
+      ctx.lineTo(430, 215);
+      ctx.stroke();
+
+      ctx.fillText(`Quantity:`, 40, 245);
+      ctx.fillText(`${selectedSlipEntry.quantity} Liters`, 260, 245);
+
+      ctx.fillText(`Fat % / SNF %:`, 40, 272);
+      ctx.fillText(`${selectedSlipEntry.fat}% / ${selectedSlipEntry.snf}%`, 260, 272);
+
+      ctx.fillText(`Temperature:`, 40, 299);
+      ctx.fillText(`${selectedSlipEntry.temperature || '4.0'} °C`, 260, 299);
+
+      ctx.fillText(`Applied Rate:`, 40, 326);
+      ctx.fillText(`₹${selectedSlipEntry.rate.toFixed(2)} / L`, 260, 326);
+
+      // Total Box
+      ctx.fillStyle = '#F5EBE1';
+      ctx.fillRect(30, 350, 400, 54);
+      ctx.strokeStyle = '#4E2A18';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(30, 350, 400, 54);
+
+      ctx.fillStyle = '#4E2A18';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillText('TOTAL PAYABLE:', 45, 383);
+      ctx.textAlign = 'right';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText(`₹${selectedSlipEntry.totalAmount.toFixed(2)}`, 415, 383);
+
+      // Footer
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#7C695D';
+      ctx.font = 'italic 12px sans-serif';
+      ctx.fillText('Thank you for trusting Rudu Farm!', 230, 440);
+      ctx.fillText('Better Dairy. Better Tomorrow.', 230, 460);
+
+      const link = document.createElement('a');
+      link.download = `Milk_Receipt_${selectedSlipEntry.id || 'Rudu'}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (e) {
+      window.print();
+    }
+  };
+
+  const handleShare = async () => {
+    const receiptMsg = `RUDU FARM MILK RECEIPT\nReceipt: ${selectedSlipEntry.id}\nFarmer: ${selectedSlipEntry.farmerName} (${selectedSlipEntry.farmerId})\nQty: ${selectedSlipEntry.quantity}L | Fat: ${selectedSlipEntry.fat}% | SNF: ${selectedSlipEntry.snf}%\nRate: ₹${selectedSlipEntry.rate.toFixed(2)}/L\nTOTAL PAYABLE: ₹${selectedSlipEntry.totalAmount.toFixed(2)}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Rudu Milk Receipt ${selectedSlipEntry.id}`,
+          text: receiptMsg
+        });
+        return;
+      } catch (err) {}
+    }
+
+    try {
+      await navigator.clipboard.writeText(receiptMsg);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch (err) {}
   };
 
   const handleWhatsAppShare = () => {
@@ -47,7 +167,6 @@ export const PrintSlipModal = () => {
 Thank you for trusting Rudu Farm! 🌱
 _Better Dairy. Better Tomorrow._`;
 
-    // Copy to clipboard as backup
     try {
       navigator.clipboard.writeText(receiptMessage);
     } catch (err) {}
@@ -55,7 +174,6 @@ _Better Dairy. Better Tomorrow._`;
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
 
-    // Formulate WhatsApp Web / App Direct URL
     const encodedMessage = encodeURIComponent(receiptMessage);
     const whatsappUrl = cleanPhone.length >= 10
       ? `https://wa.me/${cleanPhone.startsWith('91') ? cleanPhone : '91' + cleanPhone}?text=${encodedMessage}`
@@ -268,29 +386,44 @@ _Better Dairy. Better Tomorrow._`;
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-            <button onClick={handlePrint} className="btn btn-primary" style={{ flex: 1, justifyContent: 'center', padding: '10px 6px', fontSize: '12px' }}>
-              <Printer size={15} /> Print
-            </button>
-            <button
-              onClick={handleWhatsAppShare}
-              className="btn btn-primary"
-              style={{ flex: 1, justifyContent: 'center', padding: '10px 6px', fontSize: '12px', background: '#25D366', borderColor: '#25D366' }}
-            >
-              {copied ? <Check size={15} color="#FFFFFF" /> : <WhatsAppIcon size={15} />}
-              {copied ? 'Copied!' : 'WhatsApp'}
-            </button>
-            <button
-              onClick={handleSmsSend}
-              disabled={sendingSms}
-              className="btn btn-primary"
-              style={{ flex: 1, justifyContent: 'center', padding: '10px 6px', fontSize: '12px', background: '#2563EB', borderColor: '#2563EB', opacity: sendingSms ? 0.7 : 1 }}
-            >
-              <MessageSquare size={15} />
-              {sendingSms ? 'Sending...' : 'SMS'}
-            </button>
-          </div>
+          {/* Action Buttons: Farmers only see Print, Save Image, Share. Admin/Operator sees WhatsApp and SMS */}
+          {isFarmerRole ? (
+            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+              <button onClick={handlePrint} className="btn btn-primary" style={{ flex: 1, justifyContent: 'center', padding: '10px 6px', fontSize: '12px' }}>
+                <Printer size={15} /> Print
+              </button>
+              <button onClick={handleSaveAsImage} className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '10px 6px', fontSize: '12px', background: '#F5EBE1', color: '#4E2A18', border: '1px solid #DCC5B3', fontWeight: '800' }}>
+                <Download size={15} /> Save Image
+              </button>
+              <button onClick={handleShare} className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '10px 6px', fontSize: '12px', background: '#EBF7EE', color: '#15803D', border: '1px solid #C6EAD0', fontWeight: '800' }}>
+                {copied ? <Check size={15} /> : <Share2 size={15} />}
+                {copied ? 'Copied!' : 'Share'}
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+              <button onClick={handlePrint} className="btn btn-primary" style={{ flex: 1, justifyContent: 'center', padding: '10px 6px', fontSize: '12px' }}>
+                <Printer size={15} /> Print
+              </button>
+              <button
+                onClick={handleWhatsAppShare}
+                className="btn btn-primary"
+                style={{ flex: 1, justifyContent: 'center', padding: '10px 6px', fontSize: '12px', background: '#25D366', borderColor: '#25D366' }}
+              >
+                {copied ? <Check size={15} color="#FFFFFF" /> : <WhatsAppIcon size={15} />}
+                {copied ? 'Copied!' : 'WhatsApp'}
+              </button>
+              <button
+                onClick={handleSmsSend}
+                disabled={sendingSms}
+                className="btn btn-primary"
+                style={{ flex: 1, justifyContent: 'center', padding: '10px 6px', fontSize: '12px', background: '#2563EB', borderColor: '#2563EB', opacity: sendingSms ? 0.7 : 1 }}
+              >
+                <MessageSquare size={15} />
+                {sendingSms ? 'Sending...' : 'SMS'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

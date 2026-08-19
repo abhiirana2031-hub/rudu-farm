@@ -103,7 +103,7 @@ const CowPastureSilhouette = () => (
 );
 
 export const FarmerDashboard = ({ initialTab }) => {
-  const { farmers, selectedFarmerId, entries, payouts, openSlip } = useFarm();
+  const { farmers, selectedFarmerId, entries, payouts, openSlip, currentUser, currentRole } = useFarm();
   const [activeSubTab, setActiveSubTab] = useState(initialTab || 'Withdrawal Passbook'); // 'Withdrawal Passbook' | 'Supply History' | 'Details'
   const [selectedPayoutSlip, setSelectedPayoutSlip] = useState(null);
   const [showDetailedPassbook, setShowDetailedPassbook] = useState(false);
@@ -131,7 +131,7 @@ export const FarmerDashboard = ({ initialTab }) => {
       setCreatedTransactionId(fakeTxnId);
       
       // Update local memory data dynamically
-      farmer.advanceBalance += parseFloat(advanceAmount);
+      if (farmer) farmer.advanceBalance += parseFloat(advanceAmount);
     }, 1500);
   };
 
@@ -147,19 +147,29 @@ export const FarmerDashboard = ({ initialTab }) => {
     }
   }, [initialTab]);
 
-  const farmer = farmers.find(f => f.id === selectedFarmerId) || farmers[0];
+  // Isolate current logged-in farmer if role is farmer
+  const loggedInFarmer = (currentRole === 'farmer' || currentUser?.role === 'farmer') && currentUser
+    ? (farmers || []).find(f => 
+        f?.phone === currentUser?.phone || 
+        f?.id === currentUser?.id || 
+        f?.id === currentUser?.farmerId || 
+        (f?.name && currentUser?.name && f.name.toLowerCase() === currentUser.name.toLowerCase())
+      )
+    : null;
+
+  const farmer = loggedInFarmer || farmers.find(f => f.id === selectedFarmerId) || farmers[0];
 
   if (!farmer) {
     return (
       <div style={{ maxWidth: '900px', margin: '0 auto', paddingBottom: '24px', textAlign: 'center', paddingTop: '40px' }}>
         <h2 style={{ color: 'var(--text-main)' }}>No Farmer Data Found</h2>
-        <p style={{ color: 'var(--text-muted)' }}>The database is currently empty. Please ask an administrator to add a farmer.</p>
+        <p style={{ color: 'var(--text-muted)' }}>No records match your profile. Please contact your collection center administrator.</p>
       </div>
     );
   }
 
-  const farmerEntries = entries.filter(e => e.farmerId === farmer.id);
-  const farmerPayouts = payouts.filter(p => p.farmerId === farmer.id || p.farmerName.toLowerCase().includes(farmer.name.toLowerCase()));
+  const farmerEntries = entries.filter(e => e.farmerId === farmer.id || (farmer.phone && e.farmerPhone === farmer.phone));
+  const farmerPayouts = payouts.filter(p => p.farmerId === farmer.id || (farmer.phone && p.farmerPhone === farmer.phone) || (p.farmerName && farmer.name && p.farmerName.toLowerCase().includes(farmer.name.toLowerCase())));
 
   const totalClearedPayouts = farmerPayouts.reduce((acc, p) => acc + p.amount, 0);
 
