@@ -46,11 +46,14 @@ export const Navbar = ({ onToggleMobileMenu }) => {
           <Menu size={22} />
         </button>
         
-        <div className="rudu-logo-text" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div className="brand-icon-box" style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontWeight: '800', fontSize: '17px', color: '#FFFFFF' }}>R</span>
+        <div className="rudu-logo-text" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div className="brand-icon-box" style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#EBF7EE', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+            <span style={{ fontWeight: '900', fontSize: '18px', color: '#16A34A' }}>R</span>
           </div>
-          <span className="brand-title" style={{ fontSize: '20px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '-0.5px' }}>Rudu</span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className="brand-title" style={{ fontSize: '20px', fontWeight: '900', color: '#FFFFFF', letterSpacing: '-0.5px', lineHeight: 1 }}>Rudu Farm</span>
+            <span style={{ fontSize: '10px', color: '#A7F3D0', fontWeight: '700', marginTop: '2px' }}>Smart Dairy</span>
+          </div>
         </div>
 
         {/* Global Language Switcher */}
