@@ -74,10 +74,6 @@ export const Sidebar = ({ onClose }) => {
     <aside className="sidebar" style={{
       background: '#152D1C',
       color: '#FFFFFF',
-      width: '290px',
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
       padding: '20px 16px',
       boxShadow: '4px 0 25px rgba(0,0,0,0.2)',
       overflowY: 'auto'
