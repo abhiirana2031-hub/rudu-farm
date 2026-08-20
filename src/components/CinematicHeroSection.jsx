@@ -93,50 +93,42 @@ export const CinematicHeroSection = ({ onScrollToSection, onHandleLogin }) => {
             </span>
           </div>
 
-          {/* Un-compressed Desktop Navigation Links with Generous Gaps */}
-          <nav 
-            className="hidden md:flex items-center"
-            style={{ display: 'flex', alignItems: 'center', gap: '36px', marginLeft: 'auto', marginRight: '36px' }}
-          >
+          {/* Desktop Navigation Links (Hidden on Mobile) */}
+          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 ml-auto mr-6">
             <button 
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="text-[15px] font-bold text-slate-950 hover:text-[#C5221F] transition-colors cursor-pointer py-1"
-              style={{ margin: '0 8px' }}
             >
               Home
             </button>
             <button 
               onClick={() => onScrollToSection && onScrollToSection('about')}
               className="text-[15px] font-semibold text-slate-700 hover:text-slate-950 transition-colors cursor-pointer py-1"
-              style={{ margin: '0 8px' }}
             >
               Our Story
             </button>
             <button 
               onClick={() => onScrollToSection && onScrollToSection('products')}
               className="text-[15px] font-semibold text-slate-700 hover:text-slate-950 transition-colors cursor-pointer py-1"
-              style={{ margin: '0 8px' }}
             >
               Services
             </button>
             <button 
               onClick={() => onScrollToSection && onScrollToSection('purity')}
               className="text-[15px] font-semibold text-slate-700 hover:text-slate-950 transition-colors cursor-pointer py-1"
-              style={{ margin: '0 8px' }}
             >
               Purity Audit
             </button>
             <button 
               onClick={() => onScrollToSection && onScrollToSection('faq')}
               className="text-[15px] font-semibold text-slate-700 hover:text-slate-950 transition-colors cursor-pointer py-1"
-              style={{ margin: '0 8px' }}
             >
               Contact Us
             </button>
           </nav>
 
-          {/* High-Contrast Bold Login / Partner CTA Button */}
-          <div className="hidden sm:flex items-center gap-3">
+          {/* High-Contrast Bold Login / Partner CTA Button (Desktop) */}
+          <div className="hidden md:flex items-center gap-3">
             <button 
               onClick={() => onHandleLogin && onHandleLogin('farmer')}
               className="rounded-full px-6 py-2.5 text-sm font-extrabold transition-all duration-200 cursor-pointer shadow-lg hover:scale-[1.03] flex items-center gap-2"
@@ -152,13 +144,13 @@ export const CinematicHeroSection = ({ onScrollToSection, onHandleLogin }) => {
             </button>
           </div>
 
-          {/* Mobile Menu Hamburger Toggle */}
+          {/* Mobile Menu Hamburger Button */}
           <button 
             onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
-            className="md:hidden p-2.5 rounded-full text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors"
-            aria-label="Toggle Menu"
+            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full text-slate-950 bg-slate-100 hover:bg-slate-200 transition-colors shadow-sm"
+            aria-label="Toggle Navigation Menu"
           >
-            {isMobileNavOpen ? <X size={22} /> : <Menu size={22} />}
+            {isMobileNavOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
 
