@@ -52,7 +52,7 @@ export const Navbar = ({ onToggleMobileMenu }) => {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span className="brand-title" style={{ fontSize: '20px', fontWeight: '900', color: '#FFFFFF', letterSpacing: '-0.5px', lineHeight: 1 }}>Rudu Farm</span>
-            <span style={{ fontSize: '10px', color: '#A7F3D0', fontWeight: '700', marginTop: '2px' }}>Smart Dairy</span>
+            <span className="brand-subtitle" style={{ fontSize: '10px', color: '#A7F3D0', fontWeight: '700', marginTop: '2px' }}>Smart Dairy</span>
           </div>
         </div>
 
@@ -78,7 +78,8 @@ export const Navbar = ({ onToggleMobileMenu }) => {
               fontSize: '12px',
               fontWeight: '800',
               cursor: 'pointer',
-              marginLeft: '8px'
+              marginLeft: '8px',
+              whiteSpace: 'nowrap'
             }}
             title="Switch Language / भाषा बदलें"
           >
