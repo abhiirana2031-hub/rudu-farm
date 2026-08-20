@@ -64,25 +64,26 @@ export const Navbar = ({ onToggleMobileMenu }) => {
               const nextLang = currentLang === 'en' ? 'hi' : 'en';
               localStorage.setItem('rudu_lang', nextLang);
               window.dispatchEvent(new Event('rudu_lang_change'));
+              // force re-render in Navbar if needed by just reloading or state, but it handles well.
             }}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '5px',
-              background: 'rgba(255, 255, 255, 0.18)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
+              gap: '6px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              border: '1px solid rgba(255, 255, 255, 0.4)',
               color: '#FFFFFF',
-              padding: '4px 10px',
+              padding: '6px 12px',
               borderRadius: '20px',
-              fontSize: '11.5px',
+              fontSize: '12px',
               fontWeight: '800',
               cursor: 'pointer',
-              marginLeft: '6px'
+              marginLeft: '8px'
             }}
             title="Switch Language / भाषा बदलें"
           >
-            <span style={{ fontSize: '13px' }}>🌐</span>
-            <span>Language</span>
+            <span style={{ fontSize: '14px' }}>🌐</span>
+            <span>EN / हिंदी</span>
           </button>
         )}
       </div>
