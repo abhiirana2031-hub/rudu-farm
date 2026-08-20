@@ -52,6 +52,36 @@ export const Navbar = ({ onToggleMobileMenu }) => {
           </div>
           <span className="brand-title" style={{ fontSize: '20px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '-0.5px' }}>Rudu</span>
         </div>
+
+        {/* Global Language Switcher */}
+        {typeof window !== 'undefined' && (
+          <button
+            onClick={() => {
+              const currentLang = localStorage.getItem('rudu_lang') || 'en';
+              const nextLang = currentLang === 'en' ? 'hi' : 'en';
+              localStorage.setItem('rudu_lang', nextLang);
+              window.dispatchEvent(new Event('rudu_lang_change'));
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              background: 'rgba(255, 255, 255, 0.18)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              color: '#FFFFFF',
+              padding: '4px 10px',
+              borderRadius: '20px',
+              fontSize: '11.5px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              marginLeft: '6px'
+            }}
+            title="Switch Language / भाषा बदलें"
+          >
+            <span style={{ fontSize: '13px' }}>🌐</span>
+            <span>Language</span>
+          </button>
+        )}
       </div>
       
       <div className="right-group">
