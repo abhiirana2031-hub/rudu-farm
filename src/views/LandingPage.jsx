@@ -1234,7 +1234,7 @@ export const LandingPage = () => {
             <h4>Get In Touch</h4>
             <div className="footer-contact-item">
               <Phone size={14} />
-              <span>+91 98765 43210</span>
+              <span>+91 8859171700</span>
             </div>
             <div className="footer-contact-item">
               <Mail size={14} />

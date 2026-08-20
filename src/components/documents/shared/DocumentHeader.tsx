@@ -25,7 +25,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   
   const businessName = tenantInfo?.name || 'RUDU DAIRY & LIVESTOCK FARM';
   const address = tenantInfo?.address || 'Village Road, Main Collection Hub, Sector 4, Kheda';
-  const phone = tenantInfo?.phone || '+91 98765 43210 / 88591 71700';
+  const phone = tenantInfo?.phone || '+91 8859171700';
   const email = tenantInfo?.email || 'support@rudufarm.com';
   const gstin = tenantInfo?.gstin || '07AAAAA0000A1Z5';
   const logoUrl = tenantInfo?.logo;

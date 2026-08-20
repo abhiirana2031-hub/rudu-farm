@@ -57,7 +57,7 @@ export const DocumentGeneratorModal: React.FC<DocumentGeneratorModalProps> = ({
   // Business Profile Editable State
   const [businessName, setBusinessName] = useState('RUDU DAIRY & LIVESTOCK FARM');
   const [businessAddress, setBusinessAddress] = useState('Village Road, Main Collection Hub, Sector 4, Kheda');
-  const [businessPhone, setBusinessPhone] = useState('+91 98765 43210 / 88591 71700');
+  const [businessPhone, setBusinessPhone] = useState('+91 8859171700');
   const [businessGstin, setBusinessGstin] = useState('07AAAAA0000A1Z5');
 
   // Recipient / Customer Editable State
