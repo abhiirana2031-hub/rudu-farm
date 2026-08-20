@@ -8562,3 +8562,24 @@ input, select, textarea {
   }
 }
 
+
+
+/* Responsive Mobile Navbar */
+
+@media (max-width: 768px) {
+
+  .top-navbar, .farmer-portal-header { padding: 0 10px; }
+
+  .brand-title { font-size: 16px !important; }
+
+  .user-phone { display: none; }
+
+  .left-nav-group, .right-group { gap: 6px !important; }
+
+  .brand-icon-box { width: 30px !important; height: 30px !important; }
+
+  .brand-icon-box span { font-size: 14px !important; }
+
+}
+
+
