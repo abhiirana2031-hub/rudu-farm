@@ -94,34 +94,39 @@ export const CinematicHeroSection = ({ onScrollToSection, onHandleLogin }) => {
           </div>
 
           {/* Desktop Navigation Links (Hidden on Mobile) */}
-          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 ml-auto mr-6">
+          <nav className="hidden md:flex items-center" style={{ gap: '32px', marginLeft: 'auto', marginRight: '32px' }}>
             <button 
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="text-[15px] font-bold text-slate-950 hover:text-[#C5221F] transition-colors cursor-pointer py-1"
+              style={{ whiteSpace: 'nowrap' }}
             >
               Home
             </button>
             <button 
               onClick={() => onScrollToSection && onScrollToSection('about')}
               className="text-[15px] font-semibold text-slate-700 hover:text-slate-950 transition-colors cursor-pointer py-1"
+              style={{ whiteSpace: 'nowrap' }}
             >
               Our Story
             </button>
             <button 
               onClick={() => onScrollToSection && onScrollToSection('products')}
               className="text-[15px] font-semibold text-slate-700 hover:text-slate-950 transition-colors cursor-pointer py-1"
+              style={{ whiteSpace: 'nowrap' }}
             >
               Services
             </button>
             <button 
               onClick={() => onScrollToSection && onScrollToSection('purity')}
               className="text-[15px] font-semibold text-slate-700 hover:text-slate-950 transition-colors cursor-pointer py-1"
+              style={{ whiteSpace: 'nowrap' }}
             >
               Purity Audit
             </button>
             <button 
               onClick={() => onScrollToSection && onScrollToSection('faq')}
               className="text-[15px] font-semibold text-slate-700 hover:text-slate-950 transition-colors cursor-pointer py-1"
+              style={{ whiteSpace: 'nowrap' }}
             >
               Contact Us
             </button>
