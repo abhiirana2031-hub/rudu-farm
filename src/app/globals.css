@@ -225,7 +225,7 @@ input, select, textarea {
 .sidebar {
   display: none;
   width: 260px;
-  background-color: var(--bg-card);
+  background-color: #152D1C;
   border-right: 1px solid var(--border);
   padding: 24px 16px;
   flex-direction: column;
