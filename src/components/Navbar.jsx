@@ -87,17 +87,13 @@ export const Navbar = ({ onToggleMobileMenu }) => {
         )}
       </div>
       
-      <div className="right-group">
-        <div className="user-profile-pill">
-          <div className="user-avatar-circle">
+      <div className="right-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="user-profile-pill" style={{ background: 'rgba(255, 255, 255, 0.15)', border: '1px solid rgba(255, 255, 255, 0.25)', padding: '4px 12px', borderRadius: '25px', color: '#FFFFFF' }}>
+          <div className="user-avatar-circle" style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#EBF7EE', color: '#16A34A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <User size={16} />
           </div>
-          <div className="user-meta-info">
-            <div className="user-phone">{details.phoneOrName}</div>
-            <div className="user-portal-tag">
-              {details.icon}
-              <span>{details.label}</span>
-            </div>
+          <div className="user-meta-info" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="user-phone" style={{ fontSize: '12.5px', fontWeight: '800', color: '#FFFFFF' }}>{details.phoneOrName}</div>
           </div>
         </div>
 
