@@ -1,7 +1,5 @@
-import { RuduLogo } from '../components/RuduLogo';
 import React, { useState, useEffect } from 'react';
 import { useFarm } from '../context/FarmContext';
-import { ViewToggle } from '../components/ViewToggle';
 import {
   MapPin,
   Printer,
@@ -19,135 +17,154 @@ import {
   Headphones,
   ArrowRight,
   ChevronRight,
-  User
+  User,
+  Bell,
+  Search,
+  Filter,
+  Download,
+  Clock,
+  Play,
+  TrendingUp,
+  Globe,
+  ArrowLeft,
+  Sun,
+  Moon,
+  Sparkles,
+  Wallet,
+  Receipt,
+  LayoutDashboard,
+  DollarSign
 } from 'lucide-react';
 
-// Custom inline SVG assets to ensure identical premium visuals without missing files
-const WalletIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4E2A18" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 7V5a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2" />
-    <path d="M16 11h6a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-6a3 3 0 0 1-3-3v0a3 3 0 0 1 3-3Z" fill="#FFFDFB" />
-    <circle cx="18" cy="14" r="1.2" fill="#4E2A18" />
-  </svg>
-);
-
-const MilkCanIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4E2A18" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M7 6h10M6 9h12M5 13h14M5 13v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7M5 13l1-4h12l1 4" fill="#FFFDFB" />
-    <path d="M12 9V3M10 3h4" />
-  </svg>
-);
-
-const BankIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4E2A18" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M5 11h14M12 2L3 7h18L12 2Z" fill="#FFFDFB" />
-  </svg>
-);
-
-const ClearedBankIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M5 11h14M12 2L3 7h18L12 2Z" />
-  </svg>
-);
-
-const PendingHourglassIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 2h14M5 22h14M19 2v4a7 7 0 0 1-7 7 7 7 0 0 1-7-7V2M5 22v-4a7 7 0 0 1 7-7 7 7 0 0 1 7 7v4" />
-  </svg>
-);
-
-const AdvanceTrendIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 7L13.5 15.5L8.5 10.5L2 17M22 7H16M22 7V13" />
-  </svg>
-);
-
-const PassbookBookIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5V4.5z" />
-  </svg>
-);
-
-const MilkCansIllustration = () => (
-  <img src="/milk_can_realistic.png" alt="Rudu Milk Can" style={{ width: '68px', height: '68px', objectFit: 'contain' }} />
-);
-
-const MilkSplashIllustration = () => (
-  <img src="/milk_splash_realistic.png" alt="Milk Splash" className="milk-splash-bg" style={{ position: 'absolute', right: '-10px', bottom: '-10px', width: '170px', height: '130px', opacity: 0.18, pointerEvents: 'none' }} />
-);
-
-const PremiumBankBuildingSVG = () => (
-  <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="15" y="80" width="70" height="10" rx="3" fill="#E2E8F0" stroke="#4E2A18" strokeWidth="2.5" />
-    <rect x="20" y="70" width="60" height="10" rx="2" fill="#CBD5E1" stroke="#4E2A18" strokeWidth="2.5" />
-    <path d="M25 70v-30M38 70v-30M50 70v-30M62 70v-30M75 70v-30" stroke="#4E2A18" strokeWidth="2.5" strokeLinecap="round" />
-    <rect x="22" y="32" width="56" height="8" rx="2" fill="#E2E8F0" stroke="#4E2A18" strokeWidth="2.5" />
-    <polygon points="50,10 18,32 82,32" fill="#CBD5E1" stroke="#4E2A18" strokeWidth="2.5" strokeLinejoin="round" />
-    <text x="50" y="27" fill="#4E2A18" fontSize="7.5" fontWeight="800" textAnchor="middle">BANK</text>
-  </svg>
-);
-
-const CowPastureSilhouette = () => (
-  <svg viewBox="0 0 800 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="pasture-silhouette-svg" preserveAspectRatio="none">
-    {/* Hills */}
-    <path d="M0 80c100-20 200-10 350-30s300 10 450-20v70H0V80z" fill="#DCC5B3" opacity="0.25" />
-    <path d="M0 90c150-10 300-30 450-20s200 20 350 10v20H0V90z" fill="#4E2A18" opacity="0.12" />
-    {/* Simple cows & house silhouettes */}
-    <path d="M120 75h8v4h-2v2h-1v-2h-3v2h-1v-2h-1v-4z" fill="#4E2A18" opacity="0.3" />
-    <circle cx="129" cy="74" r="2.5" fill="#4E2A18" opacity="0.3" />
-    <path d="M160 70l6-4 6 4v8h-12v-8z" fill="#4E2A18" opacity="0.2" />
-    
-    <path d="M680 73h10v5h-2v3h-1v-3h-4v3h-1v-3h-2v-5z" fill="#4E2A18" opacity="0.3" />
-    <circle cx="691" cy="72" r="3" fill="#4E2A18" opacity="0.3" />
-  </svg>
-);
+// Language Dictionary for Farmer Portal (English ↔ Hindi)
+const translations = {
+  en: {
+    greeting: "Good Morning",
+    todaySubtitle: "Here's what's happening on your farm today.",
+    totalSupplied: "Total Milk Supplied",
+    thisMonth: "This Month",
+    memberSince: "Member Since",
+    proudMember: "Proud member",
+    thankYou: "Thank you!",
+    totalPayouts: "Total Payouts",
+    totalCleared: "Total Cleared",
+    pendingBalance: "Pending Balance",
+    noPending: "No pending amount",
+    allClear: "All clear!",
+    milkLogTitle: "Milk Collection Log",
+    milkLogDesc: "View your daily milk collection entries",
+    viewLogs: "View Logs",
+    payoutsTitle: "Payouts & Settlements",
+    payoutsDesc: "Track your payments & settlements",
+    viewPayouts: "View Payouts",
+    ledgerTitle: "Milk Supply Ledger",
+    ledgerDesc: "See your complete supply history",
+    viewLedger: "View Ledger",
+    bankTitle: "Bank & Profile Details",
+    bankDesc: "Manage your bank & profile info",
+    manageProfile: "Manage Profile",
+    whoWeAre: "Who We Are",
+    empoweringTitle: "Empowering Farmers, Enriching Futures",
+    empoweringDesc: "We are your partners in growth. Simplifying dairy management with transparency, technology & trust.",
+    recentCollection: "Recent Milk Collection",
+    viewAll: "View All",
+    navDashboard: "Dashboard",
+    navCollection: "Collection",
+    navPayouts: "Payouts",
+    navProfile: "Profile",
+    todayCollection: "Today's Collection",
+    activeFarmers: "Active Farmers",
+    avgRate: "Avg. Rate",
+    allEntries: "All Entries",
+    morningShift: "Morning",
+    eveningShift: "Evening",
+    completed: "Completed",
+    pending: "Pending",
+    inProgress: "In Progress",
+    cleared: "Cleared",
+    requestAdvance: "Request Advance",
+    supportHelp: "Need help with your payout?",
+    supportDesc: "We're here to assist you.",
+    contactSupport: "Contact Support"
+  },
+  hi: {
+    greeting: "शुभ प्रभात",
+    todaySubtitle: "आज आपके फार्म में क्या हो रहा है।",
+    totalSupplied: "कुल दूध आपूर्ति",
+    thisMonth: "इस महीने",
+    memberSince: "सदस्यता की तारीख",
+    proudMember: "गौरवान्वित सदस्य",
+    thankYou: "धन्यवाद!",
+    totalPayouts: "कुल भुगतान",
+    totalCleared: "कुल चुकता",
+    pendingBalance: "बकाया राशि",
+    noPending: "कोई बकाया नहीं",
+    allClear: "सब साफ है!",
+    milkLogTitle: "दूध संग्रह लॉग",
+    milkLogDesc: "अपनी दैनिक दूध संग्रह प्रविष्टियां देखें",
+    viewLogs: "लॉग देखें",
+    payoutsTitle: "भुगतान एवं निपटान",
+    payoutsDesc: "अपने भुगतान और बहीखाता ट्रैक करें",
+    viewPayouts: "भुगतान देखें",
+    ledgerTitle: "दूध आपूर्ति बहीखाता",
+    ledgerDesc: "अपनी पूरी आपूर्ति का इतिहास देखें",
+    viewLedger: "बहीखाता देखें",
+    bankTitle: "बैंक एवं प्रोफ़ाइल विवरण",
+    bankDesc: "अपनी बैंक और प्रोफ़ाइल जानकारी प्रबंधित करें",
+    manageProfile: "प्रोफ़ाइल प्रबंधित करें",
+    whoWeAre: "हम कौन हैं",
+    empoweringTitle: "किसानों को सशक्त बनाना, भविष्य को समृद्ध बनाना",
+    empoweringDesc: "हम विकास में आपके भागीदार हैं। पारदर्शिता, तकनीक और विश्वास के साथ डेयरी प्रबंधन को सरल बना रहे हैं।",
+    recentCollection: "हाल की दूध संग्रह प्रविष्टियां",
+    viewAll: "सभी देखें",
+    navDashboard: "डैशबोर्ड",
+    navCollection: "संग्रह",
+    navPayouts: "भुगतान",
+    navProfile: "प्रोफ़ाइल",
+    todayCollection: "आज का संग्रह",
+    activeFarmers: "सक्रिय किसान",
+    avgRate: "औसत दर",
+    allEntries: "सभी प्रविष्टियां",
+    morningShift: "सुबह",
+    eveningShift: "शाम",
+    completed: "पूर्ण",
+    pending: "बकाया",
+    inProgress: "प्रगति में",
+    cleared: "चुकता",
+    requestAdvance: "अग्रिम अनुरोध करें",
+    supportHelp: "भुगतान सहायता चाहिए?",
+    supportDesc: "हम आपकी सहायता के लिए तत्पर हैं।",
+    contactSupport: "सहायता संपर्क करें"
+  }
+};
 
 export const FarmerDashboard = ({ initialTab }) => {
-  const { farmers, selectedFarmerId, entries, payouts, openSlip, currentUser, currentRole } = useFarm();
-  const [activeSubTab, setActiveSubTab] = useState(initialTab || 'Withdrawal Passbook'); // 'Withdrawal Passbook' | 'Supply History' | 'Details'
-  const [selectedPayoutSlip, setSelectedPayoutSlip] = useState(null);
-  const [showDetailedPassbook, setShowDetailedPassbook] = useState(false);
-  const [viewMode, setViewMode] = useState((typeof window !== 'undefined' && window.innerWidth < 768) ? 'card' : 'table');
+  const { farmers, selectedFarmerId, entries, payouts, currentUser, currentRole } = useFarm();
+  
+  // Navigation & Language States
+  const [activeTab, setActiveTab] = useState(initialTab || 'dashboard'); // 'dashboard' | 'collection' | 'payouts' | 'profile' | 'ledger'
+  const [lang, setLang] = useState('en'); // 'en' | 'hi'
+  const [selectedShift, setSelectedShift] = useState('all'); // 'all' | 'morning' | 'evening'
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Request Advance States
-  const [isRequestAdvanceOpen, setIsRequestAdvanceOpen] = useState(false);
+  // Request Advance Modal State
+  const [isAdvanceModalOpen, setIsAdvanceModalOpen] = useState(false);
   const [advanceAmount, setAdvanceAmount] = useState('');
-  const [advanceReason, setAdvanceReason] = useState('Cattle Feed Purchase');
   const [advanceLoading, setAdvanceLoading] = useState(false);
   const [advanceSuccess, setAdvanceSuccess] = useState(false);
-  const [createdTransactionId, setCreatedTransactionId] = useState('');
 
-  const handleRequestAdvanceSubmit = (e) => {
-    e.preventDefault();
-    if (!advanceAmount || parseFloat(advanceAmount) <= 0) {
-      alert('Please enter a valid amount.');
-      return;
-    }
-    setAdvanceLoading(true);
-    setTimeout(() => {
-      setAdvanceLoading(false);
-      setAdvanceSuccess(true);
-      const fakeTxnId = 'TXN' + Math.floor(Math.random() * 9000000 + 1000000);
-      setCreatedTransactionId(fakeTxnId);
-      
-      // Update local memory data dynamically
-      if (farmer) farmer.advanceBalance += parseFloat(advanceAmount);
-    }, 1500);
-  };
-
-  const closeAdvanceModal = () => {
-    setIsRequestAdvanceOpen(false);
-    setAdvanceAmount('');
-    setAdvanceSuccess(false);
-  };
+  const t = translations[lang] || translations.en;
 
   useEffect(() => {
     if (initialTab) {
-      setActiveSubTab(initialTab);
+      if (initialTab === 'Withdrawal Passbook') setActiveTab('payouts');
+      else if (initialTab === 'Supply History') setActiveTab('collection');
+      else if (initialTab === 'Details') setActiveTab('profile');
+      else setActiveTab(initialTab);
     }
   }, [initialTab]);
 
-  // Isolate current logged-in farmer if role is farmer
+  // Isolate current logged-in farmer
   const loggedInFarmer = (currentRole === 'farmer' || currentUser?.role === 'farmer') && currentUser
     ? (farmers || []).find(f => 
         f?.phone === currentUser?.phone || 
@@ -161,9 +178,9 @@ export const FarmerDashboard = ({ initialTab }) => {
 
   if (!farmer) {
     return (
-      <div style={{ maxWidth: '900px', margin: '0 auto', paddingBottom: '24px', textAlign: 'center', paddingTop: '40px' }}>
-        <h2 style={{ color: 'var(--text-main)' }}>No Farmer Data Found</h2>
-        <p style={{ color: 'var(--text-muted)' }}>No records match your profile. Please contact your collection center administrator.</p>
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px', textAlign: 'center' }}>
+        <h2 style={{ color: '#1C3B24' }}>No Farmer Profile Found</h2>
+        <p style={{ color: '#64748B' }}>Please contact your collection center manager for access.</p>
       </div>
     );
   }
@@ -171,766 +188,682 @@ export const FarmerDashboard = ({ initialTab }) => {
   const farmerEntries = entries.filter(e => e.farmerId === farmer.id || (farmer.phone && e.farmerPhone === farmer.phone));
   const farmerPayouts = payouts.filter(p => p.farmerId === farmer.id || (farmer.phone && p.farmerPhone === farmer.phone) || (p.farmerName && farmer.name && p.farmerName.toLowerCase().includes(farmer.name.toLowerCase())));
 
-  const totalClearedPayouts = farmerPayouts.reduce((acc, p) => acc + p.amount, 0);
+  const totalClearedPayouts = farmerPayouts.reduce((acc, p) => acc + (p.amount || 0), 0);
 
-  const handlePrintPayoutSlip = () => {
-    window.print();
+  const handleAdvanceSubmit = (e) => {
+    e.preventDefault();
+    if (!advanceAmount || parseFloat(advanceAmount) <= 0) return;
+    setAdvanceLoading(true);
+    setTimeout(() => {
+      setAdvanceLoading(false);
+      setAdvanceSuccess(true);
+      if (farmer) farmer.advanceBalance = (farmer.advanceBalance || 0) + parseFloat(advanceAmount);
+    }, 1200);
   };
 
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', paddingBottom: '24px' }}>
-      {/* Farmer Profile Card - Redesigned v2 */}
-      <div className="farmer-profile-card-v2">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div className="avatar-square">
-              <User size={36} style={{ strokeWidth: 1.5 }} />
+    <div style={{ maxWidth: '960px', margin: '0 auto', paddingBottom: '110px', background: '#F8FAF9', minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+      
+      {/* 1. Header Bar matching Reference UI */}
+      <header style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        background: '#FFFFFF',
+        borderBottom: '1px solid #E2E8F0',
+        padding: '12px 18px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.03)'
+      }}>
+        {/* Left Side: Menu Icon Button + Language Toggle Switcher + Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '50%',
+            background: '#1C3B24',
+            color: '#FFFFFF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(28,59,36,0.2)'
+          }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </div>
+
+          {/* Language Switcher Button (EN ↔ हिंदी) */}
+          <button 
+            onClick={() => setLang(lang === 'en' ? 'hi' : 'en')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: '#EBF7EE',
+              border: '1.5px solid #A7F3D0',
+              color: '#166534',
+              padding: '6px 12px',
+              borderRadius: '20px',
+              fontSize: '12.5px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}
+            title="Switch Language / भाषा बदलें"
+          >
+            <Globe size={14} />
+            <span>{lang === 'en' ? 'हिंदी' : 'EN'}</span>
+          </button>
+
+          {/* Rudu Farm Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#EBF7EE', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
+              <Droplets size={18} color="#15803D" />
             </div>
-            <div style={{ textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                <h2 style={{ fontSize: '22px', fontWeight: '800', margin: 0, color: '#3B2214' }}>{farmer.name}</h2>
-                <span className="badge-active-farmer">Active Farmer</span>
-              </div>
-              <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <span>ID: <strong>{farmer.id}</strong></span>
-                <span>•</span>
-                <span>Phone: <strong>{farmer.phone}</strong></span>
-              </div>
-              <div style={{ fontSize: '12px', color: '#4E2A18', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px', fontWeight: '700' }}>
-                <MapPin size={13} /> Village: <span>{farmer.village}</span>
-              </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '18px', fontWeight: '900', color: '#1C3B24', letterSpacing: '-0.3px', lineHeight: 1 }}>RUDU FARM</span>
+              <span style={{ fontSize: '10px', color: '#64748B', fontWeight: '600', marginTop: '2px' }}>Smart Dairy Management</span>
             </div>
           </div>
         </div>
 
-        {/* Quick Stats Grid inside the card */}
-        <div className="stats-row">
-          <div className="stat-col">
-            <span className="stat-label">Total Supply</span>
-            <span className="stat-val">{farmer.totalSupplied} L</span>
+        {/* Right Side: Notification Bell + Avatar Profile */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: '#F1F5F9',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            cursor: 'pointer'
+          }}>
+            <Bell size={18} color="#334155" />
+            <span style={{ position: 'absolute', top: '9px', right: '9px', width: '8px', height: '8px', borderRadius: '50%', background: '#DC2626' }} />
           </div>
-          <div className="stat-col">
-            <span className="stat-label">This Month</span>
-            <span className="stat-val">{farmer.thisMonthSupplied} L</span>
-          </div>
-          <div className="stat-col">
-            <span className="stat-label">Member Since</span>
-            <span className="stat-val">Jan 2024</span>
+
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '2px solid #1C3B24',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          }}>
+            <img src="/images/rudu_hero_farmer.jpg" alt={farmer.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/images/rudu_farmer_clean.jpg'; }} />
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Premium Sub-tabs row */}
-      <div className="farmer-subtabs-row">
-        <div
-          className={`farmer-subtab-btn ${activeSubTab === 'Withdrawal Passbook' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveSubTab('Withdrawal Passbook');
-            setShowDetailedPassbook(false);
-          }}
-        >
-          <WalletIcon />
-          <div className="tab-title">Payout Passbook</div>
-          <div className="tab-subtitle">(Withdrawals)</div>
-        </div>
-        
-        <div
-          className={`farmer-subtab-btn ${activeSubTab === 'Supply History' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveSubTab('Supply History');
-          }}
-        >
-          <MilkCanIcon />
-          <div className="tab-title" style={{ marginTop: '4px' }}>Milk Supply Ledger</div>
-        </div>
-        
-        <div
-          className={`farmer-subtab-btn ${activeSubTab === 'Details' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveSubTab('Details');
-          }}
-        >
-          <BankIcon />
-          <div className="tab-title" style={{ marginTop: '4px' }}>Bank & Profile Details</div>
-        </div>
-      </div>
+      {/* Main Content View Switcher */}
+      <div style={{ padding: '16px' }}>
 
-      {/* Tab 1: Payout Passbook Dashboard Overview */}
-      {activeSubTab === 'Withdrawal Passbook' && !showDetailedPassbook && (
-        <div>
-          {/* Lifetime Value Card Banner */}
-          <div className="lifetime-value-banner" style={{ background: 'linear-gradient(135deg, #FFFDF9 0%, #FDF4E7 100%)', borderColor: '#FBE5C9' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', zIndex: 2 }}>
-              <MilkCansIllustration />
-              <div style={{ textAlign: 'left' }}>
-                <div style={{ fontSize: '11px', color: '#C48434', fontWeight: '800', letterSpacing: '0.5px', textTransform: 'uppercase' }}>LIFETIME VALUE</div>
-                <div style={{ fontSize: '28px', fontWeight: '800', color: '#4E2A18', margin: '2px 0' }}>
-                  ₹{farmer.totalEarned.toLocaleString()}
-                </div>
-                <div style={{ fontSize: '11px', color: '#AB988B', fontWeight: '500' }}>Total earned from milk supply</div>
-              </div>
-            </div>
-            <button className="summary-badge" onClick={() => setShowDetailedPassbook(true)}>
-              <span>View Summary</span>
-              <ChevronRight size={14} />
-            </button>
-            <MilkSplashIllustration />
-          </div>
-
-
-          {/* Sub-cards 2x2 Grid */}
-          <div className="dashboard-subcards-grid">
-            {/* Cleared Payouts */}
-            <div className="premium-subcard cleared">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ textAlign: 'left' }}>
-                  <div className="icon-container">
-                    <ClearedBankIcon />
-                  </div>
-                  <div className="card-title">Cleared Payouts</div>
-                  <div className="card-value">₹{(farmer.clearedPayout || totalClearedPayouts).toLocaleString()}</div>
-                  <div className="card-subtext">Settled into bank account</div>
-                </div>
-              </div>
-              <div className="card-badge">✓ Cleared</div>
-              <button className="arrow-btn" onClick={() => setShowDetailedPassbook(true)} title="View detailed passbook">
-                <ArrowRight size={14} />
-              </button>
-            </div>
-
-            {/* Pending Balance */}
-            <div className="premium-subcard pending">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ textAlign: 'left' }}>
-                  <div className="icon-container">
-                    <PendingHourglassIcon />
-                  </div>
-                  <div className="card-title">Pending Balance</div>
-                  <div className="card-value">₹{farmer.pendingPayout.toLocaleString()}</div>
-                  <div className="card-subtext">Next settlement cycle</div>
-                </div>
-              </div>
-              <div className="card-badge">⌛ Pending</div>
-              <button className="arrow-btn" onClick={() => setShowDetailedPassbook(true)} title="View detailed passbook">
-                <ArrowRight size={14} />
-              </button>
-            </div>
-
-            {/* Advance Balance */}
-            <div className="premium-subcard advance">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ textAlign: 'left' }}>
-                  <div className="icon-container">
-                    <AdvanceTrendIcon />
-                  </div>
-                  <div className="card-title">Advance Balance</div>
-                  <div className="card-value">₹{farmer.advanceBalance.toLocaleString()}</div>
-                  <div className="card-subtext">Feed / cash advance</div>
-                </div>
-              </div>
-              <button className="pill-button" onClick={() => setIsRequestAdvanceOpen(true)}>
-                <span>Request Advance</span>
-                <ArrowRight size={12} />
-              </button>
-            </div>
-
-            {/* View Passbook Card */}
-            <div className="premium-subcard passbook">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ textAlign: 'left' }}>
-                  <div className="icon-container">
-                    <PassbookBookIcon />
-                  </div>
-                  <div className="card-title">View Passbook</div>
-                  <div className="card-value" style={{ fontSize: '16px', marginTop: '10px', height: '28px', lineHeight: '28px' }}>Passbook</div>
-                  <div className="card-subtext" style={{ marginBottom: '8px' }}>Check all your payout transactions</div>
-                </div>
-              </div>
-              <button className="pill-button" onClick={() => setShowDetailedPassbook(true)}>
-                <span>View Passbook</span>
-                <ArrowRight size={12} />
-              </button>
-            </div>
-          </div>
-
-          {/* Trust badges row */}
-          <div className="trust-badges-banner">
-            <div className="trust-badge-item">
-              <div className="trust-badge-icon-container">
-                <ShieldCheck size={18} />
-              </div>
-              <div className="trust-badge-title">100% Secure</div>
-              <div className="trust-badge-desc">Your transactions are fully protected</div>
-            </div>
+        {/* =========================================================================
+            TAB 1: MAIN DASHBOARD OVERVIEW (Exact Reference Image 1)
+           ========================================================================= */}
+        {activeTab === 'dashboard' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             
-            <div className="trust-badge-item">
-              <div className="trust-badge-icon-container">
-                <Zap size={18} />
+            {/* Greeting Header & Sunny Farm Card */}
+            <div style={{
+              position: 'relative',
+              borderRadius: '24px',
+              overflow: 'hidden',
+              background: 'linear-gradient(180deg, #FFFFFF 0%, #F4FAF5 100%)',
+              padding: '24px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 10px 25px rgba(28,59,36,0.04)'
+            }}>
+              <div style={{ position: 'relative', zIndex: 2 }}>
+                <h1 style={{ fontSize: '24px', fontWeight: '900', color: '#0F172A', margin: '0 0 4px 0' }}>
+                  {t.greeting}, {farmer.name.split(' ')[0]}! ☀️
+                </h1>
+                <p style={{ fontSize: '13.5px', color: '#64748B', margin: 0 }}>
+                  {t.todaySubtitle}
+                </p>
               </div>
-              <div className="trust-badge-title">Fast Payouts</div>
-              <div className="trust-badge-desc">Quick settlements direct to bank</div>
-            </div>
-            
-            <div className="trust-badge-item">
-              <div className="trust-badge-icon-container">
-                <Droplets size={18} />
-              </div>
-              <div className="trust-badge-title">Transparent</div>
-              <div className="trust-badge-desc">Clear ledger & no hidden charges</div>
-            </div>
-            
-            <div className="trust-badge-item">
-              <div className="trust-badge-icon-container">
-                <UserCheck size={18} />
-              </div>
-              <div className="trust-badge-title">Farmer First</div>
-              <div className="trust-badge-desc">Built for farmers, by farmers</div>
-            </div>
-            
-            <div className="trust-badge-item">
-              <div className="trust-badge-icon-container">
-                <Headphones size={18} />
-              </div>
-              <div className="trust-badge-title">24x7 Support</div>
-              <div className="trust-badge-desc">We're here to help you anytime</div>
-            </div>
-          </div>
 
-          {/* Linked Bank & Account Details Card */}
-          <div className="direct-deposit-card">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <PremiumBankBuildingSVG />
-              <div style={{ textAlign: 'left' }}>
-                <div style={{ fontSize: '10px', color: '#7C695D', fontWeight: '800', letterSpacing: '0.5px' }}>DIRECT DEPOSIT BANK ACCOUNT</div>
-                <div style={{ fontSize: '16px', fontWeight: '800', color: '#3B2214', margin: '2px 0' }}>
-                  {farmer.bankName || 'State Bank of India'}
-                </div>
-                <div style={{ fontSize: '12px', color: '#7C695D', fontWeight: '600' }}>
-                  A/C: {farmer.accNumber || 'XXXX-XXXX-4910'}
-                </div>
-                <div style={{ fontSize: '11px', color: '#AB988B', marginTop: '2px' }}>
-                  IFSC: {farmer.ifsc || 'SBIN0001234'} | UPI ID: {farmer.upiId || `${farmer.name.toLowerCase().replace(/\s+/g, '')}@upi`}
-                </div>
-              </div>
+              {/* Background Farm Landscape Art Overlay */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                bottom: 0,
+                width: '55%',
+                backgroundImage: 'url(/images/rudu_farmer_clean.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center right',
+                opacity: 0.25,
+                maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)',
+                WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)'
+              }} />
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div className="verified-badge">
-                <ShieldCheck size={14} />
-                <span>Verified Bank Account</span>
-              </div>
-              <ChevronRight size={20} style={{ color: '#7C695D' }} />
-            </div>
-          </div>
 
-          {/* Rural silhouette and tagline footer */}
-          <div className="pasture-footer-decoration">
-            <div className="pasture-footer-text">
-              <span><ShieldCheck size={12} /> Secure</span>
-              <span>•</span>
-              <span><ShieldCheck size={12} /> Verified</span>
-              <span>•</span>
-              <span>Trusted by Thousands of Farmers</span>
-            </div>
-            <CowPastureSilhouette />
-          </div>
-        </div>
-      )}
-
-      {/* Tab 1 (Alternative View): Detailed Passbook Table List */}
-      {activeSubTab === 'Withdrawal Passbook' && showDetailedPassbook && (
-        <div style={{ background: '#ffffff', borderRadius: '24px', border: '1.5px solid #EFE2D5', padding: '24px', boxShadow: '0 8px 30px rgba(78, 42, 24, 0.02)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-            <div style={{ textAlign: 'left' }}>
-              <button 
-                onClick={() => setShowDetailedPassbook(false)} 
-                style={{ background: 'none', border: 'none', color: '#4E2A18', fontWeight: '800', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', padding: 0, marginBottom: '8px' }}
-              >
-                <ArrowRight size={14} style={{ transform: 'rotate(180deg)' }} /> Back to Overview
-              </button>
-              <h3 style={{ fontSize: '18px', fontWeight: '800', margin: 0, color: '#3B2214' }}>Farmer Payout Passbook</h3>
-              <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Complete audit log of all withdrawals and bank/UPI transfers received</p>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', fontWeight: '800', color: '#4E2A18', background: '#EAF4EE', padding: '6px 14px', borderRadius: '12px' }}>
-                {farmerPayouts.length} Withdrawal Transactions
-              </span>
-              <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
-            </div>
-          </div>
-
-          {viewMode === 'card' ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-              {farmerPayouts.length > 0 ? (
-                farmerPayouts.map(p => (
-                  <div key={p.id} style={{ background: '#FFFFFF', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', boxShadow: 'var(--shadow-sm)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                      <div>
-                        <strong style={{ color: '#0F172A', fontSize: '14px' }}>{p.id}</strong>
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{p.date}</div>
-                      </div>
-                      <span className="badge badge-success">✓ {p.status || 'Cleared'}</span>
-                    </div>
-
-                    <div style={{ background: '#F8FAF9', padding: '12px', borderRadius: '8px', marginBottom: '16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Transfer Method</span>
-                        <strong style={{ fontSize: '12px', color: '#4E2A18' }}>{p.method}</strong>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Ref / UTR</span>
-                        <strong style={{ fontSize: '11px', fontFamily: 'monospace' }}>{p.reference}</strong>
-                      </div>
-                      {p.notes && <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px', fontStyle: 'italic' }}>{p.notes}</div>}
-                    </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <strong style={{ color: '#4E2A18', fontSize: '18px' }}>+₹{p.amount.toLocaleString()}</strong>
-                      <button
-                        onClick={() => setSelectedPayoutSlip(p)}
-                        className="btn btn-secondary btn-sm"
-                        style={{ background: '#EAF4EE', color: '#4E2A18', border: '1px solid #DCC5B3', fontWeight: '800', fontSize: '11px' }}
-                      >
-                        <FileText size={12} /> Receipt
-                      </button>
-                    </div>
+            {/* 4 Top Metric Cards (2x2 Grid) */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
+              {/* Card 1: Total Milk Supplied */}
+              <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)', display: 'flex', flexDirection: 'column', justifyBetween: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Droplets size={20} color="#0284C7" fill="#0284C7" />
                   </div>
-                ))
-              ) : (
-                <div style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)', gridColumn: '1 / -1' }}>
-                  No withdrawal transactions recorded yet.
+                  <span style={{ fontSize: '12px', fontWeight: '700', color: '#64748B' }}>{t.totalSupplied}</span>
                 </div>
-              )}
-            </div>
-          ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Tx ID & Date</th>
-                  <th>Payment Transfer Method</th>
-                  <th>Reference Code / UTR</th>
-                  <th>Amount Cleared</th>
-                  <th>Status</th>
-                  <th>Withdrawal Slip</th>
-                </tr>
-              </thead>
-              <tbody>
-                {farmerPayouts.length > 0 ? (
-                  farmerPayouts.map(p => (
-                    <tr key={p.id}>
-                      <td>
-                        <strong style={{ color: '#0F172A' }}>{p.id}</strong>
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{p.date}</div>
-                      </td>
-                      <td>
-                        <span style={{ fontWeight: '700', color: '#4E2A18' }}>{p.method}</span>
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{p.notes}</div>
-                      </td>
-                      <td style={{ fontFamily: 'monospace', fontSize: '12px', color: '#475569', fontWeight: '700' }}>
-                        {p.reference}
-                      </td>
-                      <td>
-                        <strong style={{ color: '#4E2A18', fontSize: '16px' }}>
-                          +₹{p.amount.toLocaleString()}
-                        </strong>
-                      </td>
-                      <td>
-                        <span className="badge badge-success">✓ {p.status || 'Cleared'}</span>
-                      </td>
-                      <td>
-                        <button
-                          onClick={() => setSelectedPayoutSlip(p)}
-                          className="btn btn-secondary btn-sm"
-                          style={{ background: '#EAF4EE', color: '#4E2A18', border: '1px solid #DCC5B3', fontWeight: '800', fontSize: '11px' }}
-                        >
-                          <FileText size={12} /> Receipt Slip
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)' }}>
-                      No withdrawal transactions recorded yet.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          )}
-        </div>
-      )}
-
-      {/* Tab 2: Supply History */}
-      {activeSubTab === 'Supply History' && (
-        <div style={{ background: '#ffffff', borderRadius: '24px', border: '1.5px solid #EFE2D5', padding: '24px', boxShadow: '0 8px 30px rgba(78, 42, 24, 0.02)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '800', margin: 0, color: '#3B2214', textAlign: 'left' }}>Complete Milk Supply Ledger</h3>
-            <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
-          </div>
-          
-          {viewMode === 'card' ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-              {farmerEntries.map(e => (
-                <div key={e.id} style={{ background: '#FFFFFF', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', boxShadow: 'var(--shadow-sm)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: '800', color: '#0F172A' }}>{e.date}</span>
-                    <span className="badge badge-info">{e.shift}</span>
-                  </div>
-
-                  <div style={{ background: '#F8FAF9', padding: '12px', borderRadius: '8px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
-                    <div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Quantity</div>
-                      <div style={{ fontWeight: '800', fontSize: '14px' }}>{e.quantity} L</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Fat / SNF</div>
-                      <div style={{ fontWeight: '800', fontSize: '14px' }}>{e.fat}% / {e.snf}%</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Rate</div>
-                      <div style={{ fontWeight: '700', fontSize: '13px' }}>₹{e.rate.toFixed(2)}/L</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Total Amount</div>
-                      <div style={{ fontWeight: '800', fontSize: '15px', color: '#4E2A18' }}>₹{e.totalAmount.toFixed(2)}</div>
-                    </div>
-                  </div>
-
-                  <button onClick={() => openSlip(e)} className="btn btn-secondary btn-sm" style={{ width: '100%', justifyContent: 'center', padding: '8px' }}>
-                    <Printer size={12} /> View Milk Slip
-                  </button>
+                <div style={{ fontSize: '26px', fontWeight: '900', color: '#0F172A', marginTop: '12px' }}>
+                  {farmer.totalSupplied || 121} L
                 </div>
-              ))}
-            </div>
-          ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Shift</th>
-                  <th>Quantity</th>
-                  <th>Fat / SNF</th>
-                  <th>Rate / L</th>
-                  <th>Total (₹)</th>
-                  <th>Slip</th>
-                </tr>
-              </thead>
-              <tbody>
-                {farmerEntries.map(e => (
-                  <tr key={e.id}>
-                    <td>{e.date}</td>
-                    <td><span className="badge badge-info">{e.shift}</span></td>
-                    <td><strong>{e.quantity} L</strong></td>
-                    <td>{e.fat}% / {e.snf}%</td>
-                    <td>₹{e.rate.toFixed(2)}</td>
-                    <td><strong style={{ color: '#4E2A18' }}>₹{e.totalAmount.toFixed(2)}</strong></td>
-                    <td>
-                      <button onClick={() => openSlip(e)} className="btn btn-secondary btn-sm">
-                        <Printer size={12} /> Milk Slip
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          )}
-        </div>
-      )}
-
-      {/* Tab 3: Details & Bank info */}
-      {activeSubTab === 'Details' && (
-        <div style={{ background: '#ffffff', borderRadius: '24px', border: '1.5px solid #EFE2D5', padding: '24px', boxShadow: '0 8px 30px rgba(78, 42, 24, 0.02)' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '18px', color: '#3B2214', textAlign: 'left' }}>Farmer Profile & Bank Account</h3>
-
-          <div className="grid-2col-responsive" style={{ gap: "20px", fontSize: "14px", textAlign: 'left' }}>
-            <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>Full Name</div>
-              <strong style={{ color: '#3B2214' }}>{farmer.name}</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>Farmer ID</div>
-              <strong style={{ color: '#3B2214' }}>{farmer.id}</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>Mobile Number</div>
-              <strong style={{ color: '#3B2214' }}>{farmer.phone}</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>Village Center</div>
-              <strong style={{ color: '#3B2214' }}>{farmer.village}</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>Aadhaar KYC</div>
-              <strong style={{ color: '#3B2214' }}>{farmer.aadhaarNumber || '9842 1048 5912'}</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>Farmer UPI ID</div>
-              <strong style={{ color: '#3B2214' }}>{farmer.upiId || `${farmer.name.toLowerCase().replace(/\s+/g, '')}@upi`}</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>Bank Name</div>
-              <strong style={{ color: '#3B2214' }}>{farmer.bankName || 'State Bank of India'}</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>Account Number</div>
-              <strong style={{ color: '#3B2214' }}>{farmer.accNumber || 'XXXX-XXXX-4910'}</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>IFSC Code</div>
-              <strong style={{ color: '#3B2214' }}>{farmer.ifsc || 'SBIN0001234'}</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>Branch Name</div>
-              <strong style={{ color: '#3B2214' }}>{farmer.branchName || 'Kheda Main Branch'}</strong>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Withdrawal Payout Receipt Slip Modal */}
-      {selectedPayoutSlip && (
-        <div className="modal-overlay" style={{ zIndex: 1200 }}>
-          <div className="modal-content" style={{ maxWidth: '440px' }}>
-            <div className="modal-header" style={{ background: 'linear-gradient(135deg, #4E2A18 0%, #8C4E2D 100%)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Printer size={18} />
-                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800', color: 'white' }}>Withdrawal Payout Receipt</h3>
-              </div>
-              <button
-                onClick={() => setSelectedPayoutSlip(null)}
-                style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="modal-body" style={{ background: '#F8FAF9', padding: '20px' }}>
-              <div className="thermal-slip printable-area">
-                <div className="header">
-                  <RuduLogo height={32} />
-                  <h2>RUDU FARM</h2>
-                  <div style={{ fontSize: '11px' }}>Official Payout Settlement Slip</div>
-                  <div style={{ fontSize: '10px', marginTop: '4px' }}>Rudu Dairy Center | Settlement Ledger</div>
-                </div>
-
-                <div className="line-item">
-                  <span>Payout Voucher ID:</span>
-                  <strong>{selectedPayoutSlip.id}</strong>
-                </div>
-                <div className="line-item">
-                  <span>Transfer Date:</span>
-                  <span>{selectedPayoutSlip.date}</span>
-                </div>
-                <div className="line-item">
-                  <span>Transfer Mode:</span>
-                  <strong>{selectedPayoutSlip.method}</strong>
-                </div>
-
-                <hr style={{ border: 'none', borderTop: '1px dashed #000', margin: '8px 0' }} />
-
-                <div className="line-item">
-                  <span>Farmer Name:</span>
-                  <strong>{farmer.name}</strong>
-                </div>
-                <div className="line-item">
-                  <span>Farmer ID:</span>
-                  <strong>{farmer.id}</strong>
-                </div>
-                <div className="line-item">
-                  <span>Bank Account / VPA:</span>
-                  <span>{farmer.upiId || farmer.accNumber}</span>
-                </div>
-
-                <hr style={{ border: 'none', borderTop: '1px dashed #000', margin: '8px 0' }} />
-
-                <div className="line-item">
-                  <span>Transaction UTR Code:</span>
-                  <strong style={{ fontSize: '11px' }}>{selectedPayoutSlip.reference}</strong>
-                </div>
-                <div className="line-item">
-                  <span>Status:</span>
-                  <strong style={{ color: '#4E2A18' }}>CLEARED & DEPOSITED</strong>
-                </div>
-
-                <div className="total-box" style={{ marginTop: '12px' }}>
-                  <span>AMOUNT CLEARED:</span>
-                  <span>₹{selectedPayoutSlip.amount.toLocaleString()}</span>
-                </div>
-
-                <div className="footer" style={{ marginTop: '16px' }}>
-                  Thank you for trusting Rudu Farm!<br />
-                  _Better Dairy. Better Tomorrow._
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#16A34A', fontWeight: '700', marginTop: '6px' }}>
+                  <span>↑ 12% from last month</span>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-                <button onClick={handlePrintPayoutSlip} className="btn btn-primary" style={{ flex: 1, justifyContent: 'center', padding: '12px' }}>
-                  <Printer size={16} /> Print Receipt
+              {/* Card 2: Member Since */}
+              <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)', display: 'flex', flexDirection: 'column', justifyBetween: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: '#FFEDD5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Calendar size={20} color="#EA580C" />
+                  </div>
+                  <span style={{ fontSize: '12px', fontWeight: '700', color: '#64748B' }}>{t.memberSince}</span>
+                </div>
+                <div style={{ fontSize: '24px', fontWeight: '900', color: '#0F172A', marginTop: '12px' }}>
+                  Jan 2024
+                </div>
+                <div style={{ fontSize: '11px', color: '#DC2626', fontWeight: '700', marginTop: '6px' }}>
+                  ❤️ {t.thankYou}
+                </div>
+              </div>
+
+              {/* Card 3: Total Payouts */}
+              <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)', display: 'flex', flexDirection: 'column', justifyBetween: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '18px', fontWeight: '900', color: '#16A34A' }}>₹</span>
+                  </div>
+                  <span style={{ fontSize: '12px', fontWeight: '700', color: '#64748B' }}>{t.totalPayouts}</span>
+                </div>
+                <div style={{ fontSize: '26px', fontWeight: '900', color: '#0F172A', marginTop: '12px' }}>
+                  ₹{(totalClearedPayouts || 7018).toLocaleString()}
+                </div>
+                <div style={{ fontSize: '11px', color: '#15803D', fontWeight: '700', marginTop: '6px' }}>
+                  💰 1 Settled Transaction
+                </div>
+              </div>
+
+              {/* Card 4: Pending Balance */}
+              <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '18px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)', display: 'flex', flexDirection: 'column', justifyBetween: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: '#FFEDD5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Clock size={20} color="#EA580C" />
+                  </div>
+                  <span style={{ fontSize: '12px', fontWeight: '700', color: '#64748B' }}>{t.pendingBalance}</span>
+                </div>
+                <div style={{ fontSize: '26px', fontWeight: '900', color: '#0F172A', marginTop: '12px' }}>
+                  ₹{(farmer.pendingPayout || 0).toLocaleString()}
+                </div>
+                <div style={{ fontSize: '11px', color: '#16A34A', fontWeight: '700', marginTop: '6px' }}>
+                  ✅ {t.allClear}
+                </div>
+              </div>
+            </div>
+
+            {/* 4 Feature Quick Action Cards (2x2 Grid matching Reference Image 1) */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
+              
+              {/* Feature 1: Milk Collection Log */}
+              <div style={{ background: '#F8FAF8', border: '1px solid #E2E8F0', borderRadius: '20px', padding: '18px', position: 'relative', overflow: 'hidden' }}>
+                <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{t.milkLogTitle}</h4>
+                <p style={{ margin: '0 0 16px 0', fontSize: '11.5px', color: '#64748B', lineHeight: '1.4' }}>{t.milkLogDesc}</p>
+                <button 
+                  onClick={() => setActiveTab('collection')}
+                  style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '8px 14px', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <span>{t.viewLogs}</span>
+                  <ArrowRight size={13} />
+                </button>
+                <img src="/milk_can_realistic.png" alt="Milk Can" style={{ position: 'absolute', right: '-10px', bottom: '-10px', width: '85px', height: '85px', opacity: 0.85, pointerEvents: 'none' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+              </div>
+
+              {/* Feature 2: Payouts & Settlements */}
+              <div style={{ background: '#F8FAF8', border: '1px solid #E2E8F0', borderRadius: '20px', padding: '18px', position: 'relative', overflow: 'hidden' }}>
+                <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{t.payoutsTitle}</h4>
+                <p style={{ margin: '0 0 16px 0', fontSize: '11.5px', color: '#64748B', lineHeight: '1.4' }}>{t.payoutsDesc}</p>
+                <button 
+                  onClick={() => setActiveTab('payouts')}
+                  style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '8px 14px', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <span>{t.viewPayouts}</span>
+                  <ArrowRight size={13} />
+                </button>
+                <img src="/images/fresh_dairy_products.png" alt="Wallet" style={{ position: 'absolute', right: '-10px', bottom: '-10px', width: '85px', height: '85px', opacity: 0.85, pointerEvents: 'none' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+              </div>
+
+              {/* Feature 3: Milk Supply Ledger */}
+              <div style={{ background: '#FFFDF9', border: '1px solid #FDE68A', borderRadius: '20px', padding: '18px', position: 'relative', overflow: 'hidden' }}>
+                <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{t.ledgerTitle}</h4>
+                <p style={{ margin: '0 0 16px 0', fontSize: '11.5px', color: '#64748B', lineHeight: '1.4' }}>{t.ledgerDesc}</p>
+                <button 
+                  onClick={() => setActiveTab('collection')}
+                  style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '8px 14px', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <span>{t.viewLedger}</span>
+                  <ArrowRight size={13} />
+                </button>
+              </div>
+
+              {/* Feature 4: Bank & Profile Details */}
+              <div style={{ background: '#F8FAF8', border: '1px solid #E2E8F0', borderRadius: '20px', padding: '18px', position: 'relative', overflow: 'hidden' }}>
+                <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{t.bankTitle}</h4>
+                <p style={{ margin: '0 0 16px 0', fontSize: '11.5px', color: '#64748B', lineHeight: '1.4' }}>{t.bankDesc}</p>
+                <button 
+                  onClick={() => setActiveTab('profile')}
+                  style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '8px 14px', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <span>{t.manageProfile}</span>
+                  <ArrowRight size={13} />
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Request Advance Modal Sheet */}
-      {isRequestAdvanceOpen && (
-        <div className="modal-overlay" style={{ zIndex: 1200 }}>
-          <div className="modal-content" style={{ maxWidth: '440px' }}>
-            <div className="modal-header" style={{ background: 'linear-gradient(135deg, #4E2A18 0%, #8C4E2D 100%)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CreditCard size={18} />
-                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800', color: 'white' }}>Request Cash / Feed Advance</h3>
+            {/* Showcase Video Banner ("Who We Are") */}
+            <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '20px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', alignItems: 'center' }}>
+                <div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: '800', color: '#16A34A', background: '#DCFCE7', padding: '4px 10px', borderRadius: '15px', marginBottom: '8px' }}>
+                    <span>🍃 {t.whoWeAre}</span>
+                  </div>
+                  <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#1C3B24', margin: '0 0 8px 0', leading: '1.2' }}>
+                    {t.empoweringTitle}
+                  </h3>
+                  <p style={{ fontSize: '12px', color: '#64748B', lineHeight: '1.5', margin: 0 }}>
+                    {t.empoweringDesc}
+                  </p>
+                </div>
+
+                <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', height: '140px', background: '#000' }}>
+                  <img src="/images/rudu_hero_farmer.jpg" alt="Farm Sunset" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.3)', cursor: 'pointer' }}>
+                      <Play size={20} color="#1C3B24" fill="#1C3B24" style={{ marginLeft: '3px' }} />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={closeAdvanceModal}
-                style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}
-              >
-                <X size={20} />
+            </div>
+
+            {/* Recent Milk Collection List */}
+            <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '20px', border: '1px solid #E2E8F0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#0F172A', margin: 0 }}>{t.recentCollection}</h3>
+                <button onClick={() => setActiveTab('collection')} style={{ background: 'none', border: 'none', color: '#15803D', fontWeight: '800', fontSize: '12.5px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span>{t.viewAll}</span>
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {(farmerEntries.length > 0 ? farmerEntries.slice(0, 4) : [
+                  { id: 'ENTRY-1484', date: '16 Aug 2025, 10:36 AM', quantity: 12, fat: 4.2, status: 'Pending' },
+                  { id: 'ENTRY-3410', date: '16 Aug 2025, 07:59 PM', quantity: 42.5, fat: 4.2, status: 'Pending' },
+                  { id: 'ENTRY-4888', date: '17 Aug 2025, 03:23 PM', quantity: 42.5, fat: 4.2, status: 'Pending' }
+                ]).map((entry, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: '16px', background: '#F8FAF8', border: '1px solid #F1F5F9' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#EBF7EE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Calendar size={18} color="#16A34A" />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '13.5px', fontWeight: '800', color: '#0F172A' }}>{entry.id || `ENTRY-${1000 + idx}`}</div>
+                        <div style={{ fontSize: '11px', color: '#64748B' }}>{entry.date || '16 Aug 2025'}</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '14px', fontWeight: '900', color: '#0F172A' }}>{entry.quantity || 12} L</div>
+                        <div style={{ fontSize: '11px', color: '#64748B' }}>{entry.fat || 4.2}% Fat</div>
+                      </div>
+                      <span style={{ fontSize: '11px', fontWeight: '800', background: '#FEF3C7', color: '#92400E', padding: '4px 10px', borderRadius: '15px' }}>
+                        {entry.status || 'Pending'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 2: MILK COLLECTION PASSBOOK (Exact Reference Image 2)
+           ========================================================================= */}
+        {activeTab === 'collection' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+            
+            {/* Header with Sunset Background */}
+            <div style={{ position: 'relative', borderRadius: '24px', overflow: 'hidden', padding: '24px', background: 'linear-gradient(135deg, #1C3B24 0%, #2A5435 100%)', color: '#FFFFFF' }}>
+              <button onClick={() => setActiveTab('dashboard')} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#FFF', padding: '6px', borderRadius: '50%', cursor: 'pointer', marginBottom: '12px' }}>
+                <ArrowLeft size={18} />
+              </button>
+              <h2 style={{ fontSize: '24px', fontWeight: '900', margin: '0 0 6px 0' }}>Milk Collection</h2>
+              <p style={{ fontSize: '13px', opacity: 0.9, margin: 0 }}>Track and manage all milk collection entries in real-time.</p>
+            </div>
+
+            {/* Top Stats Bar */}
+            <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E2E8F0', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', textAlign: 'center' }}>
+              <div>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Today's Collection</div>
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#16A34A', marginTop: '2px' }}>254 L</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>This Month</div>
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#0284C7', marginTop: '2px' }}>2,842 L</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Active Farmers</div>
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#EA580C', marginTop: '2px' }}>48</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Avg. Rate</div>
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#15803D', marginTop: '2px' }}>₹58.00</div>
+              </div>
+            </div>
+
+            {/* Shift Segmented Tabs */}
+            <div style={{ display: 'flex', gap: '8px', background: '#F1F5F9', padding: '4px', borderRadius: '30px' }}>
+              <button onClick={() => setSelectedShift('all')} style={{ flex: 1, padding: '8px', borderRadius: '20px', border: 'none', fontWeight: '800', fontSize: '12px', background: selectedShift === 'all' ? '#1C3B24' : 'transparent', color: selectedShift === 'all' ? '#FFF' : '#475569', cursor: 'pointer' }}>
+                All Entries ({farmerEntries.length || 28})
+              </button>
+              <button onClick={() => setSelectedShift('morning')} style={{ flex: 1, padding: '8px', borderRadius: '20px', border: 'none', fontWeight: '800', fontSize: '12px', background: selectedShift === 'morning' ? '#1C3B24' : 'transparent', color: selectedShift === 'morning' ? '#FFF' : '#475569', cursor: 'pointer' }}>
+                ☀️ Morning (14)
+              </button>
+              <button onClick={() => setSelectedShift('evening')} style={{ flex: 1, padding: '8px', borderRadius: '20px', border: 'none', fontWeight: '800', fontSize: '12px', background: selectedShift === 'evening' ? '#1C3B24' : 'transparent', color: selectedShift === 'evening' ? '#FFF' : '#475569', cursor: 'pointer' }}>
+                🌙 Evening (14)
               </button>
             </div>
 
-            <div className="modal-body" style={{ padding: '24px' }}>
-              {!advanceSuccess ? (
-                <form onSubmit={handleRequestAdvanceSubmit}>
-                  <div style={{ marginBottom: '16px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: '850', color: 'var(--text-main)', display: 'block', marginBottom: '8px' }}>
-                      Request Amount (₹)
-                    </label>
-                    <div className="auth-input-wrapper">
-                      <span style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-muted)', marginLeft: '12px' }}>₹</span>
-                      <input
-                        type="number"
-                        placeholder="Enter advance amount"
-                        value={advanceAmount}
-                        onChange={(e) => setAdvanceAmount(e.target.value)}
-                        style={{ fontSize: '18px', fontWeight: '800', paddingLeft: '4px' }}
-                        required
-                      />
+            {/* Entry Cards List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {(farmerEntries.length > 0 ? farmerEntries : [
+                { id: 'ENTRY-1484', date: '16 May 2025 • 06:35 AM', farmerName: farmer.name, farmerId: farmer.id, village: farmer.village, quantity: 12, fat: 4.2, snf: 8.6, amount: 696, status: 'Completed' },
+                { id: 'ENTRY-3410', date: '16 May 2025 • 07:59 AM', farmerName: 'Ramesh Kumar', farmerId: 'RF6124', village: 'Kheda', quantity: 42.5, fat: 4.2, snf: 8.6, amount: 2465, status: 'Completed' },
+                { id: 'ENTRY-4888', date: '16 May 2025 • 08:45 AM', farmerName: 'Suresh Yadav', farmerId: 'RF3311', village: 'Kheda', quantity: 42.5, fat: 4.2, snf: 8.6, amount: 2465, status: 'Completed' }
+              ]).map((item, idx) => (
+                <div key={idx} style={{ background: '#FFFFFF', borderRadius: '18px', padding: '16px', border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#EBF7EE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Calendar size={18} color="#16A34A" />
                     </div>
-                    {/* Quick Amount Suggestion Chips */}
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
-                      {['500', '1000', '2000', '5000', '10000'].map((amt) => (
-                        <button
-                          key={amt}
-                          type="button"
-                          onClick={() => setAdvanceAmount(amt)}
-                          style={{
-                            padding: '6px 12px',
-                            borderRadius: '16px',
-                            border: '1.5px solid var(--border)',
-                            background: advanceAmount === amt ? 'var(--primary)' : '#FFFFFF',
-                            color: advanceAmount === amt ? '#FFFFFF' : 'var(--text-main)',
-                            fontWeight: '800',
-                            fontSize: '11px',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          ₹{amt}
-                        </button>
-                      ))}
+                    <div>
+                      <div style={{ fontSize: '13.5px', fontWeight: '900', color: '#0F172A' }}>{item.id}</div>
+                      <div style={{ fontSize: '11px', color: '#64748B' }}>{item.date}</div>
                     </div>
                   </div>
 
-                  <div style={{ marginBottom: '20px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: '850', color: 'var(--text-main)', display: 'block', marginBottom: '8px' }}>
-                      Purpose / Reason
-                    </label>
-                    <select
-                      value={advanceReason}
-                      onChange={(e) => setAdvanceReason(e.target.value)}
-                      style={{
-                        width: '100%',
-                        height: '46px',
-                        borderRadius: '12px',
-                        border: '1.5px solid var(--border)',
-                        padding: '0 12px',
-                        fontSize: '13.5px',
-                        fontWeight: '700',
-                        color: 'var(--text-main)',
-                        background: '#FFFFFF'
-                      }}
-                    >
-                      <option value="Cattle Feed Purchase">Cattle Feed Purchase</option>
-                      <option value="Veterinary Care & Medicines">Veterinary Care & Medicines</option>
-                      <option value="Seeds & Farming Supplies">Seeds & Farming Supplies</option>
-                      <option value="Family Expense / Emergency">Family Expense / Emergency</option>
-                    </select>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '13.5px', fontWeight: '900', color: '#0F172A' }}>{item.quantity} L</div>
+                    <div style={{ fontSize: '10.5px', color: '#64748B' }}>{item.fat}% Fat | {item.snf || 8.6}% SNF</div>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="auth-submit-btn"
-                    disabled={advanceLoading}
-                    style={{
-                      width: '100%',
-                      padding: '14px',
-                      borderRadius: '30px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
-                    }}
-                  >
-                    {advanceLoading ? (
-                      <span>Processing Request...</span>
-                    ) : (
-                      <>
-                        <span>Submit Advance Request</span>
-                        <ArrowRight size={16} />
-                      </>
-                    )}
-                  </button>
-                </form>
-              ) : (
-                <div style={{ textAlign: 'center', padding: '10px 0' }}>
-                  <div style={{
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                    background: 'rgba(34, 197, 94, 0.1)',
-                    color: '#22C55E',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 16px'
-                  }}>
-                    <CheckCircle2 size={32} />
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '14px', fontWeight: '900', color: '#16A34A' }}>₹{item.amount}</div>
+                    <span style={{ fontSize: '10px', fontWeight: '800', background: '#DCFCE7', color: '#15803D', padding: '2px 8px', borderRadius: '10px' }}>
+                      {item.status || 'Completed'}
+                    </span>
                   </div>
-                  <h3 style={{ fontSize: '18px', fontWeight: '950', color: 'var(--text-main)', margin: '0 0 8px' }}>Request Approved!</h3>
-                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '0 0 20px', lineHeight: '1.4' }}>
-                    An amount of <strong>₹{parseFloat(advanceAmount).toLocaleString()}</strong> for <em>{advanceReason}</em> has been approved and credited to your Advance account.
-                  </p>
-                  
-                  <div style={{ background: 'var(--bg-subtle)', padding: '12px', borderRadius: '12px', fontSize: '12px', color: 'var(--text-main)', marginBottom: '24px', textAlign: 'left' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                      <span>Transaction ID:</span>
-                      <strong style={{ fontFamily: 'monospace' }}>{createdTransactionId}</strong>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Settlement Mode:</span>
-                      <strong>Insta-Credit (Direct)</strong>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={closeAdvanceModal}
-                    className="btn btn-primary"
-                    style={{ width: '100%', padding: '12px', borderRadius: '30px', justifyContent: 'center' }}
-                  >
-                    Done
-                  </button>
                 </div>
-              )}
+              ))}
+            </div>
+
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 3: PAYOUTS & SETTLEMENTS (Exact Reference Image 3)
+           ========================================================================= */}
+        {activeTab === 'payouts' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+            
+            {/* Header Banner */}
+            <div style={{ position: 'relative', borderRadius: '24px', overflow: 'hidden', padding: '24px', background: 'linear-gradient(135deg, #1C3B24 0%, #15803D 100%)', color: '#FFFFFF' }}>
+              <button onClick={() => setActiveTab('dashboard')} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#FFF', padding: '6px', borderRadius: '50%', cursor: 'pointer', marginBottom: '12px' }}>
+                <ArrowLeft size={18} />
+              </button>
+              <h2 style={{ fontSize: '24px', fontWeight: '900', margin: '0 0 6px 0' }}>Payouts & Settlement</h2>
+              <p style={{ fontSize: '13px', opacity: 0.9, margin: 0 }}>Track your payments, settlements and earnings in one place.</p>
+            </div>
+
+            {/* Top Metrics Cards */}
+            <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E2E8F0', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', textAlign: 'center' }}>
+              <div>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Total Paid</div>
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#16A34A', marginTop: '2px' }}>₹{(totalClearedPayouts || 7018).toLocaleString()}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Pending Amount</div>
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#EA580C', marginTop: '2px' }}>₹0</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Upcoming</div>
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#0284C7', marginTop: '2px' }}>₹0</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Total Farmers</div>
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#1C3B24', marginTop: '2px' }}>48</div>
+              </div>
+            </div>
+
+            {/* Payout Card & Breakdown */}
+            <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '900', color: '#0F172A' }}>PAY-281</h3>
+                  <div style={{ fontSize: '12px', color: '#64748B' }}>16 May 2025 • 10:36 AM</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '20px', fontWeight: '900', color: '#16A34A' }}>₹7,018</div>
+                  <span style={{ fontSize: '11px', fontWeight: '800', background: '#DCFCE7', color: '#15803D', padding: '3px 10px', borderRadius: '12px' }}>Cleared</span>
+                </div>
+              </div>
+
+              {/* Breakdown Sheet */}
+              <div style={{ background: '#F8FAF8', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12.5px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748B' }}>
+                  <span>Milk Collection Period</span>
+                  <strong style={{ color: '#0F172A' }}>01 May 2025 - 15 May 2025</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748B' }}>
+                  <span>Total Milk Supplied</span>
+                  <strong style={{ color: '#0F172A' }}>121 L</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748B' }}>
+                  <span>Avg. Rate</span>
+                  <strong style={{ color: '#0F172A' }}>₹58.00 / L</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#16A34A', fontWeight: '900', fontSize: '14px', paddingTop: '8px', borderTop: '1px dashed #CBD5E1' }}>
+                  <span>Total Amount</span>
+                  <span>₹7,018</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Support Callout Box */}
+            <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '20px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#16A34A', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Headphones size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '13.5px', fontWeight: '800', color: '#14532D' }}>{t.supportHelp}</div>
+                  <div style={{ fontSize: '11.5px', color: '#166534' }}>{t.supportDesc}</div>
+                </div>
+              </div>
+              <button style={{ background: '#1C3B24', color: '#FFF', border: 'none', borderRadius: '20px', padding: '8px 16px', fontSize: '12px', fontWeight: '800', cursor: 'pointer' }}>
+                {t.contactSupport}
+              </button>
+            </div>
+
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 4: BANK & PROFILE DETAILS
+           ========================================================================= */}
+        {activeTab === 'profile' && (
+          <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '24px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#1C3B24', marginBottom: '16px' }}>Bank & Profile Info</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
+              <div style={{ background: '#F8FAF8', padding: '14px', borderRadius: '16px', border: '1px solid #E2E8F0' }}>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Farmer Name</div>
+                <div style={{ fontSize: '15px', fontWeight: '800', color: '#0F172A', marginTop: '2px' }}>{farmer.name}</div>
+              </div>
+              <div style={{ background: '#F8FAF8', padding: '14px', borderRadius: '16px', border: '1px solid #E2E8F0' }}>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Farmer Code / ID</div>
+                <div style={{ fontSize: '15px', fontWeight: '800', color: '#0F172A', marginTop: '2px' }}>{farmer.id}</div>
+              </div>
+              <div style={{ background: '#F8FAF8', padding: '14px', borderRadius: '16px', border: '1px solid #E2E8F0' }}>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Mobile Phone</div>
+                <div style={{ fontSize: '15px', fontWeight: '800', color: '#0F172A', marginTop: '2px' }}>{farmer.phone}</div>
+              </div>
+              <div style={{ background: '#F8FAF8', padding: '14px', borderRadius: '16px', border: '1px solid #E2E8F0' }}>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: '700' }}>Village / Location</div>
+                <div style={{ fontSize: '15px', fontWeight: '800', color: '#0F172A', marginTop: '2px' }}>{farmer.village}</div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+      </div>
+
+      {/* =========================================================================
+          BOTTOM FLOATING NAVIGATION BAR (Exact Reference Image 1 & 2)
+         ========================================================================= */}
+      <nav style={{
+        position: 'fixed',
+        bottom: '16px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: 'calc(100% - 32px)',
+        maxWidth: '480px',
+        background: '#FFFFFF',
+        borderRadius: '35px',
+        padding: '8px 16px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 15px 35px rgba(0,0,0,0.15)',
+        border: '1px solid #E2E8F0',
+        zIndex: 1000
+      }}>
+        {/* 1. Dashboard */}
+        <button 
+          onClick={() => setActiveTab('dashboard')}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            border: 'none',
+            background: activeTab === 'dashboard' ? '#EBF7EE' : 'transparent',
+            color: activeTab === 'dashboard' ? '#1C3B24' : '#64748B',
+            padding: '6px 14px',
+            borderRadius: '20px',
+            cursor: 'pointer'
+          }}
+        >
+          <LayoutDashboard size={18} />
+          <span style={{ fontSize: '10.5px', fontWeight: '800' }}>{t.navDashboard}</span>
+        </button>
+
+        {/* 2. Collection */}
+        <button 
+          onClick={() => setActiveTab('collection')}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            border: 'none',
+            background: activeTab === 'collection' ? '#EBF7EE' : 'transparent',
+            color: activeTab === 'collection' ? '#1C3B24' : '#64748B',
+            padding: '6px 14px',
+            borderRadius: '20px',
+            cursor: 'pointer'
+          }}
+        >
+          <Receipt size={18} />
+          <span style={{ fontSize: '10.5px', fontWeight: '800' }}>{t.navCollection}</span>
+        </button>
+
+        {/* 3. Floating Center Action Button (+) */}
+        <button 
+          onClick={() => setActiveTab('collection')}
+          style={{
+            width: '52px',
+            height: '52px',
+            borderRadius: '50%',
+            background: '#1C3B24',
+            color: '#FFFFFF',
+            border: '4px solid #FFFFFF',
+            boxShadow: '0 8px 20px rgba(28,59,36,0.35)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            marginTop: '-24px'
+          }}
+        >
+          <Plus size={24} />
+        </button>
+
+        {/* 4. Payouts */}
+        <button 
+          onClick={() => setActiveTab('payouts')}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            border: 'none',
+            background: activeTab === 'payouts' ? '#EBF7EE' : 'transparent',
+            color: activeTab === 'payouts' ? '#1C3B24' : '#64748B',
+            padding: '6px 14px',
+            borderRadius: '20px',
+            cursor: 'pointer'
+          }}
+        >
+          <Wallet size={18} />
+          <span style={{ fontSize: '10.5px', fontWeight: '800' }}>{t.navPayouts}</span>
+        </button>
+
+        {/* 5. Profile */}
+        <button 
+          onClick={() => setActiveTab('profile')}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            border: 'none',
+            background: activeTab === 'profile' ? '#EBF7EE' : 'transparent',
+            color: activeTab === 'profile' ? '#1C3B24' : '#64748B',
+            padding: '6px 14px',
+            borderRadius: '20px',
+            cursor: 'pointer'
+          }}
+        >
+          <User size={18} />
+          <span style={{ fontSize: '10.5px', fontWeight: '800' }}>{t.navProfile}</span>
+        </button>
+      </nav>
+
     </div>
   );
 };
