@@ -33,7 +33,8 @@ import {
   Wallet,
   Receipt,
   LayoutDashboard,
-  DollarSign
+  DollarSign,
+  Truck
 } from 'lucide-react';
 
 // Language Dictionary for Farmer Portal (English ↔ Hindi)
@@ -316,59 +317,124 @@ export const FarmerDashboard = ({ initialTab }) => {
               </div>
             </div>
 
-            {/* 4 Feature Quick Action Cards */}
+            </div>
+
+            {/* Today's Collection Card (New) */}
+            <div style={{ background: '#F4FCF7', border: '1px solid #BBF7D0', borderRadius: '24px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
+              {/* Left Content */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', zIndex: 2 }}>
+                <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: '#D1FAE5', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(22, 163, 74, 0.15)', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
+                  {/* Pseudo-3D illustration using gradients and shapes as a pure CSS fallback */}
+                  <div style={{ position: 'absolute', bottom: '15px', left: '15px', width: '24px', height: '35px', background: 'linear-gradient(90deg, #94A3B8, #E2E8F0)', borderRadius: '4px' }}></div>
+                  <div style={{ position: 'absolute', bottom: '10px', right: '12px', width: '20px', height: '25px', background: 'linear-gradient(90deg, #CBD5E1, #F1F5F9)', borderRadius: '4px' }}></div>
+                  <div style={{ position: 'absolute', top: '15px', right: '20px', fontSize: '24px' }}>🥛</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: '#16A34A', letterSpacing: '0.5px', textTransform: 'uppercase' }}>{t.todayCollection}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '2px' }}>
+                    <span style={{ fontSize: '32px', fontWeight: '900', color: '#0F172A', lineHeight: 1 }}>{filteredEntries.length > 0 ? filteredEntries[0].quantity : '42'} L</span>
+                    <span style={{ fontSize: '13px', fontWeight: '800', color: '#16A34A', background: '#DCFCE7', padding: '4px 8px', borderRadius: '8px' }}>₹{filteredEntries.length > 0 ? filteredEntries[0].totalAmount || Math.round(filteredEntries[0].quantity * 50) : '2,520'}</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#16A34A', fontWeight: '700', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>{filteredEntries.length > 0 ? filteredEntries.length : '6'} Entries</span>
+                    <span>•</span>
+                    <span>Last updated 10:45 AM</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right Content */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-end', gap: '10px', zIndex: 2, height: '100%' }}>
+                <div style={{ position: 'absolute', right: '-20px', top: '-10px', opacity: 0.15, transform: 'scale(1.5)' }}>
+                   <TrendingUp size={100} color="#16A34A" strokeWidth={2} />
+                </div>
+                <button onClick={() => setActiveTab('collection')} style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '8px 16px', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', zIndex: 3, position: 'relative', marginTop: '30px' }}>
+                  View Details <ArrowRight size={14} />
+                </button>
+              </div>
+            </div>
+
+            {/* 4 Feature Quick Action Cards (Redesigned matching screenshot) */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
               
               {/* Feature 1: Milk Collection Log */}
-              <div style={{ background: '#F8FAF8', border: '1px solid #E2E8F0', borderRadius: '20px', padding: '18px', position: 'relative', overflow: 'hidden' }}>
-                <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{t.milkLogTitle}</h4>
-                <p style={{ margin: '0 0 16px 0', fontSize: '11.5px', color: '#64748B', lineHeight: '1.4' }}>{t.milkLogDesc}</p>
-                <button 
-                  onClick={() => setActiveTab('collection')}
-                  style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '8px 14px', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                >
-                  <span>{t.viewLogs}</span>
-                  <ArrowRight size={13} />
-                </button>
+              <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <FileText size={20} color="#16A34A" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <h4 style={{ margin: '0 0 2px 0', fontSize: '14.5px', fontWeight: '900', color: '#0F172A', lineHeight: '1.2' }}>{t.milkLogTitle}</h4>
+                    <p style={{ margin: '0 0 12px 0', fontSize: '11px', color: '#64748B', lineHeight: '1.3' }}>{t.milkLogDesc}</p>
+                    <button 
+                      onClick={() => setActiveTab('collection')}
+                      style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '7px 14px', fontSize: '11px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', width: 'fit-content' }}
+                    >
+                      <span>{t.viewLogs}</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* Feature 2: Payouts & Settlements */}
-              <div style={{ background: '#F8FAF8', border: '1px solid #E2E8F0', borderRadius: '20px', padding: '18px', position: 'relative', overflow: 'hidden' }}>
-                <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{t.payoutsTitle}</h4>
-                <p style={{ margin: '0 0 16px 0', fontSize: '11.5px', color: '#64748B', lineHeight: '1.4' }}>{t.payoutsDesc}</p>
-                <button 
-                  onClick={() => setActiveTab('payouts')}
-                  style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '8px 14px', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                >
-                  <span>{t.viewPayouts}</span>
-                  <ArrowRight size={13} />
-                </button>
+              <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Wallet size={20} color="#16A34A" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <h4 style={{ margin: '0 0 2px 0', fontSize: '14.5px', fontWeight: '900', color: '#0F172A', lineHeight: '1.2' }}>{t.payoutsTitle}</h4>
+                    <p style={{ margin: '0 0 12px 0', fontSize: '11px', color: '#64748B', lineHeight: '1.3' }}>{t.payoutsDesc}</p>
+                    <button 
+                      onClick={() => setActiveTab('payouts')}
+                      style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '7px 14px', fontSize: '11px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', width: 'fit-content' }}
+                    >
+                      <span>{t.viewPayouts}</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              {/* Feature 3: Milk Supply Ledger */}
-              <div style={{ background: '#FFFDF9', border: '1px solid #FDE68A', borderRadius: '20px', padding: '18px', position: 'relative', overflow: 'hidden' }}>
-                <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{t.ledgerTitle}</h4>
-                <p style={{ margin: '0 0 16px 0', fontSize: '11.5px', color: '#64748B', lineHeight: '1.4' }}>{t.ledgerDesc}</p>
-                <button 
-                  onClick={() => setActiveTab('collection')}
-                  style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '8px 14px', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                >
-                  <span>{t.viewLedger}</span>
-                  <ArrowRight size={13} />
-                </button>
+              {/* Feature 3: Milk Supply */}
+              <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Truck size={20} color="#D97706" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <h4 style={{ margin: '0 0 2px 0', fontSize: '14.5px', fontWeight: '900', color: '#0F172A', lineHeight: '1.2' }}>{t.ledgerTitle}</h4>
+                    <p style={{ margin: '0 0 12px 0', fontSize: '11px', color: '#64748B', lineHeight: '1.3' }}>{t.ledgerDesc}</p>
+                    <button 
+                      onClick={() => setActiveTab('collection')}
+                      style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '7px 14px', fontSize: '11px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', width: 'fit-content' }}
+                    >
+                      <span>{t.viewLedger}</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* Feature 4: Bank & Profile Details */}
-              <div style={{ background: '#F8FAF8', border: '1px solid #E2E8F0', borderRadius: '20px', padding: '18px', position: 'relative', overflow: 'hidden' }}>
-                <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{t.bankTitle}</h4>
-                <p style={{ margin: '0 0 16px 0', fontSize: '11.5px', color: '#64748B', lineHeight: '1.4' }}>{t.bankDesc}</p>
-                <button 
-                  onClick={() => setActiveTab('profile')}
-                  style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '8px 14px', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                >
-                  <span>{t.manageProfile}</span>
-                  <ArrowRight size={13} />
-                </button>
+              <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E2E8F0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#F3E8FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Building size={20} color="#9333EA" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <h4 style={{ margin: '0 0 2px 0', fontSize: '14.5px', fontWeight: '900', color: '#0F172A', lineHeight: '1.2' }}>{t.bankTitle}</h4>
+                    <p style={{ margin: '0 0 12px 0', fontSize: '11px', color: '#64748B', lineHeight: '1.3' }}>{t.bankDesc}</p>
+                    <button 
+                      onClick={() => setActiveTab('profile')}
+                      style={{ background: '#1C3B24', color: '#FFFFFF', border: 'none', borderRadius: '20px', padding: '7px 14px', fontSize: '11px', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', width: 'fit-content' }}
+                    >
+                      <span>{t.manageProfile}</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
