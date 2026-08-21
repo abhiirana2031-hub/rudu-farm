@@ -317,8 +317,6 @@ export const FarmerDashboard = ({ initialTab }) => {
               </div>
             </div>
 
-            </div>
-
             {/* Today's Collection Card (New) */}
             <div style={{ background: '#F4FCF7', border: '1px solid #BBF7D0', borderRadius: '24px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
               {/* Left Content */}
