@@ -1,0 +1,77 @@
+# Robots.txt for Rudu Dairy
+# Official Website: https://rududairy.com
+# Contact: Rududairy@gmail.com
+
+# Allow all general crawlers — full public pages only
+User-agent: *
+Allow: /
+Allow: /images/
+Allow: /sitemap.xml
+Disallow: /admin
+Disallow: /admin/
+Disallow: /operator
+Disallow: /operator/
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /private/
+Disallow: /*.json$
+Crawl-delay: 2
+
+# Google — allow everything public
+User-agent: Googlebot
+Allow: /
+Allow: /images/
+Disallow: /admin/
+Disallow: /operator/
+Disallow: /api/
+
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /public/
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /operator/
+Disallow: /api/
+
+# AI Crawlers — explicitly allowed for ChatGPT, Claude, Gemini, Perplexity
+User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+Disallow: /operator/
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin/
+Disallow: /operator/
+Disallow: /api/
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin/
+Disallow: /operator/
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin/
+Disallow: /operator/
+Disallow: /api/
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+Sitemap: https://rududairy.com/sitemap.xml
