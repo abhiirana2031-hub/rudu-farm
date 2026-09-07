@@ -1,0 +1,171 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUser(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Check if user is Super Admin
+    function isSuperAdmin() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'SUPER_ADMIN';
+    }
+
+    // Check if user is member of a tenant
+    function getMembership(tenantId) {
+      return get(/databases/$(database)/documents/tenants/$(tenantId)/members/$(request.auth.uid)).data;
+    }
+
+    function isTenantMember(tenantId) {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/tenants/$(tenantId)/members/$(request.auth.uid));
+    }
+
+    function isTenantAdmin(tenantId) {
+      return isSuperAdmin() || (isTenantMember(tenantId) && getMembership(tenantId).role == 'TENANT_ADMIN');
+    }
+
+    function isOperator(tenantId) {
+      return isTenantAdmin(tenantId) || (isTenantMember(tenantId) && getMembership(tenantId).role == 'OPERATOR');
+    }
+
+    function isFarmer(tenantId, farmerId) {
+      return isTenantMember(tenantId) &&
+        (isTenantAdmin(tenantId) || getMembership(tenantId).farmerId == farmerId || request.auth.uid == farmerId);
+    }
+
+    // Global User Profiles
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isUser(userId) || isSuperAdmin();
+    }
+
+    // SaaS Platform Plans & Subscriptions
+    match /plans/{planId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+
+    match /subscriptions/{subscriptionId} {
+      allow read: if isSuperAdmin() || (isAuthenticated() && resource.data.tenantId != null && isTenantAdmin(resource.data.tenantId));
+      allow write: if isSuperAdmin();
+    }
+
+    // Tenant Scoped Hierarchy
+    match /tenants/{tenantId} {
+      allow read: if isTenantMember(tenantId) || isSuperAdmin();
+      allow write: if isTenantAdmin(tenantId) || isSuperAdmin();
+
+      // Tenant Members & Roles
+      match /members/{userId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isTenantAdmin(tenantId);
+      }
+
+      // Farmers in Tenant
+      match /farmers/{farmerId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isTenantAdmin(tenantId) || isOperator(tenantId);
+      }
+
+      // Employees / Operators
+      match /employees/{employeeId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isTenantAdmin(tenantId);
+      }
+
+      // Collection Centers
+      match /collectionCenters/{centerId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isTenantAdmin(tenantId);
+      }
+
+      // Operator Schedules
+      match /operatorSchedules/{scheduleId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isTenantAdmin(tenantId);
+      }
+
+      // Operator Sessions
+      match /operatorSessions/{sessionId} {
+        allow read: if isTenantMember(tenantId);
+        allow create: if isOperator(tenantId);
+        allow update: if isOperator(tenantId) || isTenantAdmin(tenantId);
+        allow delete: if isTenantAdmin(tenantId);
+      }
+
+      // Milk Collections (Intakes)
+      match /milkCollections/{collectionId} {
+        allow read: if isTenantMember(tenantId);
+        allow create: if isOperator(tenantId);
+        allow update, delete: if isTenantAdmin(tenantId);
+      }
+
+      // Rate Charts & Rules
+      match /milkRates/{rateId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isTenantAdmin(tenantId);
+      }
+
+      // Financial Ledger
+      match /ledgerTransactions/{transactionId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isTenantAdmin(tenantId) || isOperator(tenantId);
+      }
+
+      // Payments & Disbursements
+      match /payments/{paymentId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isTenantAdmin(tenantId);
+      }
+
+      // Receipts
+      match /receipts/{receiptId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isOperator(tenantId) || isTenantAdmin(tenantId);
+      }
+
+      // Settings
+      match /settings/{settingId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isTenantAdmin(tenantId);
+      }
+
+      // Audit Logs (Write only, immutable)
+      match /auditLogs/{auditId} {
+        allow read: if isTenantAdmin(tenantId);
+        allow create: if isAuthenticated();
+        allow update, delete: if false; // Immutable audit logs
+      }
+
+      // Quality Tests & Tanker Dispatches
+      match /qualityTests/{testId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isOperator(tenantId) || isTenantAdmin(tenantId);
+      }
+
+      match /tankerDispatches/{dispatchId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isOperator(tenantId) || isTenantAdmin(tenantId);
+      }
+
+      // Notifications
+      match /notifications/{notificationId} {
+        allow read: if isTenantMember(tenantId);
+        allow write: if isTenantAdmin(tenantId) || isOperator(tenantId);
+      }
+    }
+
+    // Default catch-all for flat collections (backward compatibility)
+    match /{document=**} {
+      allow read, write: if isAuthenticated() || isSuperAdmin();
+    }
+  }
+}
