@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -8372,13 +8372,22 @@
   background-color: #006fd6;
 }
 
-/* Adjusted scroll-to-top position to avoid overlapping with floating chat */
+/* Adjusted scroll-to-top position to avoid overlapping with floating chat or cards */
 .back-to-top-btn {
   right: 24px !important;
-  bottom: 96px !important;
+  bottom: 80px !important;
   background-color: #ffffff !important;
   color: #03081e !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+}
+
+@media (max-width: 640px) {
+  .back-to-top-btn {
+    right: 14px !important;
+    bottom: 18px !important;
+    width: 38px !important;
+    height: 38px !important;
+  }
 }
 
 .back-to-top-btn:hover {
@@ -8649,3 +8658,13 @@ iframe[title*="chat"] {
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+/* Editorial Serif & Handwriting typography utilities */
+.font-editorial-serif {
+  font-family: 'Playfair Display', Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+
+.font-handwriting {
+  font-family: 'Caveat', 'Dancing Script', 'Marck Script', cursive, sans-serif;
+}
+

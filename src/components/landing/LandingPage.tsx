@@ -18,6 +18,7 @@ import { ProductOfferModal } from './ProductOfferModal';
 import { PurityBatchChecker } from './PurityBatchChecker';
 import { SubscriptionCalculator } from './SubscriptionCalculator';
 import { MilkComparisonSection } from './MilkComparisonSection';
+import { AboutUsSection } from './AboutUsSection';
 import { 
   Milk, 
   Users, 
@@ -716,198 +717,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
 
         {/* 6. About Us Section */}
         {(activeView === 'home' || activeView === 'about') && (
-          <section id="about" className="about-us-section scroll-mt-20">
-            <div className="about-us-container">
-              <div className="landing-section-header text-center mb-8">
-                <span className="section-tagline">Who We Are</span>
-                <h2 className="section-main-title">About Rudu Dairy</h2>
-                <p className="section-desc">Pioneering transparent milk collection, modern cold-chain infrastructure, and empowering village dairy farmers across Northern India.</p>
-              </div>
-
-              {/* Brand Values Badges */}
-              <div className="flex flex-wrap justify-center gap-3 mb-10">
-                <div className="flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-full text-xs font-bold border border-red-200">
-                  <Heart size={15} /> <span>Farmer First</span>
-                </div>
-                <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-xs font-bold border border-emerald-200">
-                  <Leaf size={15} /> <span>100% Natural</span>
-                </div>
-                <div className="flex items-center gap-2 bg-amber-50 text-amber-700 px-4 py-2 rounded-full text-xs font-bold border border-amber-200">
-                  <Award size={15} /> <span>GC Certified</span>
-                </div>
-                <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-xs font-bold border border-blue-200">
-                  <ShieldCheck size={15} /> <span>Zero Adulteration</span>
-                </div>
-              </div>
-
-              {/* Sub Navigation Tabs */}
-              <div className="about-subtabs-row">
-                <button className={`about-tab-btn ${aboutSubTab === 'story' ? 'active' : ''}`} onClick={() => setAboutSubTab('story')}>
-                  <BookOpen size={16} /> <span>Company Story</span>
-                </button>
-                <button className={`about-tab-btn ${aboutSubTab === 'mission' ? 'active' : ''}`} onClick={() => setAboutSubTab('mission')}>
-                  <Target size={16} /> <span>Mission & Vision</span>
-                </button>
-                <button className={`about-tab-btn ${aboutSubTab === 'team' ? 'active' : ''}`} onClick={() => setAboutSubTab('team')}>
-                  <Users size={16} /> <span>Our Leadership</span>
-                </button>
-                <button className={`about-tab-btn ${aboutSubTab === 'infrastructure' ? 'active' : ''}`} onClick={() => setAboutSubTab('infrastructure')}>
-                  <Building2 size={16} /> <span>Infrastructure</span>
-                </button>
-                <button className={`about-tab-btn ${aboutSubTab === 'certifications' ? 'active' : ''}`} onClick={() => setAboutSubTab('certifications')}>
-                  <Award size={16} /> <span>Certifications</span>
-                </button>
-              </div>
-
-              {/* Tab 1: Company Story */}
-              {aboutSubTab === 'story' && (
-                <div className="about-content-card animated-fade-in">
-                  <div className="story-grid">
-                    <div className="story-text-col">
-                      <h3>Founded in the Heart of Mathura Dairy Belt</h3>
-                      <p>
-                        Established in 2018, Rudu Farm was born out of a simple commitment: to eliminate milk weight manipulation, fat testing disputes, and delayed payouts that traditionally plagued rural dairy farmers.
-                      </p>
-                      <p>
-                        By deploying digital Automated Milk Collection Units (AMCUs) directly to village hubs, we created a 100% transparent ecosystem where every drop of milk is tested digitally, weighed accurately, and recorded instantly on cloud servers.
-                      </p>
-                      <div className="story-highlights-row">
-                        <div className="story-highlight-box">
-                          <span className="highlight-number">500+</span>
-                          <span className="highlight-label">Partner Villages</span>
-                        </div>
-                        <div className="story-highlight-box">
-                          <span className="highlight-number">100%</span>
-                          <span className="highlight-label">Automated Payouts</span>
-                        </div>
-                        <div className="story-highlight-box">
-                          <span className="highlight-number">0%</span>
-                          <span className="highlight-label">Preservative Added</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="story-visual-col">
-                      <img src="/images/fresh_dairy_products.png" alt="Rudu Farm Story" className="story-img" />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Tab 2: Mission & Vision */}
-              {aboutSubTab === 'mission' && (
-                <div className="about-content-card animated-fade-in">
-                  <div className="mission-vision-grid">
-                    <div className="mv-card mission-card">
-                      <div className="mv-icon-wrapper"><Target size={28} /></div>
-                      <h3>Our Mission</h3>
-                      <p>
-                        To empower rural dairy farmers with transparent daily milk pricing, zero-error automated banking payouts, and modern veterinary support, while delivering unadulterated, grade-A pure dairy products to every Indian home.
-                      </p>
-                    </div>
-                    <div className="mv-card vision-card">
-                      <div className="mv-icon-wrapper"><Eye size={28} /></div>
-                      <h3>Our Vision</h3>
-                      <p>
-                        To become India's premier tech-driven dairy cooperative—setting gold standards in cold-chain purity, zero-emission logistics, and sustainable indigenous cattle care.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Tab 3: Team */}
-              {aboutSubTab === 'team' && (
-                <div className="about-content-card animated-fade-in">
-                  <div className="team-grid">
-                    <div className="team-card">
-                      <div className="team-avatar-box">RV</div>
-                      <h4>Rameshwar Verma</h4>
-                      <span className="team-role">Founder & Managing Director</span>
-                      <p>20+ years of dairy cooperative leadership in Uttar Pradesh. Pioneer of rural digitization.</p>
-                    </div>
-                    <div className="team-card">
-                      <div className="team-avatar-box">SR</div>
-                      <h4>Dr. Sunita Rao</h4>
-                      <span className="team-role">Head of Quality & Veterinary Health</span>
-                      <p>Ex-NDRI Scientist specializing in cattle nutrition, disease prevention, and A2 protein testing.</p>
-                    </div>
-                    <div className="team-card">
-                      <div className="team-avatar-box">VS</div>
-                      <h4>Vikramaditya Singh</h4>
-                      <span className="team-role">Chief Technology Officer</span>
-                      <p>Architect of Rudu's AMCU IoT hardware integration and instant farmer payment gateway.</p>
-                    </div>
-                    <div className="team-card">
-                      <div className="team-avatar-box">PS</div>
-                      <h4>Priya Sharma</h4>
-                      <span className="team-role">Head of Cold Storage & Logistics</span>
-                      <p>Oversees 45+ Bulk Milk Chilling units ensuring continuous 4°C cold-chain maintenance.</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Tab 4: Infrastructure */}
-              {aboutSubTab === 'infrastructure' && (
-                <div className="about-content-card animated-fade-in">
-                  <div className="infra-grid">
-                    <div className="infra-card">
-                      <div className="infra-icon"><Building2 size={24} /></div>
-                      <h4>4°C Bulk Milk Coolers (BMC)</h4>
-                      <p>45+ chilling stations situated within 3km of village hubs, cooling fresh milk below 4°C in 30 minutes to lock in freshness.</p>
-                    </div>
-                    <div className="infra-card">
-                      <div className="infra-icon"><Droplets size={24} /></div>
-                      <h4>Ultrasonic AMCU Testing</h4>
-                      <p>High-precision digital fat & SNF analyzers integrated with thermal print slip generators and solar backup power.</p>
-                    </div>
-                    <div className="infra-card">
-                      <div className="infra-icon"><ShieldCheck size={24} /></div>
-                      <h4>NABL Central Testing Lab</h4>
-                      <p>State-of-the-art Gas Chromatography & HPLC testing equipment for multi-spectrum adulterant screening.</p>
-                    </div>
-                    <div className="infra-card">
-                      <div className="infra-icon"><Sliders size={24} /></div>
-                      <h4>Automated Touchless Packaging</h4>
-                      <p>Hermetically sealed packaging lines operating in clean-room environments without human contact.</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Tab 5: Certifications */}
-              {aboutSubTab === 'certifications' && (
-                <div className="about-content-card animated-fade-in">
-                  <div className="cert-grid">
-                    <div className="cert-card">
-                      <div className="cert-badge-circle"><Award size={26} /></div>
-                      <h4>FSSAI Licensed</h4>
-                      <span className="cert-no">Lic. No. 10021051000189</span>
-                      <p>Compliant with Food Safety and Standards Authority of India safety benchmarks.</p>
-                    </div>
-                    <div className="cert-card">
-                      <div className="cert-badge-circle"><ShieldCheck size={26} /></div>
-                      <h4>ISO 22000:2018 Certified</h4>
-                      <span className="cert-no">Cert ID: FS-994012</span>
-                      <p>Internationally recognized Food Safety Management System accreditation.</p>
-                    </div>
-                    <div className="cert-card">
-                      <div className="cert-badge-circle"><Leaf size={26} /></div>
-                      <h4>A2 Native Breed Verified</h4>
-                      <span className="cert-no">DNA Batch Tested</span>
-                      <p>Guaranteed 100% Beta-Casein A2 protein sourced exclusively from Gir and Sahiwal cows.</p>
-                    </div>
-                    <div className="cert-card">
-                      <div className="cert-badge-circle"><CheckCircle size={26} /></div>
-                      <h4>NABL Accredited Lab</h4>
-                      <span className="cert-no">Standard ISO/IEC 17025</span>
-                      <p>Certified zero chemical adulteration, zero antibiotics, and zero heavy metal residue.</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
+          <AboutUsSection onNavigateToJourney={() => navigateToView('journey')} />
         )}
 
         {/* 7. Why Choose Us Section */}
@@ -1347,11 +1157,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
       {!isOfferModalOpen && hasOfferEverOpened && (
         <button
           onClick={() => setIsOfferModalOpen(true)}
-          className="fixed bottom-20 sm:bottom-6 left-4 sm:left-6 z-40 bg-gradient-to-r from-red-600 via-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white font-black text-xs px-3.5 py-2.5 sm:px-4.5 sm:py-3 rounded-full shadow-2xl shadow-red-600/35 flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer border-2 border-white/80"
+          className="fixed bottom-4 sm:bottom-6 left-3 sm:left-6 z-40 bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-700 hover:to-amber-600 text-white font-extrabold text-[11px] sm:text-xs px-3 py-2 sm:px-4 sm:py-2.5 rounded-full shadow-xl shadow-red-950/20 flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer border border-white/90"
           title="Claim 25% OFF Product Offer"
           aria-label="Open 25% OFF Offer"
         >
-          <Gift size={16} className="text-amber-200 animate-pulse" />
+          <Gift size={15} className="text-amber-200 animate-pulse" />
           <span>25% OFF Offer</span>
         </button>
       )}

@@ -9,7 +9,10 @@ import {
   ThermometerSnowflake, 
   Award, 
   FileText,
-  Check
+  Check,
+  QrCode,
+  MapPin,
+  FileCheck
 } from 'lucide-react';
 
 interface BatchData {
@@ -25,17 +28,18 @@ interface BatchData {
   clr: string;
   adulteration: Array<{ test: string; result: string; status: 'passed' }>;
   certNumber: string;
+  batchDate: string;
 }
 
 const SAMPLE_BATCHES: Record<string, BatchData> = {
   'RD-COW-402': {
     id: 'RD-COW-402',
     name: 'A2 Indigenous Desi Gir Cow Milk',
-    milkType: 'Desi Cow Milk (A2)',
+    milkType: 'Desi Cow Milk (A2 Protein)',
     village: 'Sikhreda Organic Pastures (UP)',
     milkedAt: '04:30 AM Today',
     testedAt: '05:15 AM Today',
-    chilledTemp: '3.8°C (Cold-Chain Verified)',
+    chilledTemp: '3.8°C',
     fat: '6.4%',
     snf: '9.2%',
     clr: '30.5',
@@ -44,18 +48,19 @@ const SAMPLE_BATCHES: Record<string, BatchData> = {
       { test: 'Starch & Reconstituted Powder', result: '0.00% (Negative)', status: 'passed' },
       { test: 'Detergents & Neutralizers', result: '0.00% (Negative)', status: 'passed' },
       { test: 'Added Water & Foreign Fats', result: '0.00% (Zero Dilution)', status: 'passed' },
-      { test: 'Oxytocin & Hormone Traces', result: 'Not Detected', status: 'passed' },
+      { test: 'Oxytocin & Hormone Traces', result: 'Not Detected (Negative)', status: 'passed' },
     ],
     certNumber: 'FSSAI-LAB-2026-0907-88',
+    batchDate: 'Today Morning Batch #01',
   },
   'RD-BUFF-819': {
     id: 'RD-BUFF-819',
     name: 'Premium Murrah Buffalo Farm Milk',
-    milkType: 'Pure Buffalo Whole Milk',
+    milkType: 'Pure Whole Buffalo Milk',
     village: 'Bhopa Road Dairy Hub',
     milkedAt: '04:15 AM Today',
     testedAt: '05:00 AM Today',
-    chilledTemp: '3.6°C (Cold-Chain Verified)',
+    chilledTemp: '3.6°C',
     fat: '7.8%',
     snf: '9.6%',
     clr: '31.2',
@@ -64,9 +69,10 @@ const SAMPLE_BATCHES: Record<string, BatchData> = {
       { test: 'Starch & Reconstituted Powder', result: '0.00% (Negative)', status: 'passed' },
       { test: 'Detergents & Neutralizers', result: '0.00% (Negative)', status: 'passed' },
       { test: 'Added Water & Foreign Fats', result: '0.00% (Zero Dilution)', status: 'passed' },
-      { test: 'Oxytocin & Hormone Traces', result: 'Not Detected', status: 'passed' },
+      { test: 'Oxytocin & Hormone Traces', result: 'Not Detected (Negative)', status: 'passed' },
     ],
     certNumber: 'FSSAI-LAB-2026-0907-92',
+    batchDate: 'Today Morning Batch #02',
   },
   'RD-GHEE-105': {
     id: 'RD-GHEE-105',
@@ -75,18 +81,19 @@ const SAMPLE_BATCHES: Record<string, BatchData> = {
     village: 'Sikhreda Heritage Dairy Unit',
     milkedAt: 'Yesterday Churned',
     testedAt: '06:00 AM Today (GC Tested)',
-    chilledTemp: 'Ambient Room Temp (Granular)',
+    chilledTemp: '24.5°C (Granular)',
     fat: '99.8%',
     snf: '0.15% Moisture',
-    clr: 'RM Value: 30.4',
+    clr: 'RM: 30.4',
     adulteration: [
       { test: 'Vanaspati & Palm Oil Impurities', result: '0.00% (GC Negative)', status: 'passed' },
       { test: 'Mineral Oils & Animal Tallow', result: '0.00% (Negative)', status: 'passed' },
-      { test: 'Artificial Color & Fragrance', result: '100% Natural Golden Beta-Carotene', status: 'passed' },
-      { test: 'Free Fatty Acids (FFA)', result: '0.28% (Well below 1.4% standard)', status: 'passed' },
-      { test: 'Peroxide Value (Freshness)', result: '0.12 meq/kg (Extremely Fresh)', status: 'passed' },
+      { test: 'Artificial Color & Fragrance', result: '100% Pure Beta-Carotene', status: 'passed' },
+      { test: 'Free Fatty Acids (FFA)', result: '0.28% (Well below 1.4% max)', status: 'passed' },
+      { test: 'Peroxide Value (Freshness)', result: '0.12 meq/kg (Fresh Batch)', status: 'passed' },
     ],
     certNumber: 'FSSAI-LAB-2026-0907-104',
+    batchDate: 'Artisanal Batch #B-105',
   },
 };
 
@@ -104,7 +111,7 @@ export const PurityBatchChecker: React.FC = () => {
     setSelectedBatchId(id);
     setTimeout(() => {
       setIsScanning(false);
-    }, 450);
+    }, 350);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -113,7 +120,6 @@ export const PurityBatchChecker: React.FC = () => {
     if (SAMPLE_BATCHES[query]) {
       handleSelectBatch(query);
     } else {
-      // Default to closest match or cow
       handleSelectBatch('RD-COW-402');
     }
   };
@@ -124,147 +130,226 @@ export const PurityBatchChecker: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-white via-amber-50/40 to-white rounded-[32px] sm:rounded-[36px] border border-amber-200/70 p-5 sm:p-8 lg:p-10 shadow-xl shadow-amber-950/5 relative overflow-hidden">
-      {/* Decorative ambient elements */}
-      <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-red-400/10 blur-3xl pointer-events-none" />
+    <div className="bg-[#FAF8F5] rounded-[2rem] sm:rounded-[2.75rem] border border-stone-200/90 p-4 sm:p-8 lg:p-10 shadow-xl shadow-stone-900/5 relative overflow-hidden">
+      
+      {/* Decorative ambient background glows */}
+      <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-emerald-100/30 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-amber-100/40 blur-3xl pointer-events-none" />
 
       {/* Header Banner */}
       <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs mb-3">
-          <FlaskConical size={14} className="text-emerald-700" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-[#15803d] border border-emerald-200/80 shadow-xs mb-3">
+          <FlaskConical size={14} className="text-[#16a34a]" />
           <span>Live Purity Transparency Lab</span>
         </div>
 
-        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        <h2 className="font-editorial-serif text-2xl sm:text-4xl lg:text-[2.65rem] font-bold text-[#14281d] tracking-tight leading-tight mb-2 sm:mb-3">
           Verify Today's Milk Quality Report
-        </h3>
-        <p className="text-xs sm:text-sm text-slate-600 mt-2 font-medium leading-relaxed">
-          Every batch from our partner farms is tested twice daily using Gas Chromatography & ultrasonic fat analyzers. No adulteration. Ever.
+        </h2>
+        
+        <p className="text-xs sm:text-sm text-stone-600 font-normal leading-relaxed max-w-xl mx-auto">
+          Every batch from our partner farms is tested twice daily using Gas Chromatography & digital fat analyzers. No adulteration. Ever.
         </p>
 
-        {/* Quick Sample Selector Pills */}
+        {/* Sample Batch Selector Pills */}
         <div className="flex flex-wrap items-center justify-center gap-2 mt-5">
-          <span className="text-xs font-bold text-slate-400 mr-1 hidden sm:inline">Select Sample Batch:</span>
-          {Object.values(SAMPLE_BATCHES).map((batch) => (
-            <button
-              key={batch.id}
-              onClick={() => handleSelectBatch(batch.id)}
-              className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
-                selectedBatchId === batch.id
-                  ? 'bg-red-600 text-white shadow-md shadow-red-600/25 scale-105'
-                  : 'bg-white text-slate-700 hover:bg-amber-100/70 border border-slate-200 shadow-2xs'
-              }`}
-            >
-              <Sparkles size={12} className={selectedBatchId === batch.id ? 'text-yellow-300' : 'text-slate-400'} />
-              <span>#{batch.id}</span>
-            </button>
-          ))}
+          <span className="text-xs font-bold text-stone-400 mr-1 hidden sm:inline">Select Sample Batch:</span>
+          {Object.values(SAMPLE_BATCHES).map((batch) => {
+            const isSelected = selectedBatchId === batch.id;
+            return (
+              <button
+                key={batch.id}
+                onClick={() => handleSelectBatch(batch.id)}
+                className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  isSelected
+                    ? 'bg-[#15803d] text-white shadow-md shadow-green-900/20 scale-105'
+                    : 'bg-white text-stone-700 hover:bg-stone-50 border border-stone-200/90 shadow-xs'
+                }`}
+              >
+                <Sparkles size={12} className={isSelected ? 'text-amber-200' : 'text-stone-400'} />
+                <span>#{batch.id}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Search Bar */}
+        {/* Batch Code Search Bar */}
         <form onSubmit={handleSearch} className="mt-4 max-w-md mx-auto flex items-center gap-2">
           <div className="relative flex-1">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
             <input
               type="text"
               placeholder="Search batch code (e.g. RD-COW-402)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3.5 py-2.5 rounded-full bg-white border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-red-400 shadow-xs"
+              className="w-full pl-9 pr-3.5 py-2.5 rounded-full bg-white border border-stone-200 text-xs font-semibold focus:outline-none focus:border-[#15803d] focus:ring-2 focus:ring-emerald-500/15 shadow-xs transition-all text-stone-800 placeholder-stone-400"
             />
           </div>
           <button
             type="submit"
-            className="px-4 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+            className="px-4.5 py-2.5 rounded-full bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
           >
-            Check
+            Verify
           </button>
         </form>
       </div>
 
-      {/* Main Certificate Card Display */}
-      <div className={`relative bg-white rounded-3xl border-2 border-emerald-500/30 p-5 sm:p-7 shadow-lg shadow-emerald-950/5 transition-opacity duration-300 ${isScanning ? 'opacity-50' : 'opacity-100'}`}>
+      {/* ─────────────────────────────────────────────────────────────
+          OFFICIAL CERTIFICATE OF QUALITY (COA CARD)
+         ───────────────────────────────────────────────────────────── */}
+      <div className={`relative bg-white rounded-3xl sm:rounded-[2.25rem] border-2 border-[#bbf7d0] p-5 sm:p-8 lg:p-9 shadow-2xl shadow-emerald-950/5 transition-opacity duration-300 ${isScanning ? 'opacity-50' : 'opacity-100'}`}>
         
-        {/* Certificate Seal Badge */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+        {/* Certificate Decorative Top Border Line */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#15803d] via-[#22c55e] to-[#86efac] rounded-t-[2.25rem]" />
+
+        {/* Certificate Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 border-b border-stone-100">
+          
           <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-md bg-emerald-500 text-white font-black text-xs tracking-wider">
-                PASSED 100% PURE
+            {/* Verification Status Badges */}
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#15803d] text-white font-extrabold text-[11px] tracking-wider uppercase shadow-xs">
+                <CheckCircle2 size={13} className="text-[#86efac]" />
+                <span>PASSED 100% PURE</span>
               </span>
-              <span className="text-xs font-mono font-bold text-slate-400">
+
+              <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-stone-600 font-mono text-[11px] font-bold">
                 Cert #{currentBatch.certNumber}
               </span>
+
+              <span className="text-[11px] font-semibold text-stone-400 hidden sm:inline">
+                • {currentBatch.batchDate}
+              </span>
             </div>
-            <h4 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
+
+            {/* Milk Batch Name */}
+            <h3 className="font-editorial-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#14281d] leading-tight mt-1">
               {currentBatch.name}
-            </h4>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mt-1">
-              <span className="flex items-center gap-1 font-medium">
-                📍 Origin: <strong>{currentBatch.village}</strong>
+            </h3>
+
+            {/* Origin & Milking Details */}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-stone-500 mt-2">
+              <span className="flex items-center gap-1.5 font-medium">
+                <MapPin size={13} className="text-red-600 shrink-0" />
+                <span>Origin: <strong className="text-stone-800">{currentBatch.village}</strong></span>
               </span>
-              <span className="flex items-center gap-1 font-medium">
-                <Clock size={12} className="text-slate-400" /> Milked: <strong>{currentBatch.milkedAt}</strong>
+              <span className="flex items-center gap-1.5 font-medium">
+                <Clock size={13} className="text-stone-400 shrink-0" />
+                <span>Milked: <strong className="text-stone-800">{currentBatch.milkedAt}</strong></span>
+              </span>
+              <span className="flex items-center gap-1.5 font-medium">
+                <FileCheck size={13} className="text-[#16a34a] shrink-0" />
+                <span>Tested: <strong className="text-stone-800">{currentBatch.testedAt}</strong></span>
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-center">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-2xs">
-              <ShieldCheck size={28} />
+          {/* Government / FSSAI Gold Seal */}
+          <div className="flex items-center gap-3 bg-[#f0fdf4] border border-[#bbf7d0] px-3.5 py-2.5 rounded-2xl shrink-0 self-start sm:self-center shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-[#16a34a] text-white flex items-center justify-center shadow-md shadow-green-900/20">
+              <ShieldCheck size={22} strokeWidth={2.4} />
             </div>
-            <div className="text-left">
-              <span className="block text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">FSSAI Certified</span>
-              <span className="block text-xs font-black text-emerald-800">Govt. Lab Approved</span>
+            <div>
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                FSSAI Lic. 10021051000189
+              </span>
+              <span className="block text-xs font-bold text-[#14532d]">
+                Govt. Lab Approved
+              </span>
             </div>
           </div>
+
         </div>
 
-        {/* Core Laboratory Reading Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 my-6">
-          <div className="bg-gradient-to-b from-red-50/60 to-red-100/30 rounded-2xl p-4 border border-red-200/60 text-center">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-red-700 block">FAT Content</span>
-            <span className="text-2xl sm:text-3xl font-black text-red-600 my-1 block">{currentBatch.fat}</span>
-            <span className="text-[10px] text-red-800/80 font-medium">High Cream Layer</span>
-          </div>
-
-          <div className="bg-gradient-to-b from-amber-50/60 to-amber-100/30 rounded-2xl p-4 border border-amber-200/60 text-center">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 block">SNF Reading</span>
-            <span className="text-2xl sm:text-3xl font-black text-amber-600 my-1 block">{currentBatch.snf}</span>
-            <span className="text-[10px] text-amber-800/80 font-medium">Essential Minerals</span>
-          </div>
-
-          <div className="bg-gradient-to-b from-emerald-50/60 to-emerald-100/30 rounded-2xl p-4 border border-emerald-200/60 text-center">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 block">Lactometer (CLR)</span>
-            <span className="text-2xl sm:text-3xl font-black text-emerald-600 my-1 block">{currentBatch.clr}</span>
-            <span className="text-[10px] text-emerald-800/80 font-medium">Ideal Natural Density</span>
-          </div>
-
-          <div className="bg-gradient-to-b from-blue-50/60 to-blue-100/30 rounded-2xl p-4 border border-blue-200/60 text-center">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-blue-700 block flex items-center justify-center gap-1">
-              <ThermometerSnowflake size={12} /> Chilling Log
+        {/* ─────────────────────────────────────────────────────────────
+            4 KEY METRIC CARDS (CLEAN, REFINED VISUAL HIERARCHY)
+           ───────────────────────────────────────────────────────────── */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 my-6 sm:my-7">
+          
+          {/* 1. FAT Content Card */}
+          <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-b from-[#fffbeb] to-white border border-[#fde68a] text-center shadow-xs">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-900/80 block">
+              FAT Content
             </span>
-            <span className="text-base sm:text-xl font-black text-blue-700 my-1 block leading-tight">{currentBatch.chilledTemp.split(' ')[0]}</span>
-            <span className="text-[10px] text-blue-800/80 font-medium">Cold-Chain Maintained</span>
+            <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-amber-700 my-1 block font-mono">
+              {currentBatch.fat}
+            </span>
+            <span className="text-[10px] sm:text-[11px] text-amber-950/70 font-medium inline-block bg-amber-100/60 px-2 py-0.5 rounded-md">
+              Thick Cream Layer
+            </span>
           </div>
+
+          {/* 2. SNF Reading Card */}
+          <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-b from-[#f0fdf4] to-white border border-[#bbf7d0] text-center shadow-xs">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#14532d]/80 block">
+              SNF Reading
+            </span>
+            <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#15803d] my-1 block font-mono">
+              {currentBatch.snf}
+            </span>
+            <span className="text-[10px] sm:text-[11px] text-[#14532d] font-medium inline-block bg-[#dcfce7] px-2 py-0.5 rounded-md">
+              Essential Minerals
+            </span>
+          </div>
+
+          {/* 3. Lactometer (CLR) Card */}
+          <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-b from-[#ecfeff] to-white border border-[#a5f3fc] text-center shadow-xs">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-cyan-900/80 block">
+              Lactometer (CLR)
+            </span>
+            <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-cyan-700 my-1 block font-mono">
+              {currentBatch.clr}
+            </span>
+            <span className="text-[10px] sm:text-[11px] text-cyan-950/70 font-medium inline-block bg-cyan-100/60 px-2 py-0.5 rounded-md">
+              Ideal Natural Density
+            </span>
+          </div>
+
+          {/* 4. Chilling Log Card */}
+          <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-b from-[#eff6ff] to-white border border-[#bfdbfe] text-center shadow-xs">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-900/80 block flex items-center justify-center gap-1">
+              <ThermometerSnowflake size={12} className="text-blue-600" />
+              <span>Chilling Log</span>
+            </span>
+            <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-blue-700 my-1 block font-mono">
+              {currentBatch.chilledTemp.split(' ')[0]}
+            </span>
+            <span className="text-[10px] sm:text-[11px] text-blue-950/70 font-medium inline-block bg-blue-100/60 px-2 py-0.5 rounded-md">
+              Cold-Chain Verified
+            </span>
+          </div>
+
         </div>
 
-        {/* 5-Point Adulteration Safety Matrix */}
-        <div className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 sm:p-5">
-          <h5 className="text-xs font-black uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
-            <Award size={15} className="text-emerald-600" />
-            <span>Adulteration & Quality Assurance Matrix (5 Rigorous Tests)</span>
-          </h5>
+        {/* ─────────────────────────────────────────────────────────────
+            5-POINT ADULTERATION SAFETY MATRIX (TRUE GREEN PASSED LAB MARKS)
+           ───────────────────────────────────────────────────────────── */}
+        <div className="rounded-2xl sm:rounded-3xl border border-stone-200/80 bg-stone-50/70 p-4 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3.5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-stone-700 flex items-center gap-2">
+              <Award size={16} className="text-[#16a34a]" />
+              <span>Adulteration & Quality Assurance Matrix (5 Rigorous Tests)</span>
+            </h4>
+            <span className="text-[11px] font-bold text-[#15803d] bg-[#dcfce7] px-2.5 py-0.5 rounded-full border border-[#86efac]">
+              ✓ All 5 Parameters Cleared
+            </span>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {currentBatch.adulteration.map((item, idx) => (
-              <div key={idx} className="flex items-center justify-between bg-white px-3.5 py-2 rounded-xl border border-slate-100 shadow-2xs">
-                <span className="text-xs font-semibold text-slate-700 flex items-center gap-2">
-                  <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+              <div 
+                key={idx} 
+                className="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-stone-200/60 shadow-xs"
+              >
+                <span className="text-xs font-medium text-stone-700 flex items-center gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-[#dcfce7] text-[#15803d] flex items-center justify-center shrink-0">
+                    <Check size={13} strokeWidth={3} className="text-[#16a34a]" />
+                  </span>
                   <span>{item.test}</span>
                 </span>
-                <span className="text-xs font-black text-emerald-700 font-mono">
+
+                {/* Celebratory Emerald Passed Text */}
+                <span className="text-xs font-bold text-[#15803d] font-mono bg-[#f0fdf4] px-2 py-0.5 rounded border border-[#bbf7d0]">
                   {item.result}
                 </span>
               </div>
@@ -272,35 +357,45 @@ export const PurityBatchChecker: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom CTA Row */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6 pt-5 border-t border-slate-100">
-          <div className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-            <span>Lab Chemist Sign: <strong>Dr. R. K. Sharma (Chief Quality Officer)</strong></span>
+        {/* ─────────────────────────────────────────────────────────────
+            CERTIFICATE FOOTER & DOWNLOAD ACTION
+           ───────────────────────────────────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-5 border-t border-stone-100">
+          
+          {/* Signatory & Timestamp */}
+          <div className="text-xs text-stone-500 font-medium flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#16a34a] animate-pulse" />
+            <span>
+              Signed by: <strong className="text-stone-800">Dr. R. K. Sharma</strong> (Chief Dairy Scientist, Ex-NDRI)
+            </span>
           </div>
 
+          {/* Download Quality Certificate Button */}
           <button
             onClick={handleDownloadSlip}
-            className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-xs ${
+            className={`w-full sm:w-auto px-6 py-2.5 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95 ${
               downloadSuccess
-                ? 'bg-emerald-600 text-white'
-                : 'bg-slate-900 hover:bg-slate-800 text-white hover:scale-105 active:scale-95'
+                ? 'bg-[#15803d] text-white shadow-green-900/20'
+                : 'bg-stone-900 hover:bg-stone-800 text-white'
             }`}
           >
             {downloadSuccess ? (
               <>
                 <Check size={14} strokeWidth={2.5} />
-                <span>Certificate Saved!</span>
+                <span>Certificate Downloaded!</span>
               </>
             ) : (
               <>
                 <FileText size={14} />
-                <span>Download Quality Certificate</span>
+                <span>Download Lab Certificate (PDF)</span>
               </>
             )}
           </button>
+
         </div>
+
       </div>
+
     </div>
   );
 };
