@@ -84,7 +84,7 @@ export const OrganicCertificationsSection: React.FC = () => {
           <div className="w-14 h-1 bg-[#d4a373] rounded-full mx-auto my-3.5" />
           
           <p className="text-gray-700 text-base sm:text-lg font-normal leading-relaxed mt-4">
-            COWBERRY products are pure, chemical-free, and naturally crafted for honest, healthy nutrition.
+            Rudu Dairy products are pure, chemical-free, and naturally crafted for honest, healthy nutrition.
           </p>
         </div>
 

@@ -15,10 +15,11 @@ import { OrganicCertificationsSection } from './OrganicCertificationsSection';
 import { BlogSection } from './BlogSection';
 import { MilkJourneyTimeline } from './MilkJourneyTimeline';
 import { ProductOfferModal } from './ProductOfferModal';
-import { PurityBatchChecker } from './PurityBatchChecker';
 import { SubscriptionCalculator } from './SubscriptionCalculator';
 import { MilkComparisonSection } from './MilkComparisonSection';
 import { AboutUsSection } from './AboutUsSection';
+import { DedicatedProductPage } from '../products/DedicatedProductPage';
+import { DailyMilkPlannerPage } from '../planner/DailyMilkPlannerPage';
 import { 
   Milk, 
   Users, 
@@ -28,6 +29,8 @@ import {
   BookOpen, 
   ShieldCheck, 
   User, 
+  ShoppingBag, 
+  Calendar, 
   MapPin, 
   Droplets, 
   CheckCircle, 
@@ -137,12 +140,40 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
   const totalDailyVolume = Math.round(milkEntries.reduce((sum, e) => sum + (Number(e.quantityLiters) || 0), 0) * 10) / 10;
 
   const [activeProductTab, setActiveProductTab] = useState<'milk' | 'ghee' | 'curd' | 'paneer' | 'butter'>('milk');
-  const [activeView, setActiveView] = useState<'home' | 'products' | 'purity' | 'journey' | 'about' | 'why-us' | 'blogs' | 'faq' | 'careers' | 'certifications'>('home');
-  const [activeSection, setActiveSection] = useState<'home' | 'products' | 'purity' | 'journey' | 'about' | 'why-us' | 'blogs' | 'faq' | 'careers' | 'certifications'>('home');
+  const [activeView, setActiveView] = useState<'home' | 'products' | 'planner' | 'purity' | 'journey' | 'about' | 'why-us' | 'blogs' | 'faq' | 'careers' | 'certifications'>(() => {
+    try {
+      const path = typeof window !== 'undefined' ? window.location.pathname.replace(/\/+$/, '').toLowerCase() : '';
+      if (path === '/products') return 'products';
+      if (path === '/planner') return 'planner';
+    } catch { /* ignore */ }
+    return 'home';
+  });
+  const [activeSection, setActiveSection] = useState<'home' | 'products' | 'planner' | 'purity' | 'journey' | 'about' | 'why-us' | 'blogs' | 'faq' | 'careers' | 'certifications'>('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
+
+  // Sync browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      try {
+        const path = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+        if (path === '/products') {
+          setActiveView('products');
+          setActiveSection('products');
+        } else if (path === '/planner') {
+          setActiveView('planner');
+          setActiveSection('planner');
+        } else {
+          setActiveView('home');
+          setActiveSection('home');
+        }
+      } catch { /* ignore */ }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Product Offer Popup States
   const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
@@ -171,20 +202,61 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
     return () => observer.disconnect();
   }, [activeView]);
 
-  const navigateToView = (view: 'home' | 'products' | 'purity' | 'journey' | 'about' | 'why-us' | 'blogs' | 'faq' | 'careers' | 'certifications') => {
+  const navigateToView = (view: 'home' | 'products' | 'planner' | 'purity' | 'journey' | 'about' | 'why-us' | 'blogs' | 'faq' | 'careers' | 'certifications') => {
     setIsMobileMenuOpen(false);
-    if (view === 'products' && !hasOfferTriggeredRef.current) {
-      hasOfferTriggeredRef.current = true;
-      setTimeout(() => {
-        setIsOfferModalOpen(true);
-        setHasOfferEverOpened(true);
-      }, 700);
+
+    if (view === 'products') {
+      setActiveView('products');
+      setActiveSection('products');
+      try {
+        if (window.location.pathname !== '/products') {
+          window.history.pushState({}, '', '/products');
+        }
+      } catch { /* ignore */ }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (view === 'planner') {
+      setActiveView('planner');
+      setActiveSection('planner');
+      try {
+        if (window.location.pathname !== '/planner') {
+          window.history.pushState({}, '', '/planner');
+        }
+      } catch { /* ignore */ }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
     if (view === 'home') {
       setActiveView('home');
       setActiveSection('home');
+      try {
+        if (window.location.pathname !== '/') {
+          window.history.pushState({}, '', '/');
+        }
+      } catch { /* ignore */ }
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (activeView === 'products' || activeView === 'planner') {
+      setActiveView('home');
+      setActiveSection(view);
+      try {
+        if (window.location.pathname !== '/') {
+          window.history.pushState({}, '', '/');
+        }
+      } catch { /* ignore */ }
+      setTimeout(() => {
+        const targetId = view === 'journey' ? 'journey' : (view === 'certifications' ? 'organic-certifications' : view);
+        const el = document.getElementById(targetId);
+        if (el) {
+          const offsetTop = el.getBoundingClientRect().top + window.pageYOffset - 75;
+          window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+        }
+      }, 60);
       return;
     }
 
@@ -326,22 +398,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
       { name: "A2 Organic Cow Milk", desc: "Pure A2 protein cow milk sourced directly from indigenous desi cows.", price: "₹78/L", tag: "A2 Pure", rating: 5, img: "/images/rudu_milk_product.png" }
     ],
     ghee: [
-      { name: "Danedar Cow Ghee", desc: "Traditional slow-cooked ghee with grainy texture, golden color, and heavenly aroma.", price: "₹680/L", tag: "GC Tested Pure", rating: 5, img: "/images/fresh_dairy_products.png" },
-      { name: "Premium Desi Ghee", desc: "Pure buffalo milk ghee, aromatic, perfect for cooking, sweets, and parathas.", price: "₹740/L", tag: "Rich Aroma", rating: 5, img: "/images/fresh_dairy_products.png" },
-      { name: "A2 Bilona Vedic Ghee", desc: "Hand-churned A2 cow ghee prepared using traditional wooden bilona process.", price: "₹1,250/L", tag: "Vedic Bilona", rating: 5, img: "/images/fresh_dairy_products.png" },
-      { name: "Pure Country Ghee", desc: "Traditional village farm ghee with rich golden granulates and pure taste.", price: "₹620/L", tag: "Farm Fresh", rating: 4.9, img: "/images/fresh_dairy_products.png" }
+      { name: "Danedar Cow Ghee", desc: "Traditional slow-cooked ghee with grainy texture, golden color, and heavenly aroma.", price: "₹680/L", tag: "GC Tested Pure", rating: 5, img: "/images/rudu_bilona_ghee.jpg" },
+      { name: "Premium Desi Ghee", desc: "Pure buffalo milk ghee, aromatic, perfect for cooking, sweets, and parathas.", price: "₹740/L", tag: "Rich Aroma", rating: 5, img: "/images/rudu_bilona_ghee.jpg" },
+      { name: "A2 Bilona Vedic Ghee", desc: "Hand-churned A2 cow ghee prepared using traditional wooden bilona process.", price: "₹1,250/L", tag: "Vedic Bilona", rating: 5, img: "/images/rudu_bilona_ghee.jpg" },
+      { name: "Pure Country Ghee", desc: "Traditional village farm ghee with rich golden granulates and pure taste.", price: "₹620/L", tag: "Farm Fresh", rating: 4.9, img: "/images/rudu_bilona_ghee.jpg" }
     ],
     curd: [
-      { name: "Thick Creamy Dahi", desc: "Naturally set dahi with mild sour flavor and rich thick consistency, set in hygiene cups.", price: "₹30/cup", tag: "Gut Health", rating: 4.9, img: "/images/fresh_dairy_products.png" },
-      { name: "Fresh Sweet Lassi", desc: "Rich churned sweet buttermilk flavored with cardamom and saffron, served chilled.", price: "₹25/bottle", tag: "Refreshing", rating: 4.8, img: "/images/fresh_dairy_products.png" },
-      { name: "Masala Spiced Chaach", desc: "Refreshing spiced buttermilk infused with roasted cumin, mint, and black salt.", price: "₹18/pack", tag: "Digestive", rating: 4.8, img: "/images/fresh_dairy_products.png" },
-      { name: "Greek Style Hung Curd", desc: "Ultra-thick strained probiotic dahi packed with natural proteins.", price: "₹45/cup", tag: "High Protein", rating: 4.9, img: "/images/fresh_dairy_products.png" }
+      { name: "Thick Creamy Dahi", desc: "Naturally set dahi with mild sour flavor and rich thick consistency, set in hygiene cups.", price: "₹30/cup", tag: "Gut Health", rating: 4.9, img: "/images/rudu_creamy_curd.jpg" },
+      { name: "Fresh Sweet Lassi", desc: "Rich churned sweet buttermilk flavored with cardamom and saffron, served chilled.", price: "₹25/bottle", tag: "Refreshing", rating: 4.8, img: "/images/rudu_creamy_curd.jpg" },
+      { name: "Masala Spiced Chaach", desc: "Refreshing spiced buttermilk infused with roasted cumin, mint, and black salt.", price: "₹18/pack", tag: "Digestive", rating: 4.8, img: "/images/rudu_creamy_curd.jpg" },
+      { name: "Greek Style Hung Curd", desc: "Ultra-thick strained probiotic dahi packed with natural proteins.", price: "₹45/cup", tag: "High Protein", rating: 4.9, img: "/images/rudu_creamy_curd.jpg" }
     ],
     paneer: [
-      { name: "Soft Malai Paneer", desc: "Deliciously soft paneer cubes made from pure full cream milk, packed touch-free.", price: "₹110/200g", tag: "Protein Rich", rating: 5, img: "/images/fresh_dairy_products.png" },
-      { name: "Organic Cottage Paneer", desc: "Hand-crafted fresh cottage paneer made with organic cow milk.", price: "₹120/200g", tag: "Farm Organic", rating: 4.9, img: "/images/fresh_dairy_products.png" },
-      { name: "Low Fat Protein Paneer", desc: "Homogenized low-calorie paneer specially made for fitness lovers.", price: "₹105/200g", tag: "Slim Fit", rating: 4.8, img: "/images/fresh_dairy_products.png" },
-      { name: "Herb Spiced Masala Paneer", desc: "Soft paneer cubes seasoned with natural green herbs and aromatic spices.", price: "₹130/200g", tag: "Gourmet", rating: 5, img: "/images/fresh_dairy_products.png" }
+      { name: "Soft Malai Paneer", desc: "Deliciously soft paneer cubes made from pure full cream milk, packed touch-free.", price: "₹110/200g", tag: "Protein Rich", rating: 5, img: "/images/rudu_fresh_paneer.jpg" },
+      { name: "Organic Cottage Paneer", desc: "Hand-crafted fresh cottage paneer made with organic cow milk.", price: "₹120/200g", tag: "Farm Organic", rating: 4.9, img: "/images/rudu_fresh_paneer.jpg" },
+      { name: "Low Fat Protein Paneer", desc: "Homogenized low-calorie paneer specially made for fitness lovers.", price: "₹105/200g", tag: "Slim Fit", rating: 4.8, img: "/images/rudu_fresh_paneer.jpg" },
+      { name: "Herb Spiced Masala Paneer", desc: "Soft paneer cubes seasoned with natural green herbs and aromatic spices.", price: "₹130/200g", tag: "Gourmet", rating: 5, img: "/images/rudu_fresh_paneer.jpg" }
     ],
     butter: [
       { name: "Fresh White Butter", desc: "Traditional unsalted white butter churned from pure fresh cream.", price: "₹140/200g", tag: "Country Style", rating: 4.9, img: "/images/fresh_dairy_products.png" },
@@ -350,6 +422,28 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
       { name: "Heavy Whipping Cream", desc: "Fresh 30% fat rich dairy cream for desserts, coffee, and rich gravies.", price: "₹90/200ml", tag: "Rich Cream", rating: 5, img: "/images/fresh_dairy_products.png" }
     ]
   };
+
+  // Dedicated full-page Product Page view
+  if (activeView === 'products') {
+    return (
+      <DedicatedProductPage 
+        onBackToHome={() => navigateToView('home')} 
+        onOpenPlanner={() => navigateToView('planner')}
+        onOpenLogin={onOpenLogin} 
+      />
+    );
+  }
+
+  // Dedicated full-page Daily Milk Planner view
+  if (activeView === 'planner') {
+    return (
+      <DailyMilkPlannerPage 
+        onBackToHome={() => navigateToView('home')}
+        onExploreProducts={() => navigateToView('products')}
+        onOpenLogin={onOpenLogin}
+      />
+    );
+  }
 
   return (
     <div className="landing-page-container">
@@ -378,6 +472,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
             <button onClick={() => navigateToView('products')} className={`nav-link ${activeSection === 'products' ? 'active' : ''}`}>
               Our Products <span style={{ fontSize: '11px', marginLeft: '4px', opacity: 0.8 }}>▼</span>
             </button>
+            <button onClick={() => navigateToView('planner')} className={`nav-link ${activeSection === 'planner' ? 'active' : ''}`}>Daily Milk Planner</button>
             <button onClick={() => navigateToView('purity')} className={`nav-link ${activeSection === 'purity' ? 'active' : ''}`}>Purity</button>
             <button onClick={() => navigateToView('journey')} className={`nav-link ${activeSection === 'journey' ? 'active' : ''}`}>Journey</button>
             <button onClick={() => navigateToView('about')} className={`nav-link ${activeSection === 'about' ? 'active' : ''}`}>About Us</button>
@@ -467,20 +562,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
                     Directly from our local dairy farms to your doorstep. Experience 100% lab-tested pure, fresh, and unadulterated milk every morning.
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-4 mb-8">
+                  <div className="flex flex-row items-center gap-2.5 sm:gap-4 mb-6 sm:mb-8 w-full max-w-md">
                     <button 
                       onClick={() => navigateToView('products')} 
-                      className="bg-red-600 hover:bg-red-700 text-white font-bold text-base px-7 py-3.5 rounded-full shadow-lg shadow-red-600/20 hover:shadow-xl hover:shadow-red-600/30 transition-all duration-300 flex items-center gap-2.5"
+                      className="flex-1 sm:flex-initial justify-center bg-[#E21E23] hover:bg-[#c9181d] text-white font-extrabold text-xs sm:text-base px-3.5 py-3 sm:px-7 sm:py-3.5 rounded-full shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 transition-all duration-300 flex items-center gap-1.5 sm:gap-2.5 cursor-pointer whitespace-nowrap active:scale-98"
                     >
-                      <Sliders size={18} />
+                      <Sliders size={17} strokeWidth={2.5} />
                       <span>Our Products</span>
                     </button>
                     <button 
-                      onClick={() => handleLogin('farmer')} 
-                      className="bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-200 hover:border-gray-300 font-bold text-base px-7 py-3.5 rounded-full shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-2.5"
+                      onClick={() => navigateToView('planner')} 
+                      className="flex-1 sm:flex-initial justify-center bg-white hover:bg-slate-50 text-[#1A202C] border border-[#E2E8F0] hover:border-slate-300 font-extrabold text-xs sm:text-base px-3.5 py-3 sm:px-7 sm:py-3.5 rounded-full shadow-xs hover:shadow-md transition-all duration-300 flex items-center gap-1.5 sm:gap-2.5 cursor-pointer whitespace-nowrap active:scale-98"
                     >
-                      <Users size={18} className="text-gray-600" />
-                      <span>Partner With Us</span>
+                      <Calendar size={17} strokeWidth={2.2} className="text-[#E21E23]" />
+                      <span>Daily Milk Planner</span>
                     </button>
                   </div>
 
@@ -524,30 +619,56 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
 
         {/* 2. Real-time Impact & Metrics Banner */}
         {activeView === 'home' && (
-          <div className="bg-white border-y border-gray-100 py-6 px-4 shadow-sm">
-            <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
-              <div className="border-r border-gray-100 last:border-r-0">
-                <div className="text-2xl sm:text-3xl font-black text-red-600">
-                  <AnimatedCounter target={totalHappyFarmers > 0 ? totalHappyFarmers : 500} suffix="+" />
+          <div className="bg-[#F8F5EE] border-y border-[#EAE2D8] py-8 sm:py-12 px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">
+                
+                {/* Card 1: Supplying Farmers */}
+                <div className="bg-white rounded-[22px] sm:rounded-[28px] p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 border-b-[5px] sm:border-b-[6px] border-b-[#A82E2E] text-center flex flex-col items-center justify-center">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-black text-[#1A202C] tracking-tight leading-none">
+                    <AnimatedCounter target={totalHappyFarmers > 0 ? totalHappyFarmers : 500} suffix="+" />
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-black tracking-widest text-[#718096] uppercase mt-2 sm:mt-2.5">
+                    Supplying Farmers
+                  </div>
                 </div>
-                <div className="text-xs sm:text-sm font-semibold text-gray-600 mt-1">Supplying Farmers</div>
-              </div>
-              <div className="border-r border-gray-100 last:border-r-0">
-                <div className="text-2xl sm:text-3xl font-black text-gray-900">
-                  <AnimatedCounter target={totalVillages > 0 ? totalVillages : 15} suffix="+" />
+
+                {/* Card 2: Partner Villages */}
+                <div className="bg-white rounded-[22px] sm:rounded-[28px] p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 border-b-[5px] sm:border-b-[6px] border-b-[#D99A1C] text-center flex flex-col items-center justify-center">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-black text-[#1A202C] tracking-tight leading-none">
+                    <AnimatedCounter target={totalVillages > 0 ? totalVillages : 15} suffix="+" />
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-black tracking-widest text-[#718096] uppercase mt-2 sm:mt-2.5">
+                    Partner Villages
+                  </div>
                 </div>
-                <div className="text-xs sm:text-sm font-semibold text-gray-600 mt-1">Partner Villages</div>
-              </div>
-              <div className="border-r border-gray-100 last:border-r-0">
-                <div className="text-2xl sm:text-3xl font-black text-emerald-700">
-                  <AnimatedCounter target={totalDailyVolume > 0 ? Math.round(totalDailyVolume) : 12500} suffix=" L" />
+
+                {/* Card 3: Daily Volume */}
+                <div className="bg-white rounded-[22px] sm:rounded-[28px] p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 border-b-[5px] sm:border-b-[6px] border-b-[#2E7D32] text-center flex flex-col items-center justify-center">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-black text-[#1A202C] tracking-tight leading-none">
+                    <AnimatedCounter target={totalDailyVolume > 0 ? Math.round(totalDailyVolume) : 12500} suffix=" L" />
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-black tracking-widest text-[#718096] uppercase mt-2 sm:mt-2.5">
+                    Daily Pure Volume
+                  </div>
                 </div>
-                <div className="text-xs sm:text-sm font-semibold text-gray-600 mt-1">Daily Pure Volume</div>
+
+                {/* Card 4: GC Lab Tested Purity */}
+                <div className="bg-white rounded-[22px] sm:rounded-[28px] p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 border-b-[5px] sm:border-b-[6px] border-b-[#1E6091] text-center flex flex-col items-center justify-center">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-black text-[#1A202C] tracking-tight leading-none">
+                    100%
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-black tracking-widest text-[#718096] uppercase mt-2 sm:mt-2.5">
+                    GC Lab Tested Purity
+                  </div>
+                </div>
+
               </div>
-              <div>
-                <div className="text-2xl sm:text-3xl font-black text-amber-600">100%</div>
-                <div className="text-xs sm:text-sm font-semibold text-gray-600 mt-1">GC Lab Tested Purity</div>
-              </div>
+
+              {/* Disclaimer Note */}
+              <p className="text-[10px] sm:text-xs text-[#A0AEC0] italic font-medium mt-4 sm:mt-5 text-center">
+                *Based on daily verified village dairy collection & laboratory purity audits, March 2026.
+              </p>
             </div>
           </div>
         )}
@@ -625,7 +746,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
                           <span className="price-value">{prod.price}</span>
                         </div>
                         <button className="product-btn" onClick={() => { setQuickOrderProduct(prod); setSelectedPackSize('1 L'); setOrderQuantity(1); setOrderConfirmed(false); }}>
-                          <span>Order Fresh</span>
+                          <ShoppingBag size={14} />
+                          <span>Buy Now</span>
                           <ChevronRight size={14} />
                         </button>
                       </div>
@@ -634,20 +756,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
                 ))}
               </div>
 
-              {/* Interactive Subscription Calculator */}
-              <SubscriptionCalculator 
-                onSelectPlan={(plan) => {
-                  setQuickOrderProduct({
-                    name: `${plan.product} (Monthly Subscription)`,
-                    price: `₹${plan.monthlyCost}/mo`,
-                    tag: 'Fresh Morning Trial',
-                    desc: `${plan.quantity}L daily • Morning delivery to ${plan.locality || 'your area'} by 6:15 AM before tea`,
-                  });
-                  setSelectedPackSize(`${plan.quantity} L`);
-                  setOrderQuantity(1);
-                  setOrderConfirmed(false);
-                }}
-              />
+              {/* Link to Dedicated Full Product Page */}
+              <div className="text-center my-10">
+                <button
+                  type="button"
+                  onClick={() => navigateToView('products')}
+                  className="inline-flex items-center gap-2.5 bg-[#E21E23] hover:bg-[#c9181d] text-white px-8 py-3.5 rounded-full font-extrabold text-sm sm:text-base shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer active:scale-98"
+                >
+                  <ShoppingBag size={17} />
+                  <span>Explore All Products</span>
+                  <ArrowRight size={17} />
+                </button>
+              </div>
             </div>
           </section>
         )}
@@ -690,11 +810,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
               <div className="text-center md:hidden mt-2 text-[11px] font-semibold text-stone-400 flex items-center justify-center gap-1">
                 <span>Swipe quality pillars to explore</span>
                 <span>→</span>
-              </div>
-
-              {/* Interactive Live Purity Batch Checker */}
-              <div className="mt-12">
-                <PurityBatchChecker />
               </div>
             </div>
           </section>
@@ -803,32 +918,73 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
 
         {/* 9. Careers Section */}
         {(activeView === 'home' || activeView === 'careers') && (
-          <section id="careers" className="py-16 px-4 max-w-5xl mx-auto scroll-mt-20">
-            <div className="landing-section-header text-center mb-10">
+          <section id="careers" className="py-12 sm:py-16 px-2.5 sm:px-4 max-w-5xl mx-auto scroll-mt-20">
+            <div className="landing-section-header text-center mb-6 sm:mb-10">
               <span className="section-tagline">Join Our Team</span>
               <h2 className="section-main-title">Build the Future of Smart Dairy</h2>
               <p className="section-desc">We are always looking for passionate individuals in dairy technology, logistics, and quality assurance.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-6">
               {[
-                { title: "Dairy Quality Assurance Officer", location: "Mathura / Agra Hub", dept: "Quality Control", type: "Full Time" },
-                { title: "Village Collection Center Supervisor", location: "Aligarh / Hathras", dept: "Operations", type: "Full Time" },
-                { title: "Cold Chain Transport Coordinator", location: "Noida / Greater Noida", dept: "Logistics", type: "Full Time" },
-                { title: "Farmer Relation Manager", location: "Mathura District", dept: "Community", type: "Full Time" }
+                { 
+                  title: "Dairy Quality Assurance Officer", 
+                  location: "Mathura / Agra Hub", 
+                  dept: "Quality Control", 
+                  department: "Quality Control",
+                  type: "Full Time",
+                  deptBadge: "bg-red-50 text-red-700 border-red-200/80"
+                },
+                { 
+                  title: "Village Collection Center Supervisor", 
+                  location: "Aligarh / Hathras", 
+                  dept: "Operations", 
+                  department: "Operations",
+                  type: "Full Time",
+                  deptBadge: "bg-blue-50 text-blue-700 border-blue-200/80"
+                },
+                { 
+                  title: "Cold Chain Transport Coordinator", 
+                  location: "Noida / Gr. Noida", 
+                  dept: "Logistics", 
+                  department: "Logistics",
+                  type: "Full Time",
+                  deptBadge: "bg-amber-50 text-amber-700 border-amber-200/80"
+                },
+                { 
+                  title: "Farmer Relation Manager", 
+                  location: "Mathura District", 
+                  dept: "Community", 
+                  department: "Community",
+                  type: "Full Time",
+                  deptBadge: "bg-emerald-50 text-emerald-700 border-emerald-200/80"
+                }
               ].map((job, idx) => (
-                <div key={idx} className="bg-white rounded-3xl p-6 shadow-xl border border-gray-200 flex flex-col justify-between hover:shadow-2xl transition-all duration-300">
+                <div 
+                  key={idx} 
+                  className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-6 shadow-lg shadow-black/[0.03] border border-gray-200/90 flex flex-col justify-between hover:shadow-xl hover:border-red-200 transition-all duration-300 group"
+                >
                   <div>
-                    <span className="text-xs font-bold bg-red-50 text-red-600 px-3 py-1 rounded-full">{job.dept}</span>
-                    <h3 className="text-xl font-extrabold text-gray-900 mt-3 mb-1">{job.title}</h3>
-                    <p className="text-xs text-gray-500 font-medium"><MapPin size={13} className="inline mr-1" />{job.location} • {job.type}</p>
+                    <span className={`text-[9px] sm:text-xs font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border inline-block ${job.deptBadge}`}>
+                      {job.dept}
+                    </span>
+                    <h3 className="text-xs sm:text-lg font-black text-gray-900 mt-2 sm:mt-3 mb-1 sm:mb-1.5 leading-snug line-clamp-2 min-h-[32px] sm:min-h-[52px]">
+                      {job.title}
+                    </h3>
+                    <div className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500 font-medium line-clamp-1">
+                      <MapPin size={11} className="text-gray-400 shrink-0" />
+                      <span className="truncate">{job.location}</span>
+                      <span className="hidden sm:inline text-gray-300">•</span>
+                      <span className="hidden sm:inline font-semibold text-gray-600">{job.type}</span>
+                    </div>
                   </div>
+
                   <button 
                     onClick={() => { setSelectedJob(job); setIsCareerModalOpen(true); }}
-                    className="mt-6 bg-red-600 hover:bg-red-700 text-white font-bold text-sm py-2.5 px-5 rounded-full shadow-md transition-all flex items-center justify-center gap-2"
+                    className="mt-3 sm:mt-6 bg-[#E21E23] hover:bg-[#c9181d] text-white font-extrabold text-[11px] sm:text-sm py-2 sm:py-2.5 px-3 sm:px-5 rounded-full shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-1 sm:gap-2 cursor-pointer active:scale-98 w-full"
                   >
                     <span>Apply Now</span>
-                    <ArrowRight size={14} />
+                    <ArrowRight size={12} className="sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </button>
                 </div>
               ))}
@@ -847,6 +1003,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
           <div className="footer-milky-links">
             <div className="footer-milky-links-row">
               <button onClick={() => navigateToView('products')}>Products</button>
+              <button onClick={() => navigateToView('planner')}>Daily Milk Planner</button>
               <button onClick={() => navigateToView('about')}>About Us</button>
               <button onClick={() => navigateToView('why-us')}>Why Choose Us</button>
             </div>
@@ -1130,7 +1287,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
                     className="hero-btn-primary" 
                     style={{ width: '100%', justifyContent: 'center', padding: '13px', borderRadius: '30px', marginTop: '4px' }}
                   >
-                    <span>Confirm Quick Order Request</span>
+                    <span>Confirm & Place Order (Buy Now)</span>
                     <ArrowRight size={16} />
                   </button>
                 </>

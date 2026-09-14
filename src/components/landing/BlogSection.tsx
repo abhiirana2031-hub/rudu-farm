@@ -50,7 +50,7 @@ const BLOG_POSTS: BlogPost[] = [
       { icon: '⚖️', text: 'Higher Costs and Risks' },
       { icon: '🏷️', text: 'Uncertain Premiums' },
     ],
-    watermark: 'COWBERRY',
+    watermark: 'RUDU DAIRY',
     summary: 'Discover the relentless dedication, traditional knowledge, and soil revitalization required by local farmers to produce truly pure, chemical-free crops and fodder.',
     fullContent: {
       lead: 'Switching from conventional chemical agriculture to 100% certified organic dairy and crop farming is not just a commercial choice—it is a rigorous, multi-year generational commitment.',
@@ -89,7 +89,7 @@ const BLOG_POSTS: BlogPost[] = [
       { icon: '🧪', text: 'Liver Damage' },
       { icon: '🛡️', text: 'Immune & Developmental Effects' },
     ],
-    watermark: 'COWBERRY',
+    watermark: 'RUDU DAIRY',
     summary: 'A critical exposé on Carbendazim—a systemic fungicide widely sprayed on conventional cattle fodder and fruits—and why zero-residue testing is crucial for your family.',
     fullContent: {
       lead: 'While families strive to cook wholesome homemade meals, synthetic systemic fungicides like Carbendazim frequently bypass standard water washing, accumulating in animal tissue and dairy fat.',
@@ -128,7 +128,7 @@ const BLOG_POSTS: BlogPost[] = [
       { icon: '🌿', text: '100% Beta-Casein A2' },
       { icon: '❄️', text: '4°C Cold-Chain Sealed' },
     ],
-    watermark: 'COWBERRY',
+    watermark: 'RUDU DAIRY',
     summary: 'Understand the distinct science between A1 and A2 beta-casein proteins and why unadulterated indigenous cow milk feels lighter, healthier, and easier to digest.',
     fullContent: {
       lead: 'Many people who believe they are lactose intolerant actually suffer from inflammation triggered by the mutated A1 beta-casein protein found in commercial crossbred cows.',
@@ -229,7 +229,7 @@ export const BlogSection: React.FC = () => {
 
                   {/* Watermark badge bottom-right */}
                   {post.watermark && (
-                    <div className="absolute bottom-2 right-2.5 text-[9px] font-black uppercase tracking-widest text-white/80 bg-black/35 backdrop-blur-xs px-2 py-0.5 rounded">
+                    <div className="absolute bottom-2.5 right-2.5 text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white bg-[#144A29]/90 backdrop-blur-xs px-2.5 py-0.5 rounded-md shadow-sm border border-white/20">
                       {post.watermark}
                     </div>
                   )}
