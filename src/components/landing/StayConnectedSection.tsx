@@ -13,7 +13,7 @@ export const StayConnectedSection: React.FC = () => {
   return (
     <section 
       id="stay-connected" 
-      className="relative w-full bg-[#f2f6ee] border-y border-[#dce6d7] overflow-hidden py-10 sm:py-14 my-6 sm:my-8"
+      className="relative w-full bg-[#f2f6ee] border-t border-[#dce6d7] border-b-0 overflow-hidden py-10 sm:py-14 mt-6 sm:mt-10 mb-0"
       aria-label="Stay Connected & Mobile App Download"
     >
       {/* Delicate Pastoral Farm Illustration Background */}
