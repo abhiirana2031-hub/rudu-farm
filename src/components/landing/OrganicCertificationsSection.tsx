@@ -89,39 +89,39 @@ export const OrganicCertificationsSection: React.FC = () => {
         </div>
 
         {/* 3 Hanging Shield / Banner Cards (Horizontal scroll on mobile, Grid on desktop) */}
-        <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-5 md:gap-8 lg:gap-10 max-w-4xl mx-auto -mx-4 px-6 md:mx-auto md:px-0 pb-6 snap-x snap-mandatory no-scrollbar justify-start md:justify-center">
+        <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 max-w-4xl mx-auto -mx-4 px-6 md:mx-auto md:px-0 pb-6 snap-x snap-mandatory no-scrollbar justify-start md:justify-center">
           {CERTIFICATIONS_DATA.map((cert) => (
             <div 
               key={cert.id}
-              className="flex-shrink-0 w-[78vw] sm:w-[68vw] max-w-[270px] md:w-full snap-center flex flex-col items-center group cursor-pointer"
+              className="flex-shrink-0 w-[64vw] sm:w-[50vw] max-w-[220px] md:max-w-[270px] md:w-full snap-center flex flex-col items-center group cursor-pointer"
               onClick={() => setSelectedCert(cert)}
               title={`Click to view ${cert.title} accreditation details`}
             >
               {/* Top Dark-Green Banner Rod / Accent Hanger */}
-              <div className="w-full max-w-[270px] h-2 bg-[#234b35] rounded-t-sm shadow-sm transition-transform duration-300 group-hover:scale-[1.02]" />
+              <div className="w-full max-w-[220px] md:max-w-[270px] h-1.5 sm:h-2 bg-[#234b35] rounded-t-sm shadow-sm transition-transform duration-300 group-hover:scale-[1.02]" />
 
               {/* Pendant Banner / Shield Card Body */}
               <div 
-                className="w-full max-w-[270px] bg-white pt-5 pb-9 px-6 flex flex-col items-center justify-between border-x border-b border-stone-200/90 transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-emerald-700/40"
+                className="w-full max-w-[220px] md:max-w-[270px] bg-white pt-4 sm:pt-5 pb-7 sm:pb-9 px-4 sm:px-6 flex flex-col items-center justify-between border-x border-b border-stone-200/90 transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-emerald-700/40"
                 style={{
-                  clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 22px), 50% 100%, 0 calc(100% - 22px))',
-                  filter: 'drop-shadow(0 10px 22px rgba(35, 75, 53, 0.08))',
-                  minHeight: '235px'
+                  clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 18px), 50% 100%, 0 calc(100% - 18px))',
+                  filter: 'drop-shadow(0 8px 18px rgba(35, 75, 53, 0.07))',
+                  minHeight: '200px'
                 }}
               >
                 {/* Certificate Title Label */}
-                <h3 className="text-xs sm:text-[13.5px] font-bold text-gray-800 tracking-wide text-center mb-4 transition-colors group-hover:text-emerald-800">
+                <h3 className="text-[11.5px] sm:text-[13.5px] font-bold text-gray-800 tracking-wide text-center mb-2 sm:mb-4 transition-colors group-hover:text-emerald-800">
                   {cert.title}
                 </h3>
 
                 {/* Logo Area */}
-                <div className="flex-1 flex items-center justify-center py-2 transition-transform duration-300 group-hover:scale-105">
+                <div className="flex-1 flex items-center justify-center py-1 sm:py-2 transition-transform duration-300 group-hover:scale-105 scale-85 sm:scale-100 origin-center">
                   {cert.logo}
                 </div>
 
                 {/* Micro info hint */}
-                <div className="mt-2 text-[10.5px] font-semibold text-emerald-800/80 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <ShieldCheck size={13} className="text-emerald-700" />
+                <div className="mt-1 sm:mt-2 text-[10px] sm:text-[10.5px] font-semibold text-emerald-800/80 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <ShieldCheck size={12} className="text-emerald-700" />
                   <span>Verified Standard</span>
                 </div>
               </div>

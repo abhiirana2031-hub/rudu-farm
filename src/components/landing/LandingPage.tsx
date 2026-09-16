@@ -20,6 +20,7 @@ import { MilkComparisonSection } from './MilkComparisonSection';
 import { AboutUsSection } from './AboutUsSection';
 import { DedicatedProductPage } from '../products/DedicatedProductPage';
 import { DailyMilkPlannerPage } from '../planner/DailyMilkPlannerPage';
+import { StayConnectedSection } from './StayConnectedSection';
 import { 
   Milk, 
   Users, 
@@ -94,6 +95,19 @@ const Linkedin = ({ size = 16 }: { size?: number }) => (
     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
     <rect x="2" y="9" width="4" height="12" />
     <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
+const LeafSprig = ({ flip = false }: { flip?: boolean }) => (
+  <svg 
+    className={`w-5 h-4 sm:w-6 sm:h-5 text-[#2d6a4f] inline-block ${flip ? 'scale-x-[-1]' : ''}`} 
+    viewBox="0 0 28 18" 
+    fill="currentColor"
+  >
+    <path d="M2 16C5 14 10 9 16 3C13 6 9 11 5 14C11 12 17 7 22 1C18 5 13 11 8 15C14 14 20 10 25 5C21 10 15 15 9 17C4 18 2 17 2 16Z" opacity="0.4" />
+    <path d="M12 6C10 2 15 0 19 0C22 3 22 7 19 9C15 10 12 8 12 6Z" />
+    <path d="M5 11C4 8 8 6 12 7C14 10 13 13 10 15C7 16 5 14 5 11Z" />
+    <path d="M2 17C7 15 13 10 19 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
   </svg>
 );
 
@@ -677,10 +691,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
         {(activeView === 'home' || activeView === 'products') && (
           <section id="products" className="products-catalog-section py-16 scroll-mt-20">
             <div className="catalog-container">
-              <div className="landing-section-header">
-                <span className="section-tagline">Fresh Offerings</span>
-                <h2 className="section-main-title">Our Premium Dairy Range</h2>
-                <p className="section-desc">Explore our range of organic, nutrition-rich, and pure dairy products crafted for your healthy lifestyle.</p>
+              <div className="landing-section-header text-center max-w-2xl mx-auto mb-8 sm:mb-12">
+                <div className="inline-flex items-center justify-center gap-2 mb-2">
+                  <LeafSprig />
+                  <span className="text-[11px] sm:text-xs md:text-sm font-extrabold uppercase tracking-[0.25em] text-[#2d6a4f]">
+                    OUR PRODUCTS
+                  </span>
+                  <LeafSprig flip />
+                </div>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1e4630] font-normal tracking-wide mt-1 mb-2.5 font-['Caveat',cursive] sm:font-['Playfair_Display',serif] sm:italic sm:font-semibold">
+                  Pure. Fresh. Healthy.
+                </h2>
+                <p className="text-stone-600 text-sm sm:text-base font-normal max-w-xl mx-auto leading-relaxed">
+                  A wide range of dairy products, made from the goodness of our farm and the purity of nature.
+                </p>
               </div>
 
               <div className="catalog-tabs-container">
@@ -782,26 +806,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
                 <p className="section-desc">We follow rigorous processing guidelines to bring you delicious, high-quality, and nutritious dairy essentials.</p>
               </div>
 
-              <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-5 px-6 md:px-5 pb-4 max-w-5xl mx-auto snap-x snap-mandatory no-scrollbar -mx-4 md:mx-auto">
-                <div className="flex-shrink-0 w-[82vw] sm:w-[68vw] max-w-[290px] md:w-auto snap-center bg-white p-7 rounded-3xl text-center shadow-lg shadow-black/[0.04] border border-stone-100 flex flex-col justify-between">
-                  <div className="pillar-icon-box" style={{ background: '#fee2e2', color: '#dc2626', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}><ShieldCheck size={30} /></div>
+              <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-4 md:gap-5 px-6 md:px-5 pb-4 max-w-5xl mx-auto snap-x snap-mandatory no-scrollbar -mx-4 md:mx-auto">
+                <div className="flex-shrink-0 w-[68vw] sm:w-[50vw] max-w-[240px] md:w-auto snap-center bg-white p-5 sm:p-6 md:p-7 rounded-2xl sm:rounded-3xl text-center shadow-md shadow-black/[0.03] border border-stone-100 flex flex-col justify-between">
+                  <div className="pillar-icon-box" style={{ background: '#fee2e2', color: '#dc2626', width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}><ShieldCheck size={24} /></div>
                   <div>
-                    <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '10px' }}>GC Tested Purity</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">Our ghee batches undergo Gas Chromatography testing to prove complete purity and detect any adulterations.</p>
+                    <h3 className="text-base sm:text-lg md:text-xl font-extrabold text-stone-900 mb-1.5 sm:mb-2">GC Tested Purity</h3>
+                    <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">Our ghee batches undergo Gas Chromatography testing to prove complete purity and detect any adulterations.</p>
                   </div>
                 </div>
-                <div className="flex-shrink-0 w-[82vw] sm:w-[68vw] max-w-[290px] md:w-auto snap-center bg-white p-7 rounded-3xl text-center shadow-lg shadow-black/[0.04] border border-stone-100 flex flex-col justify-between">
-                  <div className="pillar-icon-box" style={{ background: '#fef3c7', color: '#d97706', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}><Droplets size={30} /></div>
+                <div className="flex-shrink-0 w-[68vw] sm:w-[50vw] max-w-[240px] md:w-auto snap-center bg-white p-5 sm:p-6 md:p-7 rounded-2xl sm:rounded-3xl text-center shadow-md shadow-black/[0.03] border border-stone-100 flex flex-col justify-between">
+                  <div className="pillar-icon-box" style={{ background: '#fef3c7', color: '#d97706', width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}><Droplets size={24} /></div>
                   <div>
-                    <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '10px' }}>Clean & Hygienic</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">Processed touch-free using state-of-the-art packaging systems, ensuring clean food safety from milking to delivery.</p>
+                    <h3 className="text-base sm:text-lg md:text-xl font-extrabold text-stone-900 mb-1.5 sm:mb-2">Clean & Hygienic</h3>
+                    <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">Processed touch-free using state-of-the-art packaging systems, ensuring clean food safety from milking to delivery.</p>
                   </div>
                 </div>
-                <div className="flex-shrink-0 w-[82vw] sm:w-[68vw] max-w-[290px] md:w-auto snap-center bg-white p-7 rounded-3xl text-center shadow-lg shadow-black/[0.04] border border-stone-100 flex flex-col justify-between">
-                  <div className="pillar-icon-box" style={{ background: '#dbeafe', color: '#2563eb', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}><Users size={30} /></div>
+                <div className="flex-shrink-0 w-[68vw] sm:w-[50vw] max-w-[240px] md:w-auto snap-center bg-white p-5 sm:p-6 md:p-7 rounded-2xl sm:rounded-3xl text-center shadow-md shadow-black/[0.03] border border-stone-100 flex flex-col justify-between">
+                  <div className="pillar-icon-box" style={{ background: '#dbeafe', color: '#2563eb', width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}><Users size={24} /></div>
                   <div>
-                    <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '10px' }}>Empowering Farmers</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">Procuring directly from local villages with computerized fat testing, securing fair rates and bi-weekly payouts.</p>
+                    <h3 className="text-base sm:text-lg md:text-xl font-extrabold text-stone-900 mb-1.5 sm:mb-2">Empowering Farmers</h3>
+                    <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">Procuring directly from local villages with computerized fat testing, securing fair rates and bi-weekly payouts.</p>
                   </div>
                 </div>
               </div>
@@ -837,47 +861,94 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
 
         {/* 7. Why Choose Us Section */}
         {(activeView === 'home' || activeView === 'why-us') && (
-          <section id="why-us" className="py-16 px-4 max-w-6xl mx-auto scroll-mt-20">
-            <div className="landing-section-header text-center mb-10">
-              <span className="section-tagline">Why Choose Us</span>
-              <h2 className="section-main-title">Why Farmers & Families Prefer Rudu</h2>
-              <p className="section-desc">Transparent fat testing, zero middlemen, guaranteed government rates, and 100% pure lab-tested farm fresh milk.</p>
-            </div>
+          <section id="why-us" className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-emerald-900/50 bg-gradient-to-br from-[#122e1e] via-[#1b432b] to-[#122e1e]">
+              
+              {/* Subtle Ambient Background Decorative Circles */}
+              <div className="absolute -top-32 -left-32 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-5 pb-4 -mx-4 px-6 md:mx-auto md:px-0 snap-x snap-mandatory no-scrollbar">
-              <div className="flex-shrink-0 w-[82vw] sm:w-[68vw] max-w-[310px] md:w-auto snap-center bg-white rounded-3xl p-6 shadow-xl border border-red-100 text-center hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-600 mx-auto flex items-center justify-center mb-4 shadow-sm">
-                    <ShieldCheck size={28} />
+              <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 items-center">
+                
+                {/* Left Side Content */}
+                <div className="md:col-span-5 lg:col-span-6 p-7 sm:p-10 lg:p-14 text-white flex flex-col justify-center">
+                  
+                  {/* Tagline */}
+                  <div className="inline-flex items-center gap-2 mb-3">
+                    <LeafSprig />
+                    <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.25em] text-emerald-300">
+                      PURE DESI GOODNESS
+                    </span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">100% Digital Fat Testing</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">Computerized fat & SNF testing machines ensure error-free pricing with instant printed slips.</p>
-                </div>
-              </div>
-              <div className="flex-shrink-0 w-[82vw] sm:w-[68vw] max-w-[310px] md:w-auto snap-center bg-white rounded-3xl p-6 shadow-xl border border-red-100 text-center hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 mx-auto flex items-center justify-center mb-4 shadow-sm">
-                    <CreditCard size={28} />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Direct Bank Payouts</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">Eliminate middleman commissions with bi-weekly direct bank payouts for all supplying farmers.</p>
-                </div>
-              </div>
-              <div className="flex-shrink-0 w-[82vw] sm:w-[68vw] max-w-[310px] md:w-auto snap-center bg-white rounded-3xl p-6 shadow-xl border border-red-100 text-center hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 mx-auto flex items-center justify-center mb-4 shadow-sm">
-                    <Droplets size={28} />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">4°C Cold Chain Transit</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">Rapid chilling units maintain fresh quality, natural nutrients, and zero bacterial growth.</p>
-                </div>
-              </div>
-            </div>
 
-            {/* Mobile Swipe Cue */}
-            <div className="text-center md:hidden mt-2 text-[11px] font-semibold text-stone-400 flex items-center justify-center gap-1">
-              <span>Swipe benefits to view all</span>
-              <span>→</span>
+                  {/* Title in organic script */}
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-normal font-['Caveat',cursive] sm:font-['Playfair_Display',serif] sm:italic tracking-wide mb-4 sm:mb-6 text-white leading-tight">
+                    Why Choose Rudu?
+                  </h2>
+
+                  {/* Feature Checklist */}
+                  <ul className="space-y-3 sm:space-y-4 mb-7 sm:mb-9">
+                    {[
+                      '100% Pure & Natural Dairy',
+                      'Traditional Bilona Process',
+                      'No Chemicals, No Preservatives',
+                      'Healthy for You & Your Family'
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-center gap-3 group/item">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white text-[#1b432b] flex items-center justify-center flex-shrink-0 shadow-sm transition-transform duration-200 group-hover/item:scale-110">
+                          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <span className="text-xs sm:text-sm lg:text-base font-semibold text-white/95 tracking-wide">
+                          {item}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => navigateToView('about')}
+                      className="inline-flex items-center gap-2.5 bg-[#FAF7F2] hover:bg-white text-[#1b432b] px-7 py-3 rounded-full font-bold text-xs sm:text-sm md:text-base shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 group cursor-pointer"
+                    >
+                      <span>Our Story</span>
+                      <span className="transform transition-transform group-hover:translate-x-1 font-sans">→</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right Side Products Image */}
+                <div className="md:col-span-7 lg:col-span-6 relative h-full min-h-[260px] sm:min-h-[320px] md:min-h-[420px] lg:min-h-[480px] p-4 sm:p-6 md:p-8 flex items-center justify-center">
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 group/img">
+                    <img
+                      src="/images/why_choose_products.jpg"
+                      alt="Artisanal Rudu Ghee, Fresh Whole Milk, Paneer and Dahi Curd"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105"
+                      loading="lazy"
+                    />
+
+                    {/* Gradient Fade overlay on desktop */}
+                    <div className="hidden md:block absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#1b432b] to-transparent pointer-events-none" />
+
+                    {/* Whimsical Floating Badge */}
+                    <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/95 backdrop-blur-md px-3 sm:px-4 py-1.5 rounded-full shadow-lg border border-white/80 flex items-center gap-1.5 pointer-events-none">
+                      <Sparkles size={14} className="text-amber-500" />
+                      <span className="text-[11px] sm:text-xs font-bold text-stone-900 font-['Caveat',cursive] sm:text-sm">
+                        Pure Desi Goodness ♡
+                      </span>
+                    </div>
+
+                    {/* Subtitle tag at bottom */}
+                    <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white/90 text-[10px] sm:text-xs font-medium border border-white/20">
+                      🥛 100% Farm Fresh Assured
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </section>
         )}
@@ -991,16 +1062,40 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
             </div>
           </section>
         )}
+
+        {/* 10. Stay Connected & Mobile App Download Section */}
+        {(activeView === 'home' || activeView === 'careers') && (
+          <StayConnectedSection />
+        )}
       </main>
 
       {/* 10. Footer Section */}
-      <footer id="footer" className="landing-footer-milky">
-        <div className="footer-milky-content">
+      <footer id="footer" className="landing-footer-milky relative overflow-hidden text-white">
+        {/* Shiny Sunny Day Nature Scenery Background Image */}
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center sm:bg-[center_top_25%] pointer-events-none transform scale-105 transition-transform duration-700"
+          style={{ backgroundImage: "url('/images/sunny_dairy_farm.jpg')" }}
+          aria-hidden="true"
+        />
+
+        {/* Shiny Day Atmospheric Gradient: keeps sky and bright green meadows vibrant while providing contrast */}
+        <div 
+          className="absolute inset-0 bg-gradient-to-b from-sky-950/40 via-[#062015]/55 to-[#020c07]/85 pointer-events-none"
+          aria-hidden="true"
+        />
+
+        {/* Ambient Top Sunlight Bloom */}
+        <div 
+          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[650px] h-[280px] bg-amber-100/20 rounded-full blur-3xl pointer-events-none"
+          aria-hidden="true"
+        />
+
+        <div className="footer-milky-content relative z-10">
           <div className="footer-milky-logo flex justify-center items-center py-2">
-            <RuduLogo height={48} className="mx-auto" />
+            <RuduLogo height={52} className="mx-auto drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]" />
           </div>
 
-          <div className="footer-milky-links">
+          <div className="footer-milky-links backdrop-blur-md bg-black/35 border border-white/15 rounded-2xl py-4 sm:py-5 px-6 sm:px-8 shadow-2xl max-w-2xl mx-auto">
             <div className="footer-milky-links-row">
               <button onClick={() => navigateToView('products')}>Products</button>
               <button onClick={() => navigateToView('planner')}>Daily Milk Planner</button>
@@ -1014,7 +1109,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
             </div>
           </div>
 
-          <div className="footer-milky-socials">
+          <div className="footer-milky-socials mt-6">
             <a href="#" className="social-circle" title="LinkedIn"><Linkedin size={18} /></a>
             <a href="#" className="social-circle" title="Facebook"><Facebook size={18} /></a>
             <a href="#" className="social-circle" title="YouTube"><Youtube size={18} /></a>
@@ -1022,9 +1117,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
           </div>
         </div>
 
-        <div className="footer-milky-bottom">
+        <div className="footer-milky-bottom relative z-10">
           <div className="max-w-6xl mx-auto px-4 flex justify-center items-center h-full">
-            <span>© Copyright {new Date().getFullYear()}. All Rights Reserved</span>
+            <span>© Copyright {new Date().getFullYear()} Rudu Dairy. All Rights Reserved</span>
           </div>
         </div>
       </footer>
