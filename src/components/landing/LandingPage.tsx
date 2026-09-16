@@ -98,9 +98,9 @@ const Linkedin = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
-const LeafSprig = ({ flip = false }: { flip?: boolean }) => (
+const LeafSprig = ({ flip = false, className = 'w-6 h-5 sm:w-7 sm:h-6' }: { flip?: boolean; className?: string }) => (
   <svg 
-    className={`w-5 h-4 sm:w-6 sm:h-5 text-[#2d6a4f] inline-block ${flip ? 'scale-x-[-1]' : ''}`} 
+    className={`${className} text-[#245e3d] inline-block shrink-0 ${flip ? 'scale-x-[-1]' : ''}`} 
     viewBox="0 0 28 18" 
     fill="currentColor"
   >
@@ -691,18 +691,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
         {(activeView === 'home' || activeView === 'products') && (
           <section id="products" className="products-catalog-section py-16 scroll-mt-20">
             <div className="catalog-container">
-              <div className="landing-section-header text-center max-w-2xl mx-auto mb-8 sm:mb-12">
-                <div className="inline-flex items-center justify-center gap-2 mb-2">
-                  <LeafSprig />
-                  <span className="text-[11px] sm:text-xs md:text-sm font-extrabold uppercase tracking-[0.25em] text-[#2d6a4f]">
+              <div className="landing-section-header text-center max-w-4xl mx-auto mb-10 sm:mb-16 px-3">
+                <div className="inline-flex items-center justify-center gap-3 sm:gap-4 mb-2 sm:mb-4">
+                  <LeafSprig className="w-7 h-6 sm:w-10 sm:h-8 md:w-12 md:h-9" />
+                  <span className="text-base sm:text-lg md:text-xl lg:text-2xl font-black uppercase tracking-[0.25em] sm:tracking-[0.3em] text-[#1c4d31]">
                     OUR PRODUCTS
                   </span>
-                  <LeafSprig flip />
+                  <LeafSprig flip className="w-7 h-6 sm:w-10 sm:h-8 md:w-12 md:h-9" />
                 </div>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1e4630] font-normal tracking-wide mt-1 mb-2.5 font-['Caveat',cursive] sm:font-['Playfair_Display',serif] sm:italic sm:font-semibold">
+                <h2 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[110px] text-[#133d22] font-bold tracking-tight mt-1 sm:mt-2 mb-3 sm:mb-5 font-['Caveat',cursive] leading-[1.05] sm:leading-none">
                   Pure. Fresh. Healthy.
                 </h2>
-                <p className="text-stone-600 text-sm sm:text-base font-normal max-w-xl mx-auto leading-relaxed">
+                <p className="text-[#2f4a38] text-lg sm:text-xl md:text-2xl font-medium max-w-3xl mx-auto leading-relaxed">
                   A wide range of dairy products, made from the goodness of our farm and the purity of nature.
                 </p>
               </div>
