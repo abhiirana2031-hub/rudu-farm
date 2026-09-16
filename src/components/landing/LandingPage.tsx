@@ -873,13 +873,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
                 {/* Left Side Content */}
                 <div className="md:col-span-5 lg:col-span-6 p-7 sm:p-10 lg:p-14 text-white flex flex-col justify-center">
                   
-                  {/* Tagline */}
-                  <div className="inline-flex items-center gap-2 mb-3">
-                    <LeafSprig />
-                    <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.25em] text-emerald-300">
-                      PURE DESI GOODNESS
-                    </span>
-                  </div>
+
 
                   {/* Title in organic script */}
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-normal font-['Caveat',cursive] sm:font-['Playfair_Display',serif] sm:italic tracking-wide mb-4 sm:mb-6 text-white leading-tight">
@@ -933,13 +927,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
                     {/* Gradient Fade overlay on desktop */}
                     <div className="hidden md:block absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#1b432b] to-transparent pointer-events-none" />
 
-                    {/* Whimsical Floating Badge */}
-                    <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/95 backdrop-blur-md px-3 sm:px-4 py-1.5 rounded-full shadow-lg border border-white/80 flex items-center gap-1.5 pointer-events-none">
-                      <Sparkles size={14} className="text-amber-500" />
-                      <span className="text-[11px] sm:text-xs font-bold text-stone-900 font-['Caveat',cursive] sm:text-sm">
-                        Pure Desi Goodness ♡
-                      </span>
-                    </div>
+
 
                     {/* Subtitle tag at bottom */}
                     <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white/90 text-[10px] sm:text-xs font-medium border border-white/20">
