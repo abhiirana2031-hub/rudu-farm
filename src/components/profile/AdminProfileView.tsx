@@ -31,14 +31,12 @@ export const AdminProfileView: React.FC = () => {
         name: 'Dairy Owner / Executive Admin',
         email: 'abhayrana8272@gmail.com',
         phone: '+91 99999 88888',
-        password: 'Admin@#005',
       };
     } catch {
       return {
         name: 'Dairy Owner / Executive Admin',
         email: 'abhayrana8272@gmail.com',
         phone: '+91 99999 88888',
-        password: 'Admin@#005',
       };
     }
   });
@@ -47,23 +45,26 @@ export const AdminProfileView: React.FC = () => {
   const [editName, setEditName] = useState(adminProfile.name);
   const [editPhone, setEditPhone] = useState(adminProfile.phone);
   const [editEmail, setEditEmail] = useState(adminProfile.email);
-  const [editPassword, setEditPassword] = useState(adminProfile.password);
+  const [editPassword, setEditPassword] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    const updated = {
+    const updatedProfile = {
       name: editName.trim() || 'Dairy Owner',
       phone: editPhone.trim(),
       email: editEmail.trim(),
+    };
+    const updatedForFirestore = {
+      ...updatedProfile,
       password: editPassword.trim(),
     };
-    setAdminProfile(updated);
-    localStorage.setItem('rudu_admin_profile', JSON.stringify(updated));
+    setAdminProfile(updatedProfile);
+    localStorage.setItem('rudu_admin_profile', JSON.stringify(updatedProfile));
 
     // Save to Firestore if available
     saveDocument(COLLECTIONS.USERS || 'users', 'admin-master', {
-      ...updated,
+      ...updatedForFirestore,
       role: 'SUPER_ADMIN',
       updatedAt: new Date().toISOString(),
     }).catch(console.warn);
@@ -131,7 +132,7 @@ export const AdminProfileView: React.FC = () => {
                 setEditName(adminProfile.name);
                 setEditPhone(adminProfile.phone);
                 setEditEmail(adminProfile.email);
-                setEditPassword(adminProfile.password);
+                setEditPassword('');
                 setIsEditing(true);
               }}
               className="flex items-center gap-1.5 px-4 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-xl text-xs font-bold transition-all cursor-pointer border border-purple-200"
