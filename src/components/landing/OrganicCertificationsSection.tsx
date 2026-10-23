@@ -7,7 +7,6 @@ interface CertificationDetail {
   title: string;
   badgeName: string;
   authority: string;
-  logo: React.ReactNode;
   standards: string[];
   description: string;
   certCode: string;
@@ -19,7 +18,6 @@ const CERTIFICATIONS_DATA: CertificationDetail[] = [
     title: 'India Organic',
     badgeName: 'India Organic (NPOP / Jaivik Bharat)',
     authority: 'APEDA & FSSAI (Govt. of India)',
-    logo: <IndiaOrganicLogo size={135} />,
     standards: [
       'National Programme for Organic Production (NPOP) compliant',
       'Zero synthetic fertilizers, GMOs, or chemical growth promoters',
@@ -33,7 +31,6 @@ const CERTIFICATIONS_DATA: CertificationDetail[] = [
     title: 'USDA Organic',
     badgeName: 'USDA National Organic Program',
     authority: 'United States Department of Agriculture',
-    logo: <UsdaOrganicLogo size={120} />,
     standards: [
       'Strict prohibition of synthetic chemicals and antibiotics',
       '100% organic vegetarian cattle fodder and natural pasture grazing',
@@ -47,7 +44,6 @@ const CERTIFICATIONS_DATA: CertificationDetail[] = [
     title: 'EU Organic',
     badgeName: 'European Union Organic Farming',
     authority: 'European Commission (Reg. EC 834/2007)',
-    logo: <EuOrganicLogo size={135} />,
     standards: [
       'Regulated by European Commission Regulation (EC) 834/2007',
       'Certified by accredited inspection body IN-BIO-132 for global export',
@@ -58,13 +54,30 @@ const CERTIFICATIONS_DATA: CertificationDetail[] = [
   }
 ];
 
+const renderCertLogo = (id: string, isModal = false) => {
+  if (isModal) {
+    switch (id) {
+      case 'india-organic': return <IndiaOrganicLogo size={105} />;
+      case 'usda-organic': return <UsdaOrganicLogo size={95} />;
+      case 'eu-organic': return <EuOrganicLogo size={105} />;
+      default: return null;
+    }
+  }
+  switch (id) {
+    case 'india-organic': return <IndiaOrganicLogo className="w-12 h-10 sm:w-16 sm:h-14 md:w-20 md:h-16 lg:w-24 lg:h-20 max-w-full" />;
+    case 'usda-organic': return <UsdaOrganicLogo className="w-10 h-10 sm:w-14 sm:h-14 md:w-18 md:h-18 lg:w-22 lg:h-22 max-w-full" />;
+    case 'eu-organic': return <EuOrganicLogo className="w-12 h-10 sm:w-16 sm:h-14 md:w-20 md:h-16 lg:w-24 lg:h-20 max-w-full" />;
+    default: return null;
+  }
+};
+
 export const OrganicCertificationsSection: React.FC = () => {
   const [selectedCert, setSelectedCert] = useState<CertificationDetail | null>(null);
 
   return (
     <section 
       id="organic-certifications" 
-      className="relative w-full py-16 sm:py-20 bg-[#FAF9F5] border-y border-stone-200/60 overflow-hidden"
+      className="relative w-full py-12 sm:py-16 md:py-20 bg-[#FAF9F5] border-y border-stone-200/60 overflow-hidden"
     >
       {/* Subtle organic background decoration */}
       <div className="absolute inset-0 pointer-events-none opacity-40">
@@ -72,81 +85,75 @@ export const OrganicCertificationsSection: React.FC = () => {
         <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-amber-100/40 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1f3d2b] tracking-tight leading-tight">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-14">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#1f3d2b] tracking-tight leading-tight">
             Globally Certified Organic Goodness
           </h2>
           
-          {/* Warm Amber/Gold Divider Line (matching reference screenshot) */}
-          <div className="w-14 h-1 bg-[#d4a373] rounded-full mx-auto my-3.5" />
+          {/* Warm Amber/Gold Divider Line */}
+          <div className="w-12 sm:w-14 h-1 bg-[#d4a373] rounded-full mx-auto my-3" />
           
-          <p className="text-gray-700 text-base sm:text-lg font-normal leading-relaxed mt-4">
+          <p className="text-gray-700 text-xs sm:text-sm md:text-base font-normal leading-relaxed max-w-xl mx-auto">
             Rudu Dairy products are pure, chemical-free, and naturally crafted for honest, healthy nutrition.
           </p>
         </div>
 
-        {/* 3 Hanging Shield / Banner Cards (Horizontal scroll on mobile, Grid on desktop) */}
-        <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 max-w-4xl mx-auto -mx-4 px-6 md:mx-auto md:px-0 pb-6 snap-x snap-mandatory no-scrollbar justify-start md:justify-center">
+        {/* All 3 Cards side-by-side in a guaranteed 3-column layout without any horizontal scroll */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6 lg:gap-8 max-w-3xl lg:max-w-4xl mx-auto px-0.5 sm:px-4">
           {CERTIFICATIONS_DATA.map((cert) => (
             <div 
               key={cert.id}
-              className="flex-shrink-0 w-[64vw] sm:w-[50vw] max-w-[220px] md:max-w-[270px] md:w-full snap-center flex flex-col items-center group cursor-pointer"
+              className="flex flex-col items-center group cursor-pointer w-full transition-transform duration-300 hover:-translate-y-1"
               onClick={() => setSelectedCert(cert)}
               title={`Click to view ${cert.title} accreditation details`}
             >
               {/* Top Dark-Green Banner Rod / Accent Hanger */}
-              <div className="w-full max-w-[220px] md:max-w-[270px] h-1.5 sm:h-2 bg-[#234b35] rounded-t-sm shadow-sm transition-transform duration-300 group-hover:scale-[1.02]" />
+              <div className="w-full h-1 sm:h-1.5 md:h-2 bg-[#234b35] rounded-t-sm shadow-2xs transition-colors duration-300 group-hover:bg-[#1b633b]" />
 
               {/* Pendant Banner / Shield Card Body */}
               <div 
-                className="w-full max-w-[220px] md:max-w-[270px] bg-white pt-4 sm:pt-5 pb-7 sm:pb-9 px-4 sm:px-6 flex flex-col items-center justify-between border-x border-b border-stone-200/90 transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-emerald-700/40"
+                className="w-full bg-white pt-2.5 sm:pt-4 md:pt-5 pb-3.5 sm:pb-6 md:pb-7 px-1.5 sm:px-3 md:px-5 flex flex-col items-center justify-between border-x border-b border-stone-200/90 shadow-2xs transition-all duration-300 group-hover:shadow-md group-hover:border-[#1b633b]/40"
                 style={{
-                  clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 18px), 50% 100%, 0 calc(100% - 18px))',
-                  filter: 'drop-shadow(0 8px 18px rgba(35, 75, 53, 0.07))',
-                  minHeight: '200px'
+                  clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 10px), 50% 100%, 0 calc(100% - 10px))',
+                  minHeight: '135px'
                 }}
               >
                 {/* Certificate Title Label */}
-                <h3 className="text-[11.5px] sm:text-[13.5px] font-bold text-gray-800 tracking-wide text-center mb-2 sm:mb-4 transition-colors group-hover:text-emerald-800">
+                <h3 className="text-[9.5px] sm:text-xs md:text-sm font-bold text-gray-800 tracking-tight text-center mb-1 sm:mb-2 transition-colors group-hover:text-emerald-800 leading-tight min-h-[22px] sm:min-h-[28px] flex items-center justify-center">
                   {cert.title}
                 </h3>
 
                 {/* Logo Area */}
-                <div className="flex-1 flex items-center justify-center py-1 sm:py-2 transition-transform duration-300 group-hover:scale-105 scale-85 sm:scale-100 origin-center">
-                  {cert.logo}
+                <div className="flex-1 flex items-center justify-center py-1 sm:py-2 transition-transform duration-300 group-hover:scale-105">
+                  {renderCertLogo(cert.id, false)}
                 </div>
 
-                {/* Micro info hint */}
-                <div className="mt-1 sm:mt-2 text-[10px] sm:text-[10.5px] font-semibold text-emerald-800/80 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <ShieldCheck size={12} className="text-emerald-700" />
-                  <span>Verified Standard</span>
+                {/* Micro info hint badge */}
+                <div className="mt-1 sm:mt-2 text-[8px] sm:text-[10px] md:text-[11px] font-semibold text-[#1c4d31] bg-[#f0f7f2] border border-[#1c4d31]/15 px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-0.5 sm:gap-1">
+                  <ShieldCheck size={11} className="text-[#16a34a] shrink-0" />
+                  <span className="hidden xs:inline">Certified</span>
+                  <span className="xs:hidden">Verified</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Mobile Swipe Cue */}
-        <div className="text-center md:hidden -mt-2 mb-4 text-[11px] font-semibold text-stone-400 flex items-center justify-center gap-1">
-          <span>Swipe certificates to view all</span>
-          <span>→</span>
-        </div>
-
         {/* Bottom Trust Badge Strip */}
-        <div className="mt-12 pt-8 border-t border-stone-200/60 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs sm:text-sm font-semibold text-gray-600">
+        <div className="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-stone-200/60 flex flex-wrap items-center justify-center gap-4 sm:gap-8 md:gap-10 text-xs sm:text-sm font-semibold text-gray-600">
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={17} className="text-emerald-700 flex-shrink-0" />
+            <CheckCircle2 size={16} className="text-[#16a34a] flex-shrink-0" />
             <span>100% Chemical & Hormone Free</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={17} className="text-emerald-700 flex-shrink-0" />
-            <span>Gas Chromatography (GC) Batch Tested</span>
+            <CheckCircle2 size={16} className="text-[#16a34a] flex-shrink-0" />
+            <span>Gas Chromatography (GC) Tested</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={17} className="text-emerald-700 flex-shrink-0" />
+            <CheckCircle2 size={16} className="text-[#16a34a] flex-shrink-0" />
             <span>Direct Village Cold-Chain Sourced</span>
           </div>
         </div>
@@ -175,7 +182,7 @@ export const OrganicCertificationsSection: React.FC = () => {
             {/* Modal Header */}
             <div className="flex items-center gap-4 mb-6">
               <div className="p-2.5 bg-stone-50 rounded-2xl border border-stone-200/70 flex items-center justify-center">
-                {selectedCert.logo}
+                {renderCertLogo(selectedCert.id, true)}
               </div>
               <div>
                 <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">

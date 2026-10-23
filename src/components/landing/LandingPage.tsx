@@ -100,14 +100,43 @@ const Linkedin = ({ size = 16 }: { size?: number }) => (
 
 const LeafSprig = ({ flip = false, className = 'w-6 h-5 sm:w-7 sm:h-6' }: { flip?: boolean; className?: string }) => (
   <svg 
-    className={`${className} text-[#245e3d] inline-block shrink-0 ${flip ? 'scale-x-[-1]' : ''}`} 
-    viewBox="0 0 28 18" 
-    fill="currentColor"
+    className={`${className} text-[#245e3d] inline-block shrink-0 transition-transform duration-300 ${flip ? 'scale-x-[-1]' : ''}`} 
+    viewBox="0 0 32 20" 
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
   >
-    <path d="M2 16C5 14 10 9 16 3C13 6 9 11 5 14C11 12 17 7 22 1C18 5 13 11 8 15C14 14 20 10 25 5C21 10 15 15 9 17C4 18 2 17 2 16Z" opacity="0.4" />
-    <path d="M12 6C10 2 15 0 19 0C22 3 22 7 19 9C15 10 12 8 12 6Z" />
-    <path d="M5 11C4 8 8 6 12 7C14 10 13 13 10 15C7 16 5 14 5 11Z" />
-    <path d="M2 17C7 15 13 10 19 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+    {/* Gracefully curving stem */}
+    <path 
+      d="M3 18C10 16 19 11 30 3" 
+      stroke="currentColor" 
+      strokeWidth="1.6" 
+      strokeLinecap="round" 
+    />
+    {/* Natural tapered leaves */}
+    <path 
+      d="M10 15C8 11.5 10 7.5 14.5 7C15.5 10.5 13.5 14 10 15Z" 
+      fill="currentColor" 
+      fillOpacity="0.85" 
+    />
+    <path 
+      d="M18 11.5C16.5 8 19 4.5 23.5 4.5C24.5 8 22 11 18 11.5Z" 
+      fill="currentColor" 
+      fillOpacity="0.95" 
+    />
+    <path 
+      d="M26 6.5C25 3.5 28 1.5 31.5 1.5C32 4.5 30 6 26 6.5Z" 
+      fill="currentColor" 
+    />
+    <path 
+      d="M14 15C16 17.5 15.5 21 11.5 20.5C10.5 17.5 12 15.5 14 15Z" 
+      fill="currentColor" 
+      fillOpacity="0.75" 
+    />
+    <path 
+      d="M22 10.5C24 13 23 16.5 19 16C18 13 20 11 22 10.5Z" 
+      fill="currentColor" 
+      fillOpacity="0.8" 
+    />
   </svg>
 );
 
@@ -302,6 +331,52 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
   const [selectedPackSize, setSelectedPackSize] = useState('1 L');
   const [orderQuantity, setOrderQuantity] = useState(1);
   const [orderConfirmed, setOrderConfirmed] = useState(false);
+  const [wishlistProducts, setWishlistProducts] = useState<Set<string>>(new Set());
+  const [selectedCardPacks, setSelectedCardPacks] = useState<Record<string, string>>({});
+
+  const toggleWishlist = (name: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setWishlistProducts(prev => {
+      const next = new Set(prev);
+      if (next.has(name)) {
+        next.delete(name);
+      } else {
+        next.add(name);
+      }
+      return next;
+    });
+  };
+
+  const getTagBadgeConfig = (tag: string) => {
+    const lower = tag.toLowerCase();
+    if (lower.includes('best') || lower.includes('seller') || lower.includes('vedic')) {
+      return { bg: 'linear-gradient(135deg, #DC2626 0%, #991B1B 100%)', icon: <Sparkles size={10} /> };
+    }
+    if (lower.includes('essential') || lower.includes('fresh') || lower.includes('daily')) {
+      return { bg: 'linear-gradient(135deg, #16A34A 0%, #15803D 100%)', icon: <Droplets size={10} /> };
+    }
+    if (lower.includes('slim') || lower.includes('fit') || lower.includes('protein')) {
+      return { bg: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)', icon: <Leaf size={10} /> };
+    }
+    if (lower.includes('a2') || lower.includes('pure') || lower.includes('gc')) {
+      return { bg: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)', icon: <Award size={10} /> };
+    }
+    if (lower.includes('gut') || lower.includes('organic') || lower.includes('farm')) {
+      return { bg: 'linear-gradient(135deg, #059669 0%, #047857 100%)', icon: <Leaf size={10} /> };
+    }
+    return { bg: 'linear-gradient(135deg, #DC2626 0%, #B91C1C 100%)', icon: <Sparkles size={10} /> };
+  };
+
+  const getCategoryBadge = (tab: string) => {
+    switch (tab) {
+      case 'milk': return { label: 'Fresh Milk', icon: <Droplets size={11} /> };
+      case 'ghee': return { label: 'Desi Ghee', icon: <Sparkles size={11} /> };
+      case 'curd': return { label: 'Dahi & Curd', icon: <Droplets size={11} /> };
+      case 'paneer': return { label: 'Fresh Paneer', icon: <Award size={11} /> };
+      case 'butter': return { label: 'Butter & Cream', icon: <Sparkles size={11} /> };
+      default: return { label: tab, icon: <Droplets size={11} /> };
+    }
+  };
 
   // About Us States
   const [aboutSubTab, setAboutSubTab] = useState<'story' | 'mission' | 'team' | 'infrastructure' | 'certifications'>('story');
@@ -404,36 +479,288 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
     }
   };
 
-  const productsData = {
+  const productsData: Record<string, Array<{
+    name: string;
+    desc: string;
+    price: string;
+    originalPrice?: string;
+    discount?: string;
+    tag: string;
+    rating: number;
+    reviewsCount?: number;
+    img: string;
+    packs?: string[];
+    highlights?: string[];
+  }>> = {
     milk: [
-      { name: "Premium Full Cream Milk", desc: "Rich in cream, pasteurized fresh milk ideal for children and traditional sweets.", price: "₹66/L", tag: "Best Seller", rating: 5, img: "/images/rudu_milk_product.png" },
-      { name: "Standardized Fresh Milk", desc: "Balanced cream content for everyday tea, coffee, and home cooking requirements.", price: "₹60/L", tag: "Daily Essential", rating: 5, img: "/images/rudu_milk_product.png" },
-      { name: "Toned Slim Milk", desc: "Homogenized low-fat milk packed with vitamins, perfect for health-conscious individuals.", price: "₹52/L", tag: "Slim Fit", rating: 4.8, img: "/images/rudu_milk_product.png" },
-      { name: "A2 Organic Cow Milk", desc: "Pure A2 protein cow milk sourced directly from indigenous desi cows.", price: "₹78/L", tag: "A2 Pure", rating: 5, img: "/images/rudu_milk_product.png" }
+      { 
+        name: "Premium Full Cream Milk", 
+        desc: "Rich in cream, pasteurized fresh milk ideal for children and traditional sweets.", 
+        price: "₹66/L", 
+        originalPrice: "₹78/L",
+        discount: "15% OFF",
+        tag: "Best Seller", 
+        rating: 5, 
+        reviewsCount: 348,
+        packs: ["500 ml", "1 L", "2 L"],
+        highlights: ["6.0% Rich Fat", "Pasteurized", "Tested Pure"],
+        img: "/images/rudu_milk_product.png" 
+      },
+      { 
+        name: "Standardized Fresh Milk", 
+        desc: "Balanced cream content for everyday tea, coffee, and home cooking requirements.", 
+        price: "₹60/L", 
+        originalPrice: "₹70/L",
+        discount: "14% OFF",
+        tag: "Daily Essential", 
+        rating: 4.9, 
+        reviewsCount: 284,
+        packs: ["500 ml", "1 L", "2 L"],
+        highlights: ["4.5% Standard Fat", "Daily Fresh", "Zero Hormones"],
+        img: "/images/rudu_milk_product.png" 
+      },
+      { 
+        name: "Toned Slim Milk", 
+        desc: "Homogenized low-fat milk packed with vitamins, perfect for health-conscious individuals.", 
+        price: "₹52/L", 
+        originalPrice: "₹62/L",
+        discount: "16% OFF",
+        tag: "Slim Fit", 
+        rating: 4.8, 
+        reviewsCount: 196,
+        packs: ["500 ml", "1 L", "2 L"],
+        highlights: ["3.0% Low Fat", "High Calcium", "Heart Healthy"],
+        img: "/images/rudu_milk_product.png" 
+      },
+      { 
+        name: "A2 Organic Cow Milk", 
+        desc: "Pure A2 protein cow milk sourced directly from indigenous desi cows.", 
+        price: "₹78/L", 
+        originalPrice: "₹92/L",
+        discount: "15% OFF",
+        tag: "A2 Pure", 
+        rating: 5, 
+        reviewsCount: 412,
+        packs: ["500 ml", "1 L", "2 L"],
+        highlights: ["Desi Gir Cow", "A2 Beta-Casein", "Easy Digest"],
+        img: "/images/rudu_milk_product.png" 
+      }
     ],
     ghee: [
-      { name: "Danedar Cow Ghee", desc: "Traditional slow-cooked ghee with grainy texture, golden color, and heavenly aroma.", price: "₹680/L", tag: "GC Tested Pure", rating: 5, img: "/images/rudu_bilona_ghee.jpg" },
-      { name: "Premium Desi Ghee", desc: "Pure buffalo milk ghee, aromatic, perfect for cooking, sweets, and parathas.", price: "₹740/L", tag: "Rich Aroma", rating: 5, img: "/images/rudu_bilona_ghee.jpg" },
-      { name: "A2 Bilona Vedic Ghee", desc: "Hand-churned A2 cow ghee prepared using traditional wooden bilona process.", price: "₹1,250/L", tag: "Vedic Bilona", rating: 5, img: "/images/rudu_bilona_ghee.jpg" },
-      { name: "Pure Country Ghee", desc: "Traditional village farm ghee with rich golden granulates and pure taste.", price: "₹620/L", tag: "Farm Fresh", rating: 4.9, img: "/images/rudu_bilona_ghee.jpg" }
+      { 
+        name: "Danedar Cow Ghee", 
+        desc: "Traditional slow-cooked ghee with grainy texture, golden color, and heavenly aroma.", 
+        price: "₹680/L", 
+        originalPrice: "₹799/L",
+        discount: "15% OFF",
+        tag: "GC Tested Pure", 
+        rating: 5, 
+        reviewsCount: 520,
+        packs: ["500 ml", "1 L", "2 L"],
+        highlights: ["Danedar Granules", "GC Certified Pure", "Golden Glow"],
+        img: "/images/rudu_bilona_ghee.jpg" 
+      },
+      { 
+        name: "Premium Desi Ghee", 
+        desc: "Pure buffalo milk ghee, aromatic, perfect for cooking, sweets, and parathas.", 
+        price: "₹740/L", 
+        originalPrice: "₹860/L",
+        discount: "14% OFF",
+        tag: "Rich Aroma", 
+        rating: 5, 
+        reviewsCount: 388,
+        packs: ["500 ml", "1 L", "2 L"],
+        highlights: ["Rich Buffalo Milk", "High Smoke Point", "Authentic Swaad"],
+        img: "/images/rudu_bilona_ghee.jpg" 
+      },
+      { 
+        name: "A2 Bilona Vedic Ghee", 
+        desc: "Hand-churned A2 cow ghee prepared using traditional wooden bilona process.", 
+        price: "₹1,250/L", 
+        originalPrice: "₹1,490/L",
+        discount: "16% OFF",
+        tag: "Vedic Bilona", 
+        rating: 5, 
+        reviewsCount: 640,
+        packs: ["250 ml", "500 ml", "1 L"],
+        highlights: ["Bilona Churned", "Indigenous Cows", "Medicinal Grade"],
+        img: "/images/rudu_bilona_ghee.jpg" 
+      },
+      { 
+        name: "Pure Country Ghee", 
+        desc: "Traditional village farm ghee with rich golden granulates and pure taste.", 
+        price: "₹620/L", 
+        originalPrice: "₹720/L",
+        discount: "14% OFF",
+        tag: "Farm Fresh", 
+        rating: 4.9, 
+        reviewsCount: 275,
+        packs: ["500 ml", "1 L", "2 L"],
+        highlights: ["Village Farm Made", "Zero Preservatives", "Naturally Rich"],
+        img: "/images/rudu_bilona_ghee.jpg" 
+      }
     ],
     curd: [
-      { name: "Thick Creamy Dahi", desc: "Naturally set dahi with mild sour flavor and rich thick consistency, set in hygiene cups.", price: "₹30/cup", tag: "Gut Health", rating: 4.9, img: "/images/rudu_creamy_curd.jpg" },
-      { name: "Fresh Sweet Lassi", desc: "Rich churned sweet buttermilk flavored with cardamom and saffron, served chilled.", price: "₹25/bottle", tag: "Refreshing", rating: 4.8, img: "/images/rudu_creamy_curd.jpg" },
-      { name: "Masala Spiced Chaach", desc: "Refreshing spiced buttermilk infused with roasted cumin, mint, and black salt.", price: "₹18/pack", tag: "Digestive", rating: 4.8, img: "/images/rudu_creamy_curd.jpg" },
-      { name: "Greek Style Hung Curd", desc: "Ultra-thick strained probiotic dahi packed with natural proteins.", price: "₹45/cup", tag: "High Protein", rating: 4.9, img: "/images/rudu_creamy_curd.jpg" }
+      { 
+        name: "Thick Creamy Dahi", 
+        desc: "Naturally set dahi with mild sour flavor and rich thick consistency, set in hygiene cups.", 
+        price: "₹30/cup", 
+        originalPrice: "₹36/cup",
+        discount: "16% OFF",
+        tag: "Gut Health", 
+        rating: 4.9, 
+        reviewsCount: 310,
+        packs: ["200g", "400g", "1 kg"],
+        highlights: ["Active Probiotics", "Naturally Set", "Thick Malai Layer"],
+        img: "/images/rudu_creamy_curd.jpg" 
+      },
+      { 
+        name: "Fresh Sweet Lassi", 
+        desc: "Rich churned sweet buttermilk flavored with cardamom and saffron, served chilled.", 
+        price: "₹25/bottle", 
+        originalPrice: "₹30/bottle",
+        discount: "16% OFF",
+        tag: "Refreshing", 
+        rating: 4.8, 
+        reviewsCount: 220,
+        packs: ["200 ml", "300 ml"],
+        highlights: ["Kesar & Elaichi", "Slow Churned", "Chilled & Fresh"],
+        img: "/images/rudu_creamy_curd.jpg" 
+      },
+      { 
+        name: "Masala Spiced Chaach", 
+        desc: "Refreshing spiced buttermilk infused with roasted cumin, mint, and black salt.", 
+        price: "₹18/pack", 
+        originalPrice: "₹22/pack",
+        discount: "18% OFF",
+        tag: "Digestive", 
+        rating: 4.8, 
+        reviewsCount: 185,
+        packs: ["200 ml", "500 ml"],
+        highlights: ["Roasted Jeera", "Rock Salt & Mint", "Natural Coolant"],
+        img: "/images/rudu_creamy_curd.jpg" 
+      },
+      { 
+        name: "Greek Style Hung Curd", 
+        desc: "Ultra-thick strained probiotic dahi packed with natural proteins.", 
+        price: "₹45/cup", 
+        originalPrice: "₹55/cup",
+        discount: "18% OFF",
+        tag: "High Protein", 
+        rating: 4.9, 
+        reviewsCount: 195,
+        packs: ["200g", "400g"],
+        highlights: ["Double Strained", "2x Protein", "Zero Added Sugar"],
+        img: "/images/rudu_creamy_curd.jpg" 
+      }
     ],
     paneer: [
-      { name: "Soft Malai Paneer", desc: "Deliciously soft paneer cubes made from pure full cream milk, packed touch-free.", price: "₹110/200g", tag: "Protein Rich", rating: 5, img: "/images/rudu_fresh_paneer.jpg" },
-      { name: "Organic Cottage Paneer", desc: "Hand-crafted fresh cottage paneer made with organic cow milk.", price: "₹120/200g", tag: "Farm Organic", rating: 4.9, img: "/images/rudu_fresh_paneer.jpg" },
-      { name: "Low Fat Protein Paneer", desc: "Homogenized low-calorie paneer specially made for fitness lovers.", price: "₹105/200g", tag: "Slim Fit", rating: 4.8, img: "/images/rudu_fresh_paneer.jpg" },
-      { name: "Herb Spiced Masala Paneer", desc: "Soft paneer cubes seasoned with natural green herbs and aromatic spices.", price: "₹130/200g", tag: "Gourmet", rating: 5, img: "/images/rudu_fresh_paneer.jpg" }
+      { 
+        name: "Soft Malai Paneer", 
+        desc: "Deliciously soft paneer cubes made from pure full cream milk, packed touch-free.", 
+        price: "₹110/200g", 
+        originalPrice: "₹130/200g",
+        discount: "15% OFF",
+        tag: "Protein Rich", 
+        rating: 5, 
+        reviewsCount: 460,
+        packs: ["200g", "500g", "1 kg"],
+        highlights: ["Melts in Mouth", "18g Protein/100g", "Touch-free Pack"],
+        img: "/images/rudu_fresh_paneer.jpg" 
+      },
+      { 
+        name: "Organic Cottage Paneer", 
+        desc: "Hand-crafted fresh cottage paneer made with organic cow milk.", 
+        price: "₹120/200g", 
+        originalPrice: "₹145/200g",
+        discount: "17% OFF",
+        tag: "Farm Organic", 
+        rating: 4.9, 
+        reviewsCount: 290,
+        packs: ["200g", "500g", "1 kg"],
+        highlights: ["Organic Milk", "Artisanal Crafted", "Zero Starch"],
+        img: "/images/rudu_fresh_paneer.jpg" 
+      },
+      { 
+        name: "Low Fat Protein Paneer", 
+        desc: "Homogenized low-calorie paneer specially made for fitness lovers.", 
+        price: "₹105/200g", 
+        originalPrice: "₹125/200g",
+        discount: "16% OFF",
+        tag: "Slim Fit", 
+        rating: 4.8, 
+        reviewsCount: 215,
+        packs: ["200g", "500g", "1 kg"],
+        highlights: ["Low Fat", "High Whey Protein", "Fitness Fuel"],
+        img: "/images/rudu_fresh_paneer.jpg" 
+      },
+      { 
+        name: "Herb Spiced Masala Paneer", 
+        desc: "Soft paneer cubes seasoned with natural green herbs and aromatic spices.", 
+        price: "₹130/200g", 
+        originalPrice: "₹155/200g",
+        discount: "16% OFF",
+        tag: "Gourmet", 
+        rating: 5, 
+        reviewsCount: 178,
+        packs: ["200g", "500g"],
+        highlights: ["Herbs & Spices", "Ready to Grill", "Chef Favorite"],
+        img: "/images/rudu_fresh_paneer.jpg" 
+      }
     ],
     butter: [
-      { name: "Fresh White Butter", desc: "Traditional unsalted white butter churned from pure fresh cream.", price: "₹140/200g", tag: "Country Style", rating: 4.9, img: "/images/fresh_dairy_products.png" },
-      { name: "Pasteurized Salted Butter", desc: "Rich and creamy table butter, perfect for spreading on toasted bread.", price: "₹260/500g", tag: "Breakfast Fav", rating: 4.8, img: "/images/fresh_dairy_products.png" },
-      { name: "Unsalted Cooking Butter", desc: "Pure churned cream butter ideal for baking, cooking, and frying.", price: "₹240/500g", tag: "Baking Essential", rating: 4.9, img: "/images/fresh_dairy_products.png" },
-      { name: "Heavy Whipping Cream", desc: "Fresh 30% fat rich dairy cream for desserts, coffee, and rich gravies.", price: "₹90/200ml", tag: "Rich Cream", rating: 5, img: "/images/fresh_dairy_products.png" }
+      { 
+        name: "Fresh White Butter", 
+        desc: "Traditional unsalted white butter churned from pure fresh cream.", 
+        price: "₹140/200g", 
+        originalPrice: "₹165/200g",
+        discount: "15% OFF",
+        tag: "Country Style", 
+        rating: 4.9, 
+        reviewsCount: 330,
+        packs: ["200g", "500g"],
+        highlights: ["Makhan Style", "Unsalted & Pure", "Makkhan on Paratha"],
+        img: "/images/fresh_dairy_products.png" 
+      },
+      { 
+        name: "Pasteurized Salted Butter", 
+        desc: "Rich and creamy table butter, perfect for spreading on toasted bread.", 
+        price: "₹260/500g", 
+        originalPrice: "₹295/500g",
+        discount: "12% OFF",
+        tag: "Breakfast Fav", 
+        rating: 4.8, 
+        reviewsCount: 245,
+        packs: ["100g", "500g"],
+        highlights: ["Creamy Spread", "Touch of Sea Salt", "Golden Tone"],
+        img: "/images/fresh_dairy_products.png" 
+      },
+      { 
+        name: "Unsalted Cooking Butter", 
+        desc: "Pure churned cream butter ideal for baking, cooking, and frying.", 
+        price: "₹240/500g", 
+        originalPrice: "₹280/500g",
+        discount: "14% OFF",
+        tag: "Baking Essential", 
+        rating: 4.9, 
+        reviewsCount: 160,
+        packs: ["500g", "1 kg"],
+        highlights: ["Bakers Choice", "Zero Salt", "100% Churned Cream"],
+        img: "/images/fresh_dairy_products.png" 
+      },
+      { 
+        name: "Heavy Whipping Cream", 
+        desc: "Fresh 30% fat rich dairy cream for desserts, coffee, and rich gravies.", 
+        price: "₹90/200ml", 
+        originalPrice: "₹110/200ml",
+        discount: "18% OFF",
+        tag: "Rich Cream", 
+        rating: 5, 
+        reviewsCount: 210,
+        packs: ["200 ml", "500 ml", "1 L"],
+        highlights: ["30% Dairy Fat", "Perfect Peaks", "Velvety Texture"],
+        img: "/images/fresh_dairy_products.png" 
+      }
     ]
   };
 
@@ -691,20 +1018,53 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
         {(activeView === 'home' || activeView === 'products') && (
           <section id="products" className="products-catalog-section py-16 scroll-mt-20">
             <div className="catalog-container">
-              <div className="landing-section-header text-center max-w-4xl mx-auto mb-10 sm:mb-16 px-3">
-                <div className="inline-flex items-center justify-center gap-3 sm:gap-4 mb-2 sm:mb-4">
-                  <LeafSprig className="w-7 h-6 sm:w-10 sm:h-8 md:w-12 md:h-9" />
-                  <span className="text-base sm:text-lg md:text-xl lg:text-2xl font-black uppercase tracking-[0.25em] sm:tracking-[0.3em] text-[#1c4d31]">
+              <div className="landing-section-header relative text-center max-w-4xl mx-auto mb-10 sm:mb-14 px-3">
+                {/* Soft ambient natural glow */}
+                <div className="absolute inset-0 -top-6 bg-[radial-gradient(ellipse_at_center,rgba(36,94,61,0.06)_0%,rgba(201,148,54,0.04)_40%,transparent_70%)] blur-xl pointer-events-none -z-10" />
+
+                {/* Eyebrow Laurel Badge */}
+                <div className="inline-flex items-center justify-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-1.5 rounded-full bg-[#1c4d31]/[0.05] border border-[#1c4d31]/12 shadow-[0_2px_10px_rgba(28,77,49,0.04)] mb-3 sm:mb-4 backdrop-blur-xs">
+                  <LeafSprig className="w-5 h-3.5 sm:w-6 sm:h-4 text-[#245e3d]" />
+                  <span className="text-[11px] sm:text-xs md:text-sm font-extrabold uppercase tracking-[0.24em] sm:tracking-[0.28em] text-[#1c4d31]">
                     OUR PRODUCTS
                   </span>
-                  <LeafSprig flip className="w-7 h-6 sm:w-10 sm:h-8 md:w-12 md:h-9" />
+                  <LeafSprig flip className="w-5 h-3.5 sm:w-6 sm:h-4 text-[#245e3d]" />
                 </div>
-                <h2 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[110px] text-[#133d22] font-bold tracking-tight mt-1 sm:mt-2 mb-3 sm:mb-5 font-['Caveat',cursive] leading-[1.05] sm:leading-none">
-                  Pure. Fresh. Healthy.
+
+                {/* Main Heading: Artisanal Serif with Italic Accent */}
+                <h2 className="font-['Playfair_Display',serif] text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[#11381f] leading-[1.15] mb-3 sm:mb-4">
+                  <span className="inline-block transition-transform duration-300 hover:-translate-y-0.5">Pure</span>
+                  <span className="text-[#c99436] mx-1.5 sm:mx-3 text-2xl sm:text-4xl md:text-5xl align-middle font-light select-none opacity-80">•</span>
+                  <span className="italic font-medium text-[#1c6439] relative inline-block transition-transform duration-300 hover:-translate-y-0.5">
+                    Fresh
+                    <svg className="absolute -bottom-1 sm:-bottom-1.5 left-0 w-full h-2 sm:h-2.5 text-[#c99436]/50" viewBox="0 0 100 20" preserveAspectRatio="none" fill="none">
+                      <path d="M2 14 C 30 4, 70 4, 98 12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                    </svg>
+                  </span>
+                  <span className="text-[#c99436] mx-1.5 sm:mx-3 text-2xl sm:text-4xl md:text-5xl align-middle font-light select-none opacity-80">•</span>
+                  <span className="inline-block transition-transform duration-300 hover:-translate-y-0.5">Healthy</span>
                 </h2>
-                <p className="text-[#2f4a38] text-lg sm:text-xl md:text-2xl font-medium max-w-3xl mx-auto leading-relaxed">
-                  A wide range of dairy products, made from the goodness of our farm and the purity of nature.
+
+                {/* Subtitle */}
+                <p className="text-[#33533d] text-base sm:text-lg md:text-xl font-normal max-w-2xl mx-auto leading-relaxed">
+                  A wide range of 100% farm-pure dairy products, crafted daily with the natural goodness of our farm and zero shortcuts.
                 </p>
+
+                {/* Micro Trust Pills */}
+                <div className="flex items-center justify-center gap-2 sm:gap-3 mt-4 sm:mt-5 flex-wrap">
+                  <span className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-[#1c4d31] bg-white/80 border border-[#1c4d31]/10 px-3 py-1 rounded-full shadow-2xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span>
+                    100% Farm Fresh
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-[#1c4d31] bg-white/80 border border-[#1c4d31]/10 px-3 py-1 rounded-full shadow-2xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#d97706]"></span>
+                    Traditional Bilona & Natural
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-[#1c4d31] bg-white/80 border border-[#1c4d31]/10 px-3 py-1 rounded-full shadow-2xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span>
+                    Zero Preservatives
+                  </span>
+                </div>
               </div>
 
               <div className="catalog-tabs-container">
@@ -746,38 +1106,158 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
               </div>
 
               <div className="products-grid">
-                {productsData[activeProductTab].map((prod, idx) => (
-                  <div className="product-card" key={idx}>
-                    <div className="product-img-box">
-                      <span className="product-badge">{prod.tag}</span>
-                      <img src={prod.img} alt={prod.name} className="product-img" />
-                    </div>
-                    <div className="product-info-box">
-                      <div className="product-meta-row">
-                        <span className="product-type">{activeProductTab}</span>
-                        <div className="product-rating">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} size={14} fill={i < Math.floor(prod.rating) ? "currentColor" : "none"} />
-                          ))}
+                {productsData[activeProductTab].map((prod, idx) => {
+                  const tagConfig = getTagBadgeConfig(prod.tag);
+                  const catConfig = getCategoryBadge(activeProductTab);
+                  const isWishlisted = wishlistProducts.has(prod.name);
+                  const currentPack = selectedCardPacks[prod.name] || (prod.packs ? (prod.packs[1] || prod.packs[0]) : '1 L');
+
+                  return (
+                    <div 
+                      className="product-card group" 
+                      key={idx}
+                      onClick={() => {
+                        setQuickOrderProduct(prod);
+                        setSelectedPackSize(currentPack);
+                        setOrderQuantity(1);
+                        setOrderConfirmed(false);
+                      }}
+                    >
+                      {/* Product Image Stage */}
+                      <div className="product-img-box">
+                        {/* Top Left Badge */}
+                        <div className="product-badge-wrap">
+                          <span className="product-badge" style={{ background: tagConfig.bg }}>
+                            {tagConfig.icon}
+                            <span>{prod.tag}</span>
+                          </span>
                         </div>
-                      </div>
-                      <h3 className="product-title">{prod.name}</h3>
-                      <p className="product-desc">{prod.desc}</p>
-                      
-                      <div className="product-action-row">
-                        <div className="product-pricing">
-                          <span className="price-label">Price Range</span>
-                          <span className="price-value">{prod.price}</span>
-                        </div>
-                        <button className="product-btn" onClick={() => { setQuickOrderProduct(prod); setSelectedPackSize('1 L'); setOrderQuantity(1); setOrderConfirmed(false); }}>
-                          <ShoppingBag size={14} />
-                          <span>Buy Now</span>
-                          <ChevronRight size={14} />
+
+                        {/* Top Right Wishlist Heart */}
+                        <button
+                          type="button"
+                          className={`product-wishlist-btn ${isWishlisted ? 'active' : ''}`}
+                          onClick={(e) => toggleWishlist(prod.name, e)}
+                          title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                          aria-label="Add to wishlist"
+                        >
+                          <Heart 
+                            size={14} 
+                            fill={isWishlisted ? '#E21E23' : 'none'} 
+                            stroke={isWishlisted ? '#E21E23' : '#64748B'} 
+                            className="transition-transform active:scale-125" 
+                          />
                         </button>
+
+                        {/* Image Showcase */}
+                        <div className="product-img-stage">
+                          <img 
+                            src={prod.img} 
+                            alt={prod.name} 
+                            className="product-img" 
+                            loading="lazy" 
+                          />
+                        </div>
+
+                        {/* Purity & Freshness Stamp */}
+                        <div className="product-purity-stamp">
+                          <ShieldCheck size={11} className="stamp-icon" />
+                          <span>100% Farm Pure</span>
+                        </div>
+                      </div>
+
+                      {/* Product Info Box */}
+                      <div className="product-info-box">
+                        {/* Meta: Category & Rating */}
+                        <div className="product-meta-row">
+                          <span className="product-type-badge">
+                            {catConfig.icon}
+                            <span>{catConfig.label}</span>
+                          </span>
+                          <div className="product-rating-badge">
+                            <Star size={11} fill="#F59E0B" color="#F59E0B" />
+                            <span className="rating-score">{prod.rating.toFixed(1)}</span>
+                            <span className="rating-count">({prod.reviewsCount || 150}+)</span>
+                          </div>
+                        </div>
+
+                        {/* Product Title */}
+                        <h3 className="product-title" title={prod.name}>
+                          {prod.name}
+                        </h3>
+
+                        {/* Purity Highlights Micro-Pills */}
+                        {prod.highlights && prod.highlights.length > 0 && (
+                          <div className="product-features-row">
+                            {prod.highlights.map((feat, fIdx) => (
+                              <span key={fIdx} className="feature-chip">
+                                <CheckCircle2 size={10} className="feature-icon" />
+                                <span>{feat}</span>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Description */}
+                        <p className="product-desc">{prod.desc}</p>
+
+                        {/* Pack Size Selector Chips */}
+                        {prod.packs && prod.packs.length > 0 && (
+                          <div className="product-packs-row" onClick={(e) => e.stopPropagation()}>
+                            <span className="packs-label">Size:</span>
+                            <div className="packs-list">
+                              {prod.packs.map((pk) => {
+                                const isSelected = currentPack === pk;
+                                return (
+                                  <button
+                                    key={pk}
+                                    type="button"
+                                    className={`pack-pill-btn ${isSelected ? 'active' : ''}`}
+                                    onClick={() => setSelectedCardPacks(prev => ({ ...prev, [prod.name]: pk }))}
+                                  >
+                                    {pk}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Action & Pricing Row */}
+                        <div className="product-action-row">
+                          <div className="product-pricing">
+                            <div className="price-top-meta">
+                              <span className="price-label">Price</span>
+                              {prod.discount && <span className="price-discount-badge">{prod.discount}</span>}
+                            </div>
+                            <div className="price-main-line">
+                              <span className="price-value">{prod.price}</span>
+                              {prod.originalPrice && (
+                                <span className="price-original">{prod.originalPrice}</span>
+                              )}
+                            </div>
+                          </div>
+
+                          <button 
+                            type="button"
+                            className="product-btn" 
+                            onClick={(e) => { 
+                              e.stopPropagation();
+                              setQuickOrderProduct(prod); 
+                              setSelectedPackSize(currentPack); 
+                              setOrderQuantity(1); 
+                              setOrderConfirmed(false); 
+                            }}
+                          >
+                            <ShoppingBag size={14} />
+                            <span>Buy Now</span>
+                            <ChevronRight size={14} className="product-btn-arrow" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Link to Dedicated Full Product Page */}
@@ -948,28 +1428,69 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
 
         {/* 9. FAQ Section */}
         {(activeView === 'home' || activeView === 'faq') && (
-          <section id="faq" className="faq-section py-16 scroll-mt-20">
-            <div className="faq-container" style={{ maxWidth: '800px', margin: '0 auto', padding: '0 20px' }}>
-              <div className="landing-section-header text-center mb-10">
-                <span className="section-tagline">Got Questions?</span>
-                <h2 className="section-main-title">Common Questions & Answers</h2>
+          <section id="faq" className="faq-section py-10 sm:py-14 scroll-mt-20">
+            <div className="faq-container max-w-2xl mx-auto px-3 sm:px-6">
+              {/* Refined Section Header */}
+              <div className="landing-section-header text-center mb-6 sm:mb-8">
+                <div className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-[#1c4d31]/[0.05] border border-[#1c4d31]/12 mb-2 sm:mb-2.5">
+                  <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.22em] text-[#1c4d31]">
+                    GOT QUESTIONS?
+                  </span>
+                </div>
+                <h2 className="font-['Playfair_Display',serif] text-2xl sm:text-3xl md:text-4xl font-bold text-[#14281d] tracking-tight mb-1.5 sm:mb-2">
+                  Common Questions &amp; Answers
+                </h2>
+                <p className="text-stone-600 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
+                  Quick answers to everything you need to know about our dairy platform, milk collection, and purity.
+                </p>
               </div>
 
-              <div className="faq-accordion-box">
-                {BUSINESS.faqs.map((faq, idx) => (
-                  <div 
-                    key={idx} 
-                    className={`faq-item ${openFaqIndex === idx ? 'open' : ''}`}
-                    onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)}
-                    style={{ background: '#fff', marginBottom: '10px', borderRadius: '16px', border: '1px solid #e5e7eb', padding: '16px', cursor: 'pointer' }}
-                  >
-                    <div className="faq-question-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <h4 style={{ fontWeight: 700 }}>{faq.question}</h4>
-                      <span className="faq-toggle-icon">{openFaqIndex === idx ? <ChevronUp size={18} /> : <ChevronDown size={18} />}</span>
+              {/* Compact, Well-Manner Arranged Accordion Cards */}
+              <div className="flex flex-col gap-2 sm:gap-2.5">
+                {BUSINESS.faqs.map((faq, idx) => {
+                  const isOpen = openFaqIndex === idx;
+                  return (
+                    <div 
+                      key={idx} 
+                      className={`group bg-white rounded-xl border transition-all duration-200 cursor-pointer overflow-hidden ${
+                        isOpen 
+                          ? 'border-[#1c4d31]/30 shadow-xs bg-[#fdfcfb]' 
+                          : 'border-stone-200/90 shadow-2xs hover:border-[#1c4d31]/30 hover:shadow-xs'
+                      }`}
+                      onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                    >
+                      <div className="flex items-center justify-between gap-3 px-3.5 py-2.5 sm:px-4 sm:py-3 select-none">
+                        <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0">
+                          <span className="text-[10px] sm:text-[11px] font-mono font-bold text-[#1c4d31]/70 bg-stone-100/90 px-1.5 py-0.5 rounded-sm shrink-0">
+                            0{idx + 1}
+                          </span>
+                          <h4 className="text-xs sm:text-[13.5px] font-bold text-[#14281d] group-hover:text-[#1c4d31] transition-colors leading-snug">
+                            {faq.question}
+                          </h4>
+                        </div>
+                        <span className={`w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${
+                          isOpen 
+                            ? 'rotate-180 bg-[#1c4d31]/10 text-[#1c4d31]' 
+                            : 'bg-stone-100 text-stone-500 group-hover:bg-[#1c4d31]/10 group-hover:text-[#1c4d31]'
+                        }`}>
+                          <ChevronDown size={14} />
+                        </span>
+                      </div>
+                      {isOpen && (
+                        <div className="px-3.5 pb-3 sm:px-4 sm:pb-3.5 pt-2 border-t border-stone-100 text-stone-600 text-xs sm:text-[13px] leading-relaxed pl-8 sm:pl-9">
+                          <p>{faq.answer}</p>
+                        </div>
+                      )}
                     </div>
-                    {openFaqIndex === idx && <div className="faq-answer-body pt-3 text-gray-600 text-sm"><p>{faq.answer}</p></div>}
-                  </div>
-                ))}
+                  );
+                })}
+              </div>
+
+              {/* Bottom Support Note */}
+              <div className="mt-5 sm:mt-6 pt-4 border-t border-stone-200/60 text-center">
+                <p className="text-xs text-stone-500">
+                  Have more questions? <span className="font-semibold text-[#1c4d31]">Call +91 8006270064</span> or email <span className="font-semibold text-[#1c4d31]">Rududairy@gmail.com</span>
+                </p>
               </div>
             </div>
           </section>

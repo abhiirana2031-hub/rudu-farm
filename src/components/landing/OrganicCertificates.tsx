@@ -1,9 +1,8 @@
 import React from 'react';
 
-export const IndiaOrganicLogo: React.FC<{ className?: string; size?: number }> = ({ className = '', size = 110 }) => (
+export const IndiaOrganicLogo: React.FC<{ className?: string; size?: number }> = ({ className = '', size }) => (
   <svg 
-    width={size} 
-    height={size * 0.85} 
+    {...(size ? { width: size, height: size * 0.85 } : {})}
     viewBox="0 0 160 136" 
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"
@@ -74,10 +73,9 @@ export const IndiaOrganicLogo: React.FC<{ className?: string; size?: number }> =
   </svg>
 );
 
-export const UsdaOrganicLogo: React.FC<{ className?: string; size?: number }> = ({ className = '', size = 110 }) => (
+export const UsdaOrganicLogo: React.FC<{ className?: string; size?: number }> = ({ className = '', size }) => (
   <svg 
-    width={size} 
-    height={size} 
+    {...(size ? { width: size, height: size } : {})}
     viewBox="0 0 140 140" 
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"
@@ -143,10 +141,9 @@ export const UsdaOrganicLogo: React.FC<{ className?: string; size?: number }> = 
   </svg>
 );
 
-export const EuOrganicLogo: React.FC<{ className?: string; size?: number }> = ({ className = '', size = 110 }) => (
+export const EuOrganicLogo: React.FC<{ className?: string; size?: number }> = ({ className = '', size }) => (
   <svg 
-    width={size} 
-    height={size * 0.85} 
+    {...(size ? { width: size, height: size * 0.85 } : {})}
     viewBox="0 0 160 136" 
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"

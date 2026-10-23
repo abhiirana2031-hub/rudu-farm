@@ -106,16 +106,43 @@ const FreshDeliveryIcon: React.FC<{ className?: string }> = ({ className = "w-10
 );
 
 // Organic Leaf Sprig for header
-const LeafSprig: React.FC<{ flip?: boolean }> = ({ flip = false }) => (
+const LeafSprig: React.FC<{ flip?: boolean; className?: string }> = ({ flip = false, className = 'w-6 h-4 sm:w-7 sm:h-4.5' }) => (
   <svg 
-    className={`w-6 h-5 text-[#2d6a4f] inline-block ${flip ? 'scale-x-[-1]' : ''}`} 
-    viewBox="0 0 28 18" 
-    fill="currentColor"
+    className={`${className} text-[#2d6a4f] inline-block shrink-0 transition-transform duration-300 ${flip ? 'scale-x-[-1]' : ''}`} 
+    viewBox="0 0 32 20" 
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
   >
-    <path d="M2 16C5 14 10 9 16 3C13 6 9 11 5 14C11 12 17 7 22 1C18 5 13 11 8 15C14 14 20 10 25 5C21 10 15 15 9 17C4 18 2 17 2 16Z" opacity="0.4" />
-    <path d="M12 6C10 2 15 0 19 0C22 3 22 7 19 9C15 10 12 8 12 6Z" />
-    <path d="M5 11C4 8 8 6 12 7C14 10 13 13 10 15C7 16 5 14 5 11Z" />
-    <path d="M2 17C7 15 13 10 19 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+    <path 
+      d="M3 18C10 16 19 11 30 3" 
+      stroke="currentColor" 
+      strokeWidth="1.6" 
+      strokeLinecap="round" 
+    />
+    <path 
+      d="M10 15C8 11.5 10 7.5 14.5 7C15.5 10.5 13.5 14 10 15Z" 
+      fill="currentColor" 
+      fillOpacity="0.85" 
+    />
+    <path 
+      d="M18 11.5C16.5 8 19 4.5 23.5 4.5C24.5 8 22 11 18 11.5Z" 
+      fill="currentColor" 
+      fillOpacity="0.95" 
+    />
+    <path 
+      d="M26 6.5C25 3.5 28 1.5 31.5 1.5C32 4.5 30 6 26 6.5Z" 
+      fill="currentColor" 
+    />
+    <path 
+      d="M14 15C16 17.5 15.5 21 11.5 20.5C10.5 17.5 12 15.5 14 15Z" 
+      fill="currentColor" 
+      fillOpacity="0.75" 
+    />
+    <path 
+      d="M22 10.5C24 13 23 16.5 19 16C18 13 20 11 22 10.5Z" 
+      fill="currentColor" 
+      fillOpacity="0.8" 
+    />
   </svg>
 );
 
