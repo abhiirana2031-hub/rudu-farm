@@ -6,14 +6,14 @@ export const AddDispatchModal: React.FC = () => {
   const { isAddDispatchModalOpen, setIsAddDispatchModalOpen, addTankerDispatch, t } = useApp();
 
   const [tankerNumber, setTankerNumber] = useState('GJ-07-TK-' + Math.floor(1000 + Math.random() * 9000));
-  const [driverName, setDriverName] = useState('Gopalbhai Rabari');
-  const [driverPhone, setDriverPhone] = useState('+91 98254 99120');
-  const [destination, setDestination] = useState('Central Chilling Dairy Plant, Anand');
-  const [quantityLiters, setQuantityLiters] = useState<number>(1200);
-  const [temperatureCelsius, setTemperatureCelsius] = useState<number>(3.8);
+  const [driverName, setDriverName] = useState('');
+  const [driverPhone, setDriverPhone] = useState('');
+  const [destination, setDestination] = useState('');
+  const [quantityLiters, setQuantityLiters] = useState<number>(0);
+  const [temperatureCelsius, setTemperatureCelsius] = useState<number>(4.0);
   const [sealNumber, setSealNumber] = useState(`SEAL-RF-${Math.floor(1000 + Math.random() * 9000)}`);
-  const [testedFat, setTestedFat] = useState<number>(4.35);
-  const [testedSnf, setTestedSnf] = useState<number>(8.68);
+  const [testedFat, setTestedFat] = useState<number>(0);
+  const [testedSnf, setTestedSnf] = useState<number>(0);
 
   if (!isAddDispatchModalOpen) return null;
 
@@ -28,7 +28,7 @@ export const AddDispatchModal: React.FC = () => {
       driverName,
       driverPhone,
       destination,
-      dispatchTime: `16 May 2025, ${timeStr}`,
+      dispatchTime: `${now.toLocaleDateString('en-GB')}, ${timeStr}`,
       quantityLiters: Number(quantityLiters),
       temperatureCelsius: Number(temperatureCelsius),
       sealNumber,

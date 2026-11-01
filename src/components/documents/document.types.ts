@@ -59,7 +59,7 @@ export interface GeneratedDocumentRecord {
 export const DEFAULT_BUSINESS_PROFILE: BusinessProfile = {
   name: 'Rudu Smart Farm & Dairy Management',
   tagline: 'Fresh • Traceable • Cooperative Dairy Network',
-  address: 'Plot 42, Anand-Kheda Dairy Expressway, Gujarat - 388001',
+  address: 'Central Dairy Office',
   phone: '+91 98765 43210 / +91 (2692) 245890',
   email: 'accounts@rudufarm.com / support@rudufarm.com',
   gstin: '24AAACR1234F1Z5',

@@ -358,7 +358,7 @@ export const DocumentTemplatesRenderer: React.FC<{ state: DocumentRenderState }>
                   sign1Title="Receiver's Signature"
                   sign2Title="Prepared By"
                   sign2Name={state.operatorName}
-                  terms="Payment is due upon receipt. Goods once sold are not returnable. Subject to Anand jurisdiction."
+                  terms="Payment is due upon receipt. Goods once sold are not returnable. "
                 />
               </div>
             );
@@ -470,7 +470,7 @@ export const DocumentTemplatesRenderer: React.FC<{ state: DocumentRenderState }>
                   ]}
                   rightTitle="Collection Center & Shift"
                   rightData={[
-                    { label: 'Collection Center', value: state.centerName || 'AMCU Kheda Center #01' },
+                    { label: 'Collection Center', value: state.centerName || 'Main Center' },
                     { label: 'Operator Name', value: state.operatorName || 'Staff Incharge' },
                     { label: 'Intake Date & Time', value: `${state.docDate} ${state.docTime}` },
                     { label: 'Payment Status', value: 'Credited to Ledger' },

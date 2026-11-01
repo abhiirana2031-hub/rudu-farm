@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
   Building,
-  ShieldCheck,
   LogOut,
   Globe,
   Edit2,
   CheckCircle2,
   BadgeCheck,
   Check,
-  CreditCard,
-  Phone,
-  Calendar,
   HelpCircle,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { FarmLandscapeHeader, ThreeDIcons, FarmerAvatar } from '../common/Illustrations';
+import { FarmLandscapeHeader, FarmerAvatar } from '../common/Illustrations';
 import { AdminProfileView } from './AdminProfileView';
 import { OperatorProfileView } from './OperatorProfileView';
 
@@ -31,14 +27,6 @@ export const BankProfileView: React.FC = () => {
     t,
   } = useApp();
 
-  if (userRole === 'admin') {
-    return <AdminProfileView />;
-  }
-
-  if (userRole === 'employee') {
-    return <OperatorProfileView />;
-  }
-
   const [isEditingUpi, setIsEditingUpi] = useState(false);
   const [upiInput, setUpiInput] = useState(currentFarmer?.bankDetails?.upiId || '');
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -49,6 +37,14 @@ export const BankProfileView: React.FC = () => {
     }
   }, [currentFarmer?.bankDetails?.upiId]);
 
+  if (userRole === 'admin') {
+    return <AdminProfileView />;
+  }
+
+  if (userRole === 'employee') {
+    return <OperatorProfileView />;
+  }
+
   const handleSaveUpi = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanUpi = upiInput.trim();
@@ -57,10 +53,10 @@ export const BankProfileView: React.FC = () => {
         bankDetails: {
           ...(currentFarmer.bankDetails || {
             accountHolder: currentFarmer.name || 'Farmer',
-            bankName: 'State Bank of India',
-            accountNumber: 'XXXX-XXXX-0000',
-            ifscCode: 'SBIN0001000',
-            kycStatus: 'Verified',
+            bankName: '',
+            accountNumber: '',
+            ifscCode: '',
+            kycStatus: 'Pending',
           }),
           upiId: cleanUpi,
         },
@@ -103,7 +99,7 @@ export const BankProfileView: React.FC = () => {
                 <BadgeCheck className="w-5 h-5 text-emerald-600" />
               </div>
               <div className="text-xs text-gray-700 font-medium">
-                Farmer ID: <span className="font-mono font-bold text-gray-900">{currentFarmer?.farmerCode || 'RF7237'}</span> • 📍 {currentFarmer?.village || 'Kheda'}, {currentFarmer?.district || 'Anand'}
+                Farmer ID: <span className="font-mono font-bold text-gray-900">{currentFarmer?.farmerCode || '—'}</span> • 📍 {currentFarmer?.village || '—'}{currentFarmer?.district ? ', ' + currentFarmer.district : ''}
               </div>
               <div className="text-[11px] text-emerald-800 font-semibold">
                 Active Member since {currentFarmer?.memberSince || '2024'}
@@ -141,29 +137,29 @@ export const BankProfileView: React.FC = () => {
             <div className="space-y-2.5 text-xs">
               <div className="flex justify-between py-1.5 border-b border-gray-100">
                 <span className="text-gray-700 font-medium">Bank Name</span>
-                <span className="font-bold text-gray-900">{currentFarmer?.bankDetails?.bankName || 'State Bank of India'}</span>
+                <span className="font-bold text-gray-900">{currentFarmer?.bankDetails?.bankName || '—'}</span>
               </div>
 
               <div className="flex justify-between py-1.5 border-b border-gray-100">
                 <span className="text-gray-700 font-medium">Account Number</span>
-                <span className="font-bold font-mono text-gray-900">{currentFarmer?.bankDetails?.accountNumber || 'XXXX-XXXX-7447'}</span>
+                <span className="font-bold font-mono text-gray-900">{currentFarmer?.bankDetails?.accountNumber || '—'}</span>
               </div>
 
               <div className="flex justify-between py-1.5 border-b border-gray-100">
                 <span className="text-gray-700 font-medium">IFSC Code</span>
-                <span className="font-bold font-mono text-gray-900">{currentFarmer?.bankDetails?.ifscCode || 'SBIN0004829'}</span>
+                <span className="font-bold font-mono text-gray-900">{currentFarmer?.bankDetails?.ifscCode || '—'}</span>
               </div>
 
               <div className="flex justify-between py-1.5 border-b border-gray-100">
                 <span className="text-gray-700 font-medium">Account Holder</span>
-                <span className="font-bold text-gray-900">{currentFarmer?.bankDetails?.accountHolder || currentFarmer?.name || 'abhi'}</span>
+                <span className="font-bold text-gray-900">{currentFarmer?.bankDetails?.accountHolder || currentFarmer?.name || '—'}</span>
               </div>
 
               <div className="flex justify-between py-1.5 items-center">
                 <span className="text-gray-700 font-medium">UPI ID</span>
                 {!isEditingUpi ? (
                   <div className="flex items-center gap-2">
-                    <span className="font-bold font-mono text-gray-900">{currentFarmer?.bankDetails?.upiId || '6396941307@upi'}</span>
+                    <span className="font-bold font-mono text-gray-900">{currentFarmer?.bankDetails?.upiId || '—'}</span>
                     <button
                       onClick={() => setIsEditingUpi(true)}
                       className="p-1 text-emerald-700 hover:bg-emerald-50 rounded-lg cursor-pointer"

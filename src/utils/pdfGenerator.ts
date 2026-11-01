@@ -295,13 +295,23 @@ export const exportCollectionSlipToPDF = (entry: MilkEntry, farmer: Farmer) => {
   doc.text('TOTAL AMOUNT:', 12, 101.5);
   doc.text(`Rs. ${totalAmt.toFixed(2)}`, 88, 101.5, { align: 'right' });
 
-  // Footer notes
+  // Footer notes and Physical Signature Lines
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.5);
   doc.setTextColor(100, 116, 139);
-  doc.text(`Collected by: ${entry.collectedBy}`, 8, 115);
-  doc.text('Thank you for delivering pure, fresh milk.', 50, 124, { align: 'center' });
-  doc.text('Auto-verified by Rudu Dairy Smart ERP', 50, 128, { align: 'center' });
+  doc.text(`Collected by: ${entry.collectedBy}`, 8, 110);
+  doc.text('Manual Milk Intake Voucher - Subject to physical verification.', 50, 115, { align: 'center' });
+
+  // Physical Signatures
+  doc.setDrawColor(203, 213, 225);
+  doc.line(8, 126, 42, 126);
+  doc.line(58, 126, 92, 126);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6);
+  doc.setTextColor(15, 23, 42);
+  doc.text('Farmer Signature', 25, 130, { align: 'center' });
+  doc.text('Operator Sign / Stamp', 75, 130, { align: 'center' });
 
   doc.save(`Slip_${entry.receiptId}_${entry.farmerCode}.pdf`);
 };
@@ -386,7 +396,20 @@ export const exportPayoutInvoiceToPDF = (payout: PayoutRecord, farmer: Farmer) =
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(100, 116, 139);
-  doc.text('This is an official financial settlement advice. Funds have been deposited directly into the registered farmer bank account.', 14, finalY + 15);
+  doc.text('This is an official manual financial settlement advice. Payment executed via offline manual verification.', 14, finalY + 12);
+  doc.text('Subject to physical signature by the beneficiary and authorized dairy management signatory.', 14, finalY + 17);
+
+  // Physical Signature Boxes
+  const sigY = finalY + 38;
+  doc.setDrawColor(203, 213, 225);
+  doc.line(18, sigY, 70, sigY);
+  doc.line(140, sigY, 192, sigY);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  doc.setTextColor(15, 23, 42);
+  doc.text(`Farmer Signature (${farmer.name})`, 44, sigY + 5, { align: 'center' });
+  doc.text('Authorized Dairy Signatory & Seal', 166, sigY + 5, { align: 'center' });
 
   doc.save(`Payout_${payout.payoutId}_${farmer.farmerCode}.pdf`);
 };

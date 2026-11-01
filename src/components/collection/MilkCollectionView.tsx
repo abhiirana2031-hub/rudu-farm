@@ -19,6 +19,7 @@ import { FarmLandscapeHeader, ThreeDIcons } from '../common/Illustrations';
 export const MilkCollectionView: React.FC = () => {
   const {
     milkEntries,
+    farmers,
     userRole,
     currentFarmer,
     setSelectedEntryForSlip,
@@ -68,6 +69,44 @@ export const MilkCollectionView: React.FC = () => {
 
   const morningCount = milkEntries.filter((e) => e.shift === 'morning').length;
   const eveningCount = milkEntries.filter((e) => e.shift === 'evening').length;
+
+  // Real-time dynamic collection metrics
+  const todayStrGB = new Date().toLocaleDateString('en-GB');
+  const todayStrISO = new Date().toISOString().split('T')[0];
+  const todayEntries = baseEntries.filter((e) => {
+    return e.date === todayStrGB || e.date === todayStrISO || (e.createdAt && e.createdAt.startsWith(todayStrISO));
+  });
+  const todayLiters = todayEntries.reduce((sum, e) => sum + (e.quantityLiters || 0), 0);
+
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  const thisMonthEntries = baseEntries.filter((e) => {
+    if (!e.date) return false;
+    if (e.date.includes('/')) {
+      const parts = e.date.split('/');
+      if (parts.length === 3) {
+        return parseInt(parts[1], 10) - 1 === currentMonth && parseInt(parts[2], 10) === currentYear;
+      }
+    }
+    if (e.date.includes('-')) {
+      const parts = e.date.split('-');
+      if (parts.length === 3) {
+        return parseInt(parts[0], 10) === currentYear && parseInt(parts[1], 10) - 1 === currentMonth;
+      }
+    }
+    return true;
+  });
+  const monthLiters = thisMonthEntries.reduce((sum, e) => sum + (e.quantityLiters || 0), 0);
+
+  const activeFarmersCount = userRole === 'farmer'
+    ? (currentFarmer?.id ? 1 : 0)
+    : (farmers && farmers.length > 0
+        ? farmers.length
+        : new Set(baseEntries.map((e) => e.farmerId || e.farmerCode).filter(Boolean)).size);
+
+  const totalMonthAmount = thisMonthEntries.reduce((sum, e) => sum + (e.totalAmount || 0), 0);
+  const avgRatePerLiter = monthLiters > 0 ? (totalMonthAmount / monthLiters).toFixed(2) : '0.00';
 
   const handleExportCSV = () => {
     const headers = [
@@ -135,10 +174,12 @@ export const MilkCollectionView: React.FC = () => {
               <span className="text-[11px] font-semibold text-gray-700">{t.todaysCollection}</span>
             </div>
             <div className="my-2">
-              <div className="text-xl sm:text-2xl font-black text-gray-950">254 L</div>
+              <div className="text-xl sm:text-2xl font-black text-gray-950 font-mono">
+                {todayLiters.toFixed(1)} L
+              </div>
             </div>
             <div className="text-[10.5px] font-bold text-emerald-700">
-              ↑ 15% {t.fromYesterday}
+              {todayEntries.length} {todayEntries.length === 1 ? 'Entry Today' : 'Entries Today'}
             </div>
           </div>
 
@@ -151,7 +192,9 @@ export const MilkCollectionView: React.FC = () => {
               <span className="text-[11px] font-semibold text-gray-700">{t.thisMonth}</span>
             </div>
             <div className="my-2">
-              <div className="text-xl sm:text-2xl font-black text-gray-950">2,842 L</div>
+              <div className="text-xl sm:text-2xl font-black text-gray-950 font-mono">
+                {monthLiters.toFixed(1)} L
+              </div>
             </div>
             <div className="text-[10.5px] font-semibold text-gray-700">
               {t.totalCollected}
@@ -167,10 +210,12 @@ export const MilkCollectionView: React.FC = () => {
               <span className="text-[11px] font-semibold text-gray-700">{t.activeFarmers}</span>
             </div>
             <div className="my-2">
-              <div className="text-xl sm:text-2xl font-black text-gray-950">48</div>
+              <div className="text-xl sm:text-2xl font-black text-gray-950 font-mono">
+                {activeFarmersCount}
+              </div>
             </div>
             <div className="text-[10.5px] font-semibold text-gray-700">
-              {t.thisMonth}
+              {activeFarmersCount === 1 ? 'Registered Farmer' : 'Registered Farmers'}
             </div>
           </div>
 
@@ -183,7 +228,9 @@ export const MilkCollectionView: React.FC = () => {
               <span className="text-[11px] font-semibold text-gray-700">{t.avgRate}</span>
             </div>
             <div className="my-2">
-              <div className="text-xl sm:text-2xl font-black text-gray-950">₹58.00</div>
+              <div className="text-xl sm:text-2xl font-black text-gray-950 font-mono">
+                ₹{avgRatePerLiter}
+              </div>
             </div>
             <div className="text-[10.5px] font-semibold text-gray-700">
               {t.perLiter}

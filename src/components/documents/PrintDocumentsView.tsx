@@ -89,8 +89,8 @@ export const PrintDocumentsView: React.FC = () => {
       setPartyName(farmer.name);
       setPartyCode(farmer.farmerCode || farmer.id);
       setPartyPhone(farmer.phone || '+91 98');
-      setPartyVillage(farmer.village || 'Anand Hub');
-      setPartyAddress(`${farmer.village || 'Dairy Zone'}, Anand District, Gujarat`);
+      setPartyVillage(farmer.village || '');
+      setPartyAddress(farmer.village || '');
 
       // Find latest milk entry for this farmer if available
       const latestEntry = milkEntries.find((e) => e.farmerId === farmer.id || e.farmerCode === farmer.farmerCode);
@@ -192,7 +192,7 @@ export const PrintDocumentsView: React.FC = () => {
     partyGstin,
     referenceId,
     paymentMode,
-    centerName: activeCenter?.name || 'Kheda AMCU #01',
+    centerName: activeCenter?.name || 'Main Center',
     operatorName: activeOperator?.name || 'Abhay Rana (Staff)',
     notes,
     items: lineItems,

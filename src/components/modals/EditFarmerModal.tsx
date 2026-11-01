@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Edit2, ShieldCheck, Key, Phone, User, MapPin } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { hashCredential, validatePinStrength } from '../../utils/cryptoAuth';
 
 export const EditFarmerModal: React.FC = () => {
   const { editingFarmer, setEditingFarmer, updateFarmer } = useApp();
@@ -16,12 +17,14 @@ export const EditFarmerModal: React.FC = () => {
   const [ifscCode, setIfscCode] = useState('');
   const [upiId, setUpiId] = useState('');
   const [kycStatus, setKycStatus] = useState<'Verified' | 'Pending'>('Verified');
+  const [validationError, setValidationError] = useState('');
 
   useEffect(() => {
     if (editingFarmer) {
       setName(editingFarmer.name || '');
       setPhone(editingFarmer.phone || '');
-      setPin((editingFarmer as any).pin || (editingFarmer as any).password || '1307');
+      setPin(''); // Never prepopulate PIN for security
+      setValidationError('');
       setVillage(editingFarmer.village || '');
       setCowCount(editingFarmer.cowCount || 0);
       setBuffaloCount(editingFarmer.buffaloCount || 0);
@@ -35,19 +38,18 @@ export const EditFarmerModal: React.FC = () => {
 
   if (!editingFarmer) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError('');
     if (!name.trim()) return;
 
-    updateFarmer(editingFarmer.id, {
+    const updates: any = {
       name: name.trim(),
       phone: phone.trim(),
       village: village.trim(),
       cattleCount: Number(cowCount) + Number(buffaloCount),
       cowCount: Number(cowCount),
       buffaloCount: Number(buffaloCount),
-      pin: pin.trim(),
-      password: pin.trim(),
       bankDetails: {
         ...editingFarmer.bankDetails,
         accountHolder: name.trim(),
@@ -57,8 +59,21 @@ export const EditFarmerModal: React.FC = () => {
         upiId,
         kycStatus,
       },
-    } as any);
+    };
 
+    if (pin.trim()) {
+      const cleanPhone = phone.trim().replace(/\D/g, '').slice(-10);
+      const pinCheck = validatePinStrength(pin.trim(), cleanPhone);
+      if (!pinCheck.valid) {
+        setValidationError(pinCheck.error || 'Please enter a valid secure 4-digit PIN.');
+        return;
+      }
+      updates.pinHash = await hashCredential(pin.trim());
+      updates.pin = null;
+      updates.password = null;
+    }
+
+    updateFarmer(editingFarmer.id, updates);
     setEditingFarmer(null);
   };
 
@@ -111,7 +126,7 @@ export const EditFarmerModal: React.FC = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-800 outline-none focus:border-emerald-600"
-                placeholder="6396941307"
+                placeholder="Enter 10-digit mobile number"
               />
             </div>
           </div>
@@ -127,8 +142,11 @@ export const EditFarmerModal: React.FC = () => {
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold font-mono text-emerald-950 outline-none focus:border-emerald-600"
-                placeholder="e.g. 1307"
+                placeholder="New 4-digit PIN (leave blank to keep current)"
               />
+              {validationError && (
+                <p className="text-[10px] text-red-600 font-bold mt-1">{validationError}</p>
+              )}
             </div>
             <div>
               <label className="block font-bold text-gray-800 mb-1 flex items-center gap-1">

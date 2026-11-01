@@ -17,6 +17,7 @@ import { useApp } from '../../context/AppContext';
 import { PayoutStatus } from '../../types';
 import { FarmLandscapeHeader, ThreeDIcons } from '../common/Illustrations';
 import { BillingPeriodsHub } from '../reports/BillingPeriodsHub';
+import { exportPayoutInvoiceToPDF } from '../../utils/pdfGenerator';
 
 export const PayoutsSettlementView: React.FC = () => {
   const {
@@ -526,6 +527,24 @@ export const PayoutsSettlementView: React.FC = () => {
                             {payout.receivedBy || payout.farmerName || 'Member'}
                           </strong>
                         </span>
+                      </div>
+
+                      <div className="pt-2 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const targetFarmer =
+                              farmers.find(
+                                (f) => f.id === payout.farmerId || f.farmerCode === payout.farmerCode
+                              ) || currentFarmer;
+                            exportPayoutInvoiceToPDF(payout, targetFarmer);
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Print / Export Signed Advice PDF</span>
+                        </button>
                       </div>
                     </div>
                   </div>

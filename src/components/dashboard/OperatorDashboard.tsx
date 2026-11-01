@@ -226,7 +226,7 @@ export const OperatorDashboard: React.FC = () => {
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-900/80 border border-emerald-500/40 text-emerald-200 text-xs font-black tracking-wider uppercase">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Center Incharge Terminal • Kheda Hub #01</span>
+              <span>Center Incharge Terminal</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               {t.operatorDashboard}
@@ -510,7 +510,7 @@ export const OperatorDashboard: React.FC = () => {
                     type="text"
                     value={farmerSearch}
                     onChange={(e) => setFarmerSearch(e.target.value)}
-                    placeholder="Search by code (e.g. RF7237), name, phone, village..."
+                    placeholder="Search by Farmer ID, name, phone, village..."
                     className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 outline-none focus:border-emerald-600 focus:bg-white"
                   />
                 </div>

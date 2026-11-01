@@ -41,10 +41,12 @@ service cloud.firestore {
         (isTenantAdmin(tenantId) || getMembership(tenantId).farmerId == farmerId || request.auth.uid == farmerId);
     }
 
-    // Global User Profiles
+    // Global User Profiles (Prevents privilege self-escalation)
     match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow write: if isUser(userId) || isSuperAdmin();
+      allow read: if isUser(userId) || isSuperAdmin();
+      allow create: if isSuperAdmin() || (isUser(userId) && (!('role' in request.resource.data) || request.resource.data.role != 'SUPER_ADMIN'));
+      allow update: if isSuperAdmin() || (isUser(userId) && (!('role' in request.resource.data) || request.resource.data.role == resource.data.role));
+      allow delete: if isSuperAdmin();
     }
 
     // SaaS Platform Plans & Subscriptions
@@ -163,9 +165,87 @@ service cloud.firestore {
       }
     }
 
-    // Default catch-all for flat collections (backward compatibility)
-    match /{document=**} {
-      allow read, write: if isAuthenticated() || isSuperAdmin();
+    // ── Flat Root Collections (Direct Modular Access) ────────────────────────
+    
+    // Public Product Catalog
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // Milk Collection Entries
+    match /entries/{entryId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // Farmers Registry (Delete restricted to SuperAdmin)
+    match /farmers/{farmerId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isSuperAdmin();
+    }
+
+    // Payout Settlement Records (Immutable financial audit trail)
+    match /payouts/{payoutId} {
+      allow read: if isAuthenticated();
+      allow create: if isSuperAdmin();
+      allow update, delete: if false; // Strict immutability: adjustments must be separate records
+    }
+
+    // Collection Operators & Centers
+    match /operators/{operatorId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+
+    match /centers/{centerId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+
+    // Global Settings & Rate Charts
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+
+    // Tanker Dispatches & Lab Quality Tests
+    match /tanker_dispatches/{dispatchId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isSuperAdmin();
+    }
+
+    match /quality_tests/{testId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // Operational Notifications
+    match /notifications/{notificationId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // System Audit Logs (Immutable, append-only)
+    match /audit_logs/{auditId} {
+      allow read: if isSuperAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if false;
+    }
+
+    // Consumer Orders: Direct client creation, update, and deletion is strictly denied.
+    // All orders must be validated, priced, and created through the authoritative server API.
+    match /orders/{orderId} {
+      allow read: if isSuperAdmin() || (isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.customerId == request.auth.uid));
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    match /subscriptions/{subId} {
+      allow read, create, update: if isAuthenticated();
+      allow delete: if isSuperAdmin();
     }
   }
 }

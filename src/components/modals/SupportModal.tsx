@@ -61,7 +61,7 @@ export const SupportModal: React.FC = () => {
 
             {/* WhatsApp Support */}
             <a
-              href="https://wa.me/919800737321?text=Hi%20Rudu%20Farm%20Team%2C%20I%20need%20assistance%20with%20my%20dairy%20account"
+              href="https://wa.me/918006270064?text=Hi%20Rudu%20Farm%20Team%2C%20I%20need%20assistance%20with%20my%20dairy%20account"
               target="_blank"
               rel="noreferrer"
               className="p-3.5 rounded-xl bg-white border border-gray-200 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-between transition-all cursor-pointer group"
@@ -72,7 +72,7 @@ export const SupportModal: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-xs font-bold text-gray-900 block group-hover:text-gray-950">WhatsApp Assistance</span>
-                  <span className="text-[11px] text-gray-500 font-medium">+91 98007 37321</span>
+                  <span className="text-[11px] text-gray-500 font-medium">+91 8006270064</span>
                 </div>
               </div>
               <span className="text-xs font-semibold text-gray-900">Chat →</span>
@@ -85,8 +85,8 @@ export const SupportModal: React.FC = () => {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div className="text-xs">
-                  <span className="font-bold text-gray-900 block">Kheda Main Dairy Hub</span>
-                  <span className="text-gray-500 block mt-0.5">Plot 42, GIDC Dairy Road, Anand - Kheda District, Gujarat 387001</span>
+                  <span className="font-bold text-gray-900 block">Rudu Dairy Central Office</span>
+                  <span className="text-gray-500 block mt-0.5">Main Branch, Dairy Road</span>
                   <span className="text-[10px] text-gray-600 font-medium flex items-center gap-1 mt-1">
                     <Clock className="w-3 h-3" />
                     Open Daily 5:30 AM - 9:00 PM

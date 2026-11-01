@@ -62,12 +62,7 @@ let storage: FirebaseStorage;
 
 try {
   app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-  // User's Cloud Firestore database in Firebase console is named "default"
-  try {
-    db = getFirestore(app, 'default');
-  } catch {
-    db = getFirestore(app);
-  }
+  db = getFirestore(app, 'default');
   auth = getAuth(app);
   storage = getStorage(app);
 } catch (error) {

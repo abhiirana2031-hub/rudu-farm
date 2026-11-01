@@ -28,6 +28,7 @@ import {
 import confetti from 'canvas-confetti';
 import { RuduLogo } from '../RuduLogo';
 import { ProductItem, PRODUCTS_CATALOG } from './DedicatedProductPage';
+import { generateOrderId } from '../../utils/identifiers';
 
 interface ProductOrderPageProps {
   product: ProductItem;
@@ -96,15 +97,41 @@ export const ProductOrderPage: React.FC<ProductOrderPageProps> = ({
     }
   };
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerPhone.trim() || !customerName.trim() || !customerAddress.trim()) {
       alert('Please provide your name, phone number, and delivery address.');
       return;
     }
 
-    const generatedId = `RF-${Math.floor(100000 + Math.random() * 900000)}`;
-    setOrderId(generatedId);
+    let authoritativeId = generateOrderId();
+    try {
+      const response = await fetch('/api/orders/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: [{ productId: product.id, packLabel: currentPack.label, quantity }],
+          orderMode,
+          customerName: customerName.trim(),
+          customerPhone: customerPhone.trim(),
+          customerAddress: customerAddress.trim(),
+          customerPincode,
+          deliverySlot,
+          deliveryNotes,
+          paymentMethod,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data?.order?.orderId) {
+          authoritativeId = data.order.orderId;
+        }
+      }
+    } catch {
+      // Graceful fallback for offline demo mode
+    }
+
+    setOrderId(authoritativeId);
 
     // Confetti celebration
     try {
@@ -118,7 +145,7 @@ export const ProductOrderPage: React.FC<ProductOrderPageProps> = ({
     // If WhatsApp method selected, open WhatsApp chat
     if (paymentMethod === 'whatsapp') {
       const message = `*RUDU DAIRY ORDER CONFIRMATION* 🥛
-Order ID: #${generatedId}
+Order ID: #${authoritativeId}
 
 • *Product:* ${product.name}
 • *Pack Size:* ${currentPack.label}

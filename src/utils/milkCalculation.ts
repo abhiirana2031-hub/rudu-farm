@@ -18,20 +18,18 @@ export const DEFAULT_QUALITY_VALIDATION: MilkQualityValidationConfig = {
   defaultUnit: 'L',
 };
 
-/**
- * Decimal-safe money calculation for milk intake.
- * Prevents IEEE 754 floating-point drift (e.g., 2.3 * 45.0 = 103.49999999999999).
- * Returns precise 2-decimal rounded number.
- */
-export function calculateMilkAmount(quantity: number, rate: number): number {
+export function calculateMilkAmountInPaise(quantity: number, rate: number): number {
   if (isNaN(quantity) || isNaN(rate) || quantity <= 0 || rate <= 0) {
     return 0;
   }
-  // Decimal-safe calculation by multiplying scaled units
-  const qtyDecimals = 1000; // supports up to 3 decimal places for quantity
-  const rateDecimals = 100; // 2 decimal places for currency
-  const totalCents = Math.round((quantity * qtyDecimals) * (rate * rateDecimals) / (qtyDecimals * 10));
-  return totalCents / 10;
+  const qtyScaled = Math.round(quantity * 1000); // 3 decimals precision for liters
+  const rateScaled = Math.round(rate * 100);     // 2 decimals precision for rate (in paise)
+  return Math.round((qtyScaled * rateScaled) / 1000);
+}
+
+export function calculateMilkAmount(quantity: number, rate: number): number {
+  const paise = calculateMilkAmountInPaise(quantity, rate);
+  return paise / 100;
 }
 
 /**

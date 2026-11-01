@@ -22,12 +22,12 @@ export const OperatorProfileView: React.FC = () => {
 
   const savedOpStr = localStorage.getItem('rudu_current_operator');
   const opData = savedOpStr ? JSON.parse(savedOpStr) : {
-    name: 'Ramesh Patel',
-    employeeCode: 'OP-101',
-    phone: '+91 98765 43210',
-    center: 'Kheda Main Center #01',
-    role: 'Center Incharge',
-    email: 'ramesh.kheda@rudufarm.com',
+    name: 'Center Operator',
+    employeeCode: 'OP-001',
+    phone: '',
+    center: 'Main Center',
+    role: 'Center Operator',
+    email: '',
   };
 
   const getLanguageName = (code: string) => {
@@ -82,7 +82,7 @@ export const OperatorProfileView: React.FC = () => {
             <Phone className="w-4 h-4 text-emerald-600 shrink-0" />
             <div className="min-w-0">
               <span className="block text-[10px] font-bold text-gray-400 uppercase">Operator Mobile</span>
-              <span className="text-xs font-bold text-gray-800 truncate block">{opData.phone || '+91 98765 43210'}</span>
+              <span className="text-xs font-bold text-gray-800 truncate block">{opData.phone || ''}</span>
             </div>
           </div>
 

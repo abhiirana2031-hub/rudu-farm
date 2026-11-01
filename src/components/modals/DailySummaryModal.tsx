@@ -37,7 +37,7 @@ export const DailySummaryModal: React.FC = () => {
             </div>
             <div>
               <h2 className="text-base font-extrabold">{t.dailySummary}</h2>
-              <p className="text-[11px] text-emerald-100/80 font-medium">16 May 2025 • Center Overview</p>
+              <p className="text-[11px] text-emerald-100/80 font-medium">{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • Center Overview</p>
             </div>
           </div>
           <button

@@ -27,6 +27,7 @@ export interface Farmer {
   avatarUrl?: string;
   pendingBalance?: number;
   pin?: string;
+  pinHash?: string;
   password?: string;
   bankDetails: {
     accountHolder: string;
@@ -206,6 +207,7 @@ export interface OperatorUser {
   shiftAssigned: 'Morning' | 'Evening' | 'Both';
   joinDate: string;
   pin?: string;
+  pinHash?: string;
   password?: string;
 }
 

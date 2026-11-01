@@ -102,7 +102,6 @@ export const loginWithEmail = async (
       if (!snap.empty) {
         const userDoc = snap.docs[0].data();
         const storedPass = (userDoc.password || userDoc.pin || '').trim();
-        const storedRole = (userDoc.role || '').toUpperCase();
 
         if (storedPass && storedPass === cleanPass) {
           // Password matches the Firestore record
@@ -119,20 +118,6 @@ export const loginWithEmail = async (
     } catch (fsErr) {
       console.warn('[Auth] Firestore users lookup failed:', fsErr);
     }
-  }
-
-  // 3. Local hardcoded fallback for official admin (offline mode)
-  const isOfficialAdmin = cleanEmail === 'rududairy@gmail.com' || cleanEmail === 'admin@rududairy.com' || cleanEmail === 'admin';
-  const savedAdminPin = localStorage.getItem('rudu_admin_pin') || '8006270064';
-  const savedAdminPass = localStorage.getItem('rudu_admin_pass') || 'admin123';
-
-  if (isOfficialAdmin && (cleanPass === savedAdminPin || cleanPass === savedAdminPass || cleanPass === 'rudu2026' || cleanPass === '8006270064' || cleanPass === 'Abhay@#005')) {
-    const adminUser = {
-      uid: 'rudu-admin-master',
-      email: cleanEmail,
-      displayName: 'Dairy Owner / Executive Admin',
-    } as unknown as User;
-    return { user: adminUser };
   }
 
   return { user: null, error: 'Invalid admin credentials. Please enter your valid email and password.' };

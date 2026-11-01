@@ -2,42 +2,60 @@ import React, { useState } from 'react';
 import { X, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { NotificationService } from '../../services/notification/notification.service';
+import { hashCredential, validatePinStrength } from '../../utils/cryptoAuth';
 
 export const AddFarmerModal: React.FC = () => {
   const { isAddFarmerModalOpen, setIsAddFarmerModalOpen, addFarmer, t } = useApp();
 
   const [name, setName] = useState('');
   const [farmerCode, setFarmerCode] = useState(`RF${Math.floor(1000 + Math.random() * 9000)}`);
-  const [phone, setPhone] = useState('+91 98');
-  const [village, setVillage] = useState('Kheda');
-  const [cowCount, setCowCount] = useState<number>(4);
-  const [buffaloCount, setBuffaloCount] = useState<number>(2);
-  const [bankName, setBankName] = useState('State Bank of India');
+  const [phone, setPhone] = useState('');
+  const [village, setVillage] = useState('');
+  const [cowCount, setCowCount] = useState<number>(0);
+  const [buffaloCount, setBuffaloCount] = useState<number>(0);
+  const [bankName, setBankName] = useState('');
   const [accountNumber, setAccountNumber] = useState('•••• •••• ' + Math.floor(1000 + Math.random() * 9000));
-  const [ifscCode, setIfscCode] = useState('SBIN0001842');
+  const [ifscCode, setIfscCode] = useState('');
   const [upiId, setUpiId] = useState('');
-  const [kycStatus, setKycStatus] = useState<'Verified' | 'Pending'>('Verified');
+  const [kycStatus, setKycStatus] = useState<'Verified' | 'Pending'>('Pending');
   const [pin, setPin] = useState('');
   const [showPin, setShowPin] = useState(false);
 
+  const [validationError, setValidationError] = useState('');
+
   if (!isAddFarmerModalOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleGeneratePin = () => {
+    const randomPin = Math.floor(2000 + Math.random() * 7000).toString();
+    setPin(randomPin);
+    setValidationError('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError('');
     if (!name.trim()) return;
+
+    const cleanPhone = phone.trim().replace(/\D/g, '').slice(-10);
+    const pinCheck = validatePinStrength(pin, cleanPhone);
+    if (!pinCheck.valid) {
+      setValidationError(pinCheck.error || 'Please provide a secure 4-digit PIN.');
+      return;
+    }
+
+    const pinHash = await hashCredential(pin.trim());
 
     addFarmer({
       name: name.trim(),
       farmerCode: farmerCode.trim(),
       phone: phone.trim(),
       village: village.trim(),
-      district: 'Anand, Gujarat',
+      district: 'Sikhreda, Uttar Pradesh',
       cattleCount: Number(cowCount) + Number(buffaloCount),
       cowCount: Number(cowCount),
       buffaloCount: Number(buffaloCount),
-      memberSince: 'May 2025',
-      pin: pin.trim() || '1234',
-      password: pin.trim() || '1234',
+      memberSince: new Date().getFullYear().toString(),
+      pinHash,
       bankDetails: {
         accountHolder: name.trim(),
         bankName,
@@ -208,14 +226,26 @@ export const AddFarmerModal: React.FC = () => {
 
           {/* Login PIN */}
           <div className="space-y-1.5">
-            <label className="block font-bold text-gray-800 mb-1">Login PIN / Password</label>
+            <div className="flex items-center justify-between">
+              <label className="block font-bold text-gray-800 text-xs">Farmer Login PIN (4 digits)</label>
+              <button
+                type="button"
+                onClick={handleGeneratePin}
+                className="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 cursor-pointer underline"
+              >
+                Generate Random PIN
+              </button>
+            </div>
             <div className="relative">
               <input
                 type={showPin ? 'text' : 'password'}
-                placeholder="Set a 4-digit PIN (default: 1234)"
+                placeholder="Set 4-digit PIN (e.g. 5829)"
                 value={pin}
                 maxLength={8}
-                onChange={(e) => setPin(e.target.value)}
+                onChange={(e) => {
+                  setPin(e.target.value);
+                  setValidationError('');
+                }}
                 className="w-full px-3 py-2 pr-10 bg-gray-50 border border-gray-200 rounded-xl font-mono font-bold text-gray-900 outline-none focus:border-emerald-600 focus:bg-white"
               />
               <button
@@ -226,7 +256,11 @@ export const AddFarmerModal: React.FC = () => {
                 {showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
-            <p className="text-[10px] text-gray-500 font-medium">Farmer uses this PIN to log in. Leave blank to use default PIN: <strong>1234</strong></p>
+            {validationError ? (
+              <p className="text-[11px] text-red-600 font-semibold">{validationError}</p>
+            ) : (
+              <p className="text-[10px] text-gray-500 font-medium">Farmer uses this PIN to authenticate. Cryptographically hashed before storing.</p>
+            )}
           </div>
 
           <div className="pt-2">

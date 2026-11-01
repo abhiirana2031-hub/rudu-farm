@@ -18,15 +18,28 @@ import {
   QuantityUnit,
   RateUnit,
   MilkQualityValidationConfig,
-  CollectionAuditEntry,
 } from '../types';
 import {
   calculateMilkAmount,
   calculateChartRate,
-  validateQualityReadings,
   findDuplicateMilkEntry,
   DEFAULT_QUALITY_VALIDATION,
 } from '../utils/milkCalculation';
+import {
+  generateMilkEntryId,
+  generateReceiptNumber,
+  generatePayoutId,
+  formatDateDisplay,
+  formatTimeDisplay,
+} from '../utils/identifiers';
+import {
+  hashCredential,
+  verifyCredential,
+  sanitizeUserForStorage,
+  isAccountLocked,
+  recordFailedAttempt,
+  resetFailedAttempts,
+} from '../utils/cryptoAuth';
 import { logCollectionAudit } from '../utils/auditLogger';
 import {
   EMPTY_FARMER,
@@ -67,7 +80,6 @@ import {
   StandardRole,
   hasPermission,
   normalizeRole,
-  canAccessFarmerData,
 } from '../lib/rbac/permissions';
 
 interface AppContextType {
@@ -360,7 +372,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           farmerId: d.farmerId || '',
           farmerName: d.farmerName || 'Registered Farmer',
           farmerCode: d.farmerCode || d.farmerId || 'RF-MEM',
-          village: d.village || 'Kheda',
+          village: d.village || '',
           date: d.date || new Date().toLocaleDateString('en-GB'),
           time: d.time || '07:00 AM',
           shift: (d.shift?.toLowerCase() === 'evening' ? 'evening' : 'morning') as ShiftType,
@@ -404,20 +416,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: f.name || f.farmerName || 'Farmer',
         farmerCode: f.farmerCode || f.id || '',
         phone: f.phone || f.mobileNumber || '',
-        village: f.village || 'Kheda',
-        district: f.district || 'Anand, Gujarat',
-        cattleCount: typeof f.cattleCount === 'number' ? f.cattleCount : 4,
-        cowCount: typeof f.cowCount === 'number' ? f.cowCount : 2,
-        buffaloCount: typeof f.buffaloCount === 'number' ? f.buffaloCount : 2,
-        memberSince: f.memberSince || 'Jan 2024',
+        village: f.village || '',
+        district: f.district || '',
+        cattleCount: typeof f.cattleCount === 'number' ? f.cattleCount : 0,
+        cowCount: typeof f.cowCount === 'number' ? f.cowCount : 0,
+        buffaloCount: typeof f.buffaloCount === 'number' ? f.buffaloCount : 0,
+        memberSince: f.memberSince || new Date().getFullYear().toString(),
         status: f.status || 'Active',
         pin: f.pin || f.password || '',
         password: f.password || f.pin || '',
         bankDetails: {
           accountHolder: f.bankDetails?.accountHolder || f.accountHolder || f.name || 'Farmer',
-          bankName: f.bankDetails?.bankName || f.bankName || 'State Bank of India',
-          accountNumber: f.bankDetails?.accountNumber || f.accountNumber || 'XXXX-XXXX-0000',
-          ifscCode: f.bankDetails?.ifscCode || f.ifscCode || 'SBIN0001000',
+          bankName: f.bankDetails?.bankName || f.bankName || '',
+          accountNumber: f.bankDetails?.accountNumber || f.accountNumber || '',
+          ifscCode: f.bankDetails?.ifscCode || f.ifscCode || '',
           upiId: f.bankDetails?.upiId !== undefined ? f.bankDetails.upiId : (f.upiId || ''),
           kycStatus: f.bankDetails?.kycStatus || f.kycStatus || 'Verified',
         },
@@ -619,17 +631,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // Final total amount with decimal-safe precision
     const totalAmount = calculateMilkAmount(finalQty, finalRate);
-    const receiptNum = Math.floor(1000 + Math.random() * 9000);
-    const newId = `ENTRY-${receiptNum}`;
     const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-    const dateStr = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const newId = generateMilkEntryId(now);
+    const receiptId = generateReceiptNumber(now);
+    const timeStr = formatTimeDisplay(now);
+    const dateStr = formatDateDisplay(now);
+
+    if (!allowDuplicateOverride) {
+      const isDuplicate = checkDuplicateEntry({
+        farmerId: farmer.id || farmerId,
+        date: dateStr,
+        shift,
+        milkType,
+      });
+      if (isDuplicate) {
+        throw new Error(
+          `Duplicate intake rejected: A ${shift} collection for ${farmer.name} (${milkType} milk) has already been recorded for ${dateStr}. If this is an authorized re-collection, enable duplicate override.`
+        );
+      }
+    }
 
     const activeMode: PricingMode = entryPricingMode || pricingMode || 'MANUAL_RATE';
 
     const newEntry: MilkEntry = {
       id: newId,
-      receiptId: `ENTRY-${receiptNum}`,
+      receiptId: receiptId,
       tenantId: 'rudu-tenant-main',
       farmerId: farmer.id || farmerId,
       farmerName: farmer.name || 'Registered Farmer',
@@ -766,11 +792,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     avgRate: number;
   }) => {
     const farmer = farmers.find((f) => f.id === farmerId) || currentFarmer;
-    const payNum = Math.floor(100 + Math.random() * 900);
-    const newId = `PAY-${payNum}`;
+
+    if (amount <= 0 || isNaN(amount)) {
+      throw new Error('Payout amount must be greater than zero.');
+    }
+
+    const existingPayout = payouts.find(
+      (p) =>
+        p.farmerId === (farmer.id || farmerId) &&
+        p.periodStart === periodStart &&
+        p.periodEnd === periodEnd
+    );
+    if (existingPayout) {
+      throw new Error(
+        `Duplicate settlement blocked: A payout has already been recorded for ${farmer.name} covering ${periodStart} to ${periodEnd} (ID: ${existingPayout.payoutId}).`
+      );
+    }
+
     const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-    const dateStr = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const newId = generatePayoutId(now);
+    const timeStr = formatTimeDisplay(now);
+    const dateStr = formatDateDisplay(now);
 
     const newPayout: PayoutRecord = {
       id: newId,
@@ -785,7 +827,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       periodStart,
       periodEnd,
       paymentMethod,
-      paymentReference: `UPI/${Math.floor(10000000 + Math.random() * 90000000)}`,
+      paymentReference: `UPI/${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`,
       totalMilkSupplied: totalMilk,
       avgRate,
       paidOn: dateStr,
@@ -825,6 +867,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ...farmerData,
       id: newId,
     };
+    if (newFarmer.pinHash) {
+      delete (newFarmer as any).pin;
+      delete (newFarmer as any).password;
+    }
     setFarmers((prev) => [newFarmer, ...prev]);
     saveDocument(COLLECTIONS.FARMERS, newId, newFarmer).catch(console.warn);
     return newFarmer;
@@ -841,11 +887,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               ? { ...f.bankDetails, ...updates.bankDetails }
               : f.bankDetails,
           };
+          if (updated.pinHash) {
+            delete (updated as any).pin;
+            delete (updated as any).password;
+          }
           saveDocument(COLLECTIONS.FARMERS, f.id, updated).catch(console.warn);
           setCurrentFarmer((prevFarmer) => {
             if (prevFarmer && (prevFarmer.id === f.id || prevFarmer.farmerCode === f.farmerCode)) {
-              localStorage.setItem('rudu_current_farmer', JSON.stringify(updated));
-              return updated;
+              const safeFarmer = sanitizeUserForStorage(updated);
+              localStorage.setItem('rudu_current_farmer', JSON.stringify(safeFarmer));
+              return safeFarmer as any;
             }
             return prevFarmer;
           });
@@ -884,6 +935,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: newId,
       employeeCode: `OP-${codeNum}`,
     };
+    if (newOperator.pinHash) {
+      delete (newOperator as any).pin;
+      delete (newOperator as any).password;
+    }
     setOperators((prev) => [newOperator, ...prev]);
     saveDocument(COLLECTIONS.OPERATORS, newId, newOperator).catch(console.warn);
     return newOperator;
@@ -893,7 +948,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setOperators((prev) =>
       prev.map((op) => {
         if (op.id === id) {
-          const updated = { ...op, ...updates };
+          const updated: OperatorUser = { ...op, ...updates };
+          if (updated.pinHash) {
+            delete (updated as any).pin;
+            delete (updated as any).password;
+          }
           saveDocument(COLLECTIONS.OPERATORS, id, updated).catch(console.warn);
           return updated;
         }
@@ -1166,22 +1225,61 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         };
       }
 
-      // Strict PIN / Password verification
-      const expectedPin = (matchedOp as any).pin || (matchedOp as any).password || '1234';
-      if (secret !== expectedPin && secret !== '8006270064' && secret !== 'admin123') {
+      // Check account lockout status
+      const opIdentifier = matchedOp.phone || matchedOp.id;
+      const opLock = isAccountLocked(opIdentifier);
+      if (opLock.locked) {
         return {
           success: false,
-          error: 'Incorrect Operator Security PIN. Please verify your PIN.',
+          error: `Account temporarily locked due to repeated failed attempts. Please retry in ${opLock.remainingSeconds} seconds.`,
         };
       }
 
+      // Cryptographic verification & migration
+      const opVerification = await verifyCredential(
+        secret,
+        matchedOp.id,
+        matchedOp.pinHash,
+        (matchedOp as any).pin || (matchedOp as any).password,
+        matchedOp.phone
+      );
+
+      if (!opVerification.valid) {
+        const attempt = recordFailedAttempt(opIdentifier);
+        if (attempt.locked) {
+          return {
+            success: false,
+            error: 'Too many failed login attempts. Account temporarily locked for 15 minutes.',
+          };
+        }
+        return {
+          success: false,
+          error: `Incorrect Operator Security PIN. ${attempt.attemptsLeft} attempt(s) remaining.`,
+        };
+      }
+
+      // Successful verification: reset lockout tracker
+      resetFailedAttempts(opIdentifier);
+
+      // If legacy account authenticated, upgrade to PBKDF2 pinHash immediately
+      if (opVerification.needsUpgrade) {
+        hashCredential(secret).then((pinHash) => {
+          saveDocument(COLLECTIONS.OPERATORS, matchedOp.id, {
+            pinHash,
+            pin: null,
+            password: null,
+          }).catch(console.warn);
+        });
+      }
+
+      const safeOp = sanitizeUserForStorage(matchedOp);
       setUserRole('employee');
       setIsAuthenticated(true);
       setCurrentTab('dashboard');
       localStorage.setItem('rudu_role', 'employee');
       localStorage.setItem('rudu_auth_employee', 'true');
       localStorage.setItem('rudu_auth', 'true');
-      localStorage.setItem('rudu_current_operator', JSON.stringify(matchedOp));
+      localStorage.setItem('rudu_current_operator', JSON.stringify(safeOp));
       return { success: true };
     }
 
@@ -1199,7 +1297,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!cleanInput && !isCode) {
       return {
         success: false,
-        error: 'Please enter a valid 10-digit mobile number (e.g. 6396941307) or Farmer Code (e.g. RF7237).',
+        error: 'Please enter a valid 10-digit mobile number or Farmer Code.',
       };
     }
 
@@ -1232,29 +1330,62 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
     }
 
-    // 4. Strict Farmer PIN / Passcode Verification
-    const expectedFarmerPin = (matchedFarmer as any).pin || (matchedFarmer as any).password;
-    const fPhoneLast4 = (matchedFarmer.phone || '').replace(/\D/g, '').slice(-4);
-
-    const isPinMatch = expectedFarmerPin
-      ? secret === expectedFarmerPin || secret === '8006270064' || secret === '1234'
-      : secret === fPhoneLast4 || secret === '1234' || secret === '1307' || secret === '8006270064';
-
-    if (!isPinMatch) {
+    // Check farmer account lockout status
+    const farmerIdentifier = matchedFarmer.phone || matchedFarmer.farmerCode || matchedFarmer.id;
+    const farmerLock = isAccountLocked(farmerIdentifier);
+    if (farmerLock.locked) {
       return {
         success: false,
-        error: 'Incorrect Passcode / PIN. Please enter your valid 4-digit PIN.',
+        error: `Account temporarily locked due to repeated failed attempts. Please retry in ${farmerLock.remainingSeconds} seconds.`,
       };
     }
 
-    setCurrentFarmer(matchedFarmer);
+    // 4. Strict Cryptographic Farmer PIN / Passcode Verification
+    const farmerVerification = await verifyCredential(
+      secret,
+      matchedFarmer.farmerCode || matchedFarmer.id,
+      matchedFarmer.pinHash,
+      (matchedFarmer as any).pin || (matchedFarmer as any).password,
+      matchedFarmer.phone
+    );
+
+    if (!farmerVerification.valid) {
+      const attempt = recordFailedAttempt(farmerIdentifier);
+      if (attempt.locked) {
+        return {
+          success: false,
+          error: 'Too many failed login attempts. Account temporarily locked for 15 minutes.',
+        };
+      }
+      return {
+        success: false,
+        error: `Incorrect Passcode / PIN. ${attempt.attemptsLeft} attempt(s) remaining.`,
+      };
+    }
+
+    // Successful verification: reset lockout tracker
+    resetFailedAttempts(farmerIdentifier);
+
+    // If legacy account authenticated, upgrade to PBKDF2 pinHash immediately and delete plaintext
+    if (farmerVerification.needsUpgrade) {
+      hashCredential(secret).then((pinHash) => {
+        saveDocument(COLLECTIONS.FARMERS, matchedFarmer.id, {
+          pinHash,
+          pin: null,
+          password: null,
+        }).catch(console.warn);
+      });
+    }
+
+    const safeFarmer = sanitizeUserForStorage(matchedFarmer);
+    setCurrentFarmer(safeFarmer as any);
     setUserRole('farmer');
     setIsAuthenticated(true);
     setCurrentTab('dashboard');
     localStorage.setItem('rudu_role', 'farmer');
     localStorage.setItem('rudu_auth_farmer', 'true');
     localStorage.setItem('rudu_auth', 'true');
-    localStorage.setItem('rudu_current_farmer', JSON.stringify(matchedFarmer));
+    localStorage.setItem('rudu_current_farmer', JSON.stringify(safeFarmer));
 
     return { success: true };
   };

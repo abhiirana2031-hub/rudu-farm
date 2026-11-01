@@ -50,7 +50,7 @@ Shift:          ${entry.shift.toUpperCase()}
 ----------------------------------------
 Farmer:         ${entry.farmerName} (${entry.farmerCode})
 Location:       ${entry.village}
-Center:         ${entry.centerName || 'Kheda Center #01'}
+Center:         ${entry.centerName || 'Main Branch'}
 Milk Type:      ${entry.milkType.toUpperCase()}
 Quantity:       ${qty.toFixed(3)} ${qUnit}
 FAT %:          ${fatVal.toFixed(1)}%
@@ -122,7 +122,7 @@ Operator:       ${entry.collectedBy}
           <div className="text-center border-b border-dashed border-gray-300 pb-3">
             <div className="font-extrabold text-base tracking-wider text-gray-950">RUDU DAIRY</div>
             <div className="text-[10px] text-gray-500 font-sans font-semibold">Milk Collection Receipt</div>
-            <div className="text-[9.5px] text-gray-400 mt-0.5">Anand Hub • Helpline: 1800-RUDU-DAIRY</div>
+            <div className="text-[9.5px] text-gray-400 mt-0.5">Helpline: 1800-RUDU-DAIRY</div>
           </div>
 
           {/* Receipt & Farmer Meta */}
@@ -149,7 +149,7 @@ Operator:       ${entry.collectedBy}
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Center:</span>
-              <span>{entry.centerName || 'Kheda Hub #01'}</span>
+              <span>{entry.centerName || 'Main Center'}</span>
             </div>
           </div>
 
@@ -194,14 +194,24 @@ Operator:       ${entry.collectedBy}
             </span>
           </div>
 
-          {/* Verification Footer */}
-          <div className="flex items-center justify-between pt-1 text-[9.5px] text-gray-500 font-sans">
+          {/* Physical Verification & Signatures */}
+          <div className="flex items-center justify-between pt-1 text-[9.5px] text-gray-500 font-sans border-b border-dashed border-gray-300 pb-2">
             <div>
-              <div>Operator: {entry.collectedBy}</div>
-              <div className="text-gray-700 font-semibold mt-0.5">✓ Rudu Dairy Cloud Verified</div>
+              <div>Recorded By: {entry.collectedBy}</div>
+              <div className="text-gray-700 font-semibold mt-0.5">Manual Intake Voucher</div>
             </div>
             <div className="w-10 h-10 border border-gray-300 rounded p-0.5 flex items-center justify-center bg-white">
               <QrCode className="w-8 h-8 text-gray-800" />
+            </div>
+          </div>
+
+          {/* Physical Signature Block for Print-and-Sign Workflow */}
+          <div className="pt-2 grid grid-cols-2 gap-4 text-[9px] text-gray-700">
+            <div className="border-t border-gray-400 pt-1 text-center font-bold">
+              Farmer Signature
+            </div>
+            <div className="border-t border-gray-400 pt-1 text-center font-bold">
+              Operator Sign / Stamp
             </div>
           </div>
         </div>

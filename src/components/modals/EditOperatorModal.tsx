@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Edit2, ShieldCheck, Key, Phone, User, Building2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { OperatorUser } from '../../types';
+import { hashCredential, validatePinStrength } from '../../utils/cryptoAuth';
 
 interface EditOperatorModalProps {
   operator: OperatorUser | null;
@@ -17,12 +18,14 @@ export const EditOperatorModal: React.FC<EditOperatorModalProps> = ({ operator, 
   const [centerId, setCenterId] = useState('');
   const [status, setStatus] = useState<'Active' | 'Inactive'>('Active');
   const [shiftAssigned, setShiftAssigned] = useState<'Morning' | 'Evening' | 'Both'>('Both');
+  const [validationError, setValidationError] = useState('');
 
   useEffect(() => {
     if (operator) {
       setName(operator.name || '');
       setPhone(operator.phone || '');
-      setPin((operator as any).pin || (operator as any).password || '1234');
+      setPin(''); // Never prepopulate PIN for security
+      setValidationError('');
       setCenterId(operator.centerId || '');
       setStatus(operator.status || 'Active');
       setShiftAssigned(operator.shiftAssigned || 'Both');
@@ -31,23 +34,34 @@ export const EditOperatorModal: React.FC<EditOperatorModalProps> = ({ operator, 
 
   if (!operator) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError('');
     if (!name.trim()) return;
 
     const matchedCenter = centers.find((c) => c.id === centerId);
-
-    updateOperator(operator.id, {
+    const updates: any = {
       name: name.trim(),
       phone: phone.trim(),
-      pin: pin.trim(),
-      password: pin.trim(),
       centerId,
       centerName: matchedCenter ? matchedCenter.name : operator.centerName,
       status,
       shiftAssigned,
-    } as any);
+    };
 
+    if (pin.trim()) {
+      const cleanPhone = phone.trim().replace(/\D/g, '').slice(-10);
+      const pinCheck = validatePinStrength(pin.trim(), cleanPhone);
+      if (!pinCheck.valid) {
+        setValidationError(pinCheck.error || 'Please enter a valid secure 4-digit PIN.');
+        return;
+      }
+      updates.pinHash = await hashCredential(pin.trim());
+      updates.pin = null;
+      updates.password = null;
+    }
+
+    updateOperator(operator.id, updates);
     onClose();
   };
 
@@ -116,8 +130,11 @@ export const EditOperatorModal: React.FC<EditOperatorModalProps> = ({ operator, 
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold font-mono text-gray-800 outline-none focus:border-amber-600"
-                placeholder="1234"
+                placeholder="Leave unchanged or enter new 4-digit PIN"
               />
+              {validationError && (
+                <p className="text-[10px] text-red-600 font-bold mt-1">{validationError}</p>
+              )}
             </div>
             <div>
               <label className="block font-bold text-gray-800 mb-1 flex items-center gap-1">

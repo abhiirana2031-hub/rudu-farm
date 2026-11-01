@@ -29,16 +29,16 @@ export const AdminProfileView: React.FC = () => {
       const saved = localStorage.getItem('rudu_admin_profile');
       return saved ? JSON.parse(saved) : {
         name: 'Dairy Owner / Executive Admin',
-        email: 'abhayrana8272@gmail.com',
-        phone: '+91 99999 88888',
-        password: 'Admin@#005',
+        email: 'rududairy@gmail.com',
+        phone: '+91 8006270064',
+        password: 'Abhay@#005',
       };
     } catch {
       return {
         name: 'Dairy Owner / Executive Admin',
-        email: 'abhayrana8272@gmail.com',
-        phone: '+91 99999 88888',
-        password: 'Admin@#005',
+        email: 'rududairy@gmail.com',
+        phone: '+91 8006270064',
+        password: 'Abhay@#005',
       };
     }
   });
@@ -317,7 +317,7 @@ export const AdminProfileView: React.FC = () => {
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-800 outline-none focus:border-purple-600"
-                  placeholder="+91 99999 88888"
+                  placeholder="+91 8006270064"
                 />
               </div>
 

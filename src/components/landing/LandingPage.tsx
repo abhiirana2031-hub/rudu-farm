@@ -1015,7 +1015,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin }) => {
         )}
 
         {/* 3. Products Section */}
-        {(activeView === 'home' || activeView === 'products') && (
+        {activeView === 'home' && (
           <section id="products" className="products-catalog-section py-16 scroll-mt-20">
             <div className="catalog-container">
               <div className="landing-section-header relative text-center max-w-4xl mx-auto mb-10 sm:mb-14 px-3">

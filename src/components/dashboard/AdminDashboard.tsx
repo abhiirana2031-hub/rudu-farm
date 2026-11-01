@@ -149,7 +149,7 @@ export const AdminDashboard: React.FC = () => {
   const logisticsAndChillingCost = Math.round(totalVolume * 2.2);
   const grossMargin = wholesaleRevenue - totalMilkValue;
   const netOperatingProfit = grossMargin - logisticsAndChillingCost;
-  const profitMarginPercent = wholesaleRevenue > 0 ? ((netOperatingProfit / wholesaleRevenue) * 100).toFixed(1) : '18.4';
+  const profitMarginPercent = wholesaleRevenue > 0 ? ((netOperatingProfit / wholesaleRevenue) * 100).toFixed(1) : '0.0';
 
   // Filtered farmers
   const filteredFarmers = farmers.filter((f) => {
@@ -768,7 +768,7 @@ export const AdminDashboard: React.FC = () => {
               <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
               <input
                 type="text"
-                placeholder="Search by name, ID (e.g. RF7237), phone, village..."
+                placeholder="Search by name, Farmer ID, phone, village..."
                 value={farmerSearch}
                 onChange={(e) => setFarmerSearch(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-semibold text-gray-900 focus:bg-white focus:border-emerald-600 focus:outline-hidden"
@@ -1575,8 +1575,11 @@ export const AdminDashboard: React.FC = () => {
                 >
                   <option value="all">All Registered Farmers ({farmers.length} Farmers)</option>
                   <option value="pending_kyc">Farmers with Pending KYC Only</option>
-                  <option value="kheda">Kheda Hub #01 Suppliers Only</option>
-                  <option value="anand">Anand Central Suppliers Only</option>
+                  {centers.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} Suppliers Only
+                    </option>
+                  ))}
                 </select>
               </div>
 

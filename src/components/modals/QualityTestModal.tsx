@@ -5,12 +5,12 @@ import { useApp } from '../../context/AppContext';
 export const QualityTestModal: React.FC = () => {
   const { isQualityTestModalOpen, setIsQualityTestModalOpen, addQualityTest, qualityTests, t } = useApp();
 
-  const [sampleSource, setSampleSource] = useState('Kheda Center Morning Bulk Batch');
+  const [sampleSource, setSampleSource] = useState('');
   const [mbrtMinutes, setMbrtMinutes] = useState<number>(240);
   const [alcoholTest, setAlcoholTest] = useState<'Negative (Passed)' | 'Positive (Curdled)'>('Negative (Passed)');
   const [cobTest, setCobTest] = useState<'Passed' | 'Failed'>('Passed');
   const [adulterationResult, setAdulterationResult] = useState<'Pure / Clean' | 'Suspect'>('Pure / Clean');
-  const [testedBy, setTestedBy] = useState('Lab Tech - Hiren Dave');
+  const [testedBy, setTestedBy] = useState('');
 
   if (!isQualityTestModalOpen) return null;
 
@@ -21,7 +21,7 @@ export const QualityTestModal: React.FC = () => {
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 
     addQualityTest({
-      timestamp: `16 May 2025, ${timeStr}`,
+      timestamp: `${now.toLocaleDateString('en-GB')}, ${timeStr}`,
       sampleSource,
       mbrtMinutes: Number(mbrtMinutes),
       alcoholTest,

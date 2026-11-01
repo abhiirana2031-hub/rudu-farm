@@ -378,8 +378,15 @@ export const RuduLoginWindow: React.FC<RuduLoginWindowProps> = ({ forcedRole = '
                   <button
                     type="button"
                     onClick={async () => {
+                      if (!otpCode.trim()) {
+                        alert('Please enter your 6-digit verification code.');
+                        return;
+                      }
                       setOtpModalOpen(false);
-                      await login(selectedRole, otpPhone, 'demo123');
+                      const res = await login(selectedRole, otpPhone, otpCode.trim());
+                      if (!res.success) {
+                        setLoginError(res.error || 'Verification failed. Please check your credentials.');
+                      }
                     }}
                     style={{ flex: 1, height: '42px', borderRadius: '12px', border: 'none', backgroundColor: '#1B4D2E', color: '#ffffff', fontSize: '12.5px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(27,77,46,0.3)' }}
                   >
